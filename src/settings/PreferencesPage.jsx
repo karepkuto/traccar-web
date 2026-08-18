@@ -63,7 +63,13 @@ const PreferencesPage = () => {
   const user = useSelector((state) => state.session.user);
   const [attributes, setAttributes] = useState(user.attributes);
 
-  const versionApp = import.meta.env.VITE_APP_VERSION;
+  const versionApp = [
+    import.meta.env.VITE_APP_VERSION,
+    import.meta.env.VITE_APP_GIT_HASH,
+    import.meta.env.VITE_APP_BUILD_TIME,
+  ]
+    .filter(Boolean)
+    .join(' · ');
   const versionServer = useSelector((state) => state.session.server.version);
   const socket = useSelector((state) => state.session.socket);
 

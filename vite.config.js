@@ -1,15 +1,41 @@
+import { execSync } from 'node:child_process';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
 import { VitePWA } from 'vite-plugin-pwa';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
+const gitHash = (() => {
+  try {
+    return execSync('git rev-parse --short HEAD').toString().trim();
+  } catch {
+    return 'unknown';
+  }
+})();
+
+const buildTime = (() => {
+  const pad = (value) => String(value).padStart(2, '0');
+  const date = new Date();
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+})();
+
 export default defineConfig(() => ({
+  define: {
+    'import.meta.env.VITE_APP_GIT_HASH': JSON.stringify(gitHash),
+    'import.meta.env.VITE_APP_BUILD_TIME': JSON.stringify(buildTime),
+  },
   server: {
     port: 3000,
     proxy: {
-      '/api/socket': 'ws://localhost:8082',
-      '/api': 'http://localhost:8082',
+      '/api/socket': {
+        target: 'wss://app.pantauku.my.id',
+        ws: true,
+        changeOrigin: true,
+      },
+      '/api': {
+        target: 'https://app.pantauku.my.id',
+        changeOrigin: true,
+      },
     },
   },
   build: {
