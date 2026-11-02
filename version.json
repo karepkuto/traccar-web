@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "3665209",
+  "gitHash": "615d09c",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 17:22 WIB",
-  "commitMessage": "Apply Pantauku vivid orange theme with rounded card style\n\n- Primary vivid orange (#FF6A00, #FF8A3D in dark mode), light grey\n  background with white surfaces\n- Pill buttons without uppercase, rounded inputs, cards and dialogs,\n  soft shadows, rounded map controls\n- Selected list items get an orange tint and left accent bar\n- Server colorPrimary/colorSecondary attributes still override defaults",
-  "buildTime": "2026-11-02 17:23 WIB",
-  "buildTimeIso": "2026-11-02T10:23:15.997Z"
+  "commitTime": "2026-11-02 17:25 WIB",
+  "commitMessage": "Rebrand to Pantauku: name, logo, icons and page title\n\n- New Pantauku logo (map pin + wordmark) replaces the Traccar logo\n- Regenerated favicon and PWA icons from the new pin icon\n- Page title, description, PWA manifest name and theme color set to\n  Pantauku / #FF6A00 instead of server-provided placeholders\n- Login side panel logo rendered in white on the orange background",
+  "buildTime": "2026-11-02 17:26 WIB",
+  "buildTimeIso": "2026-11-02T10:26:16.907Z"
 }
