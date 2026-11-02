@@ -225,7 +225,8 @@ export const useLocalization = () => use(LocalizationContext);
 export const useTranslation = () => {
   const context = use(LocalizationContext);
   const { data } = context.languages[context.language];
-  return useMemo(() => (key) => data[key], [data]);
+  // Fall back to English so untranslated keys never render as empty text.
+  return useMemo(() => (key) => data[key] ?? en[key], [data]);
 };
 
 export const useTranslationKeys = (predicate) => {

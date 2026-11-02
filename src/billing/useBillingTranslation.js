@@ -40,7 +40,7 @@ const strings = {
       'When the expiration passes, the server locks the device. Data sent while locked may not be stored.',
   },
   id: {
-    billingTitle: 'Billing',
+    billingTitle: 'Langganan',
     billingStatus: 'Status tagihan',
     billingRemaining: 'Sisa',
     billingDays: 'hari',
