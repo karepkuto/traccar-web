@@ -12,6 +12,9 @@ export default (server, darkMode, direction) =>
           fontFamily: 'Roboto,Segoe UI,Helvetica Neue,Arial,sans-serif',
         },
         palette: palette(server, darkMode),
+        shape: {
+          borderRadius: 12,
+        },
         direction,
         dimensions,
         components,
