@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "ae9e70f",
+  "gitHash": "2cbb2eb",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 17:31 WIB",
-  "commitMessage": "Complete Indonesian translation and fall back to English\n\n- Translate ~330 remaining English strings in id.json and add the 5\n  missing keys (incl. eventGeofenceCrossed) that rendered as blank text\n- Fix mistranslations: Drivers was 'Antarmuka', plural menus were\n  'Semua ...'; use 'Geofence' and 'Kejadian' consistently\n- Missing keys in any language now fall back to English\n- Billing is labelled 'Langganan' in Indonesian\n- Remove the upstream Transifex workflow, which would overwrite the\n  fork's translations if run",
-  "buildTime": "2026-11-02 17:32 WIB",
-  "buildTimeIso": "2026-11-02T10:32:25.230Z"
+  "commitTime": "2026-11-02 17:43 WIB",
+  "commitMessage": "Replay speed up to 10x, time range trimming, WIB timezone\n\nReplay (per-device history):\n- Playback speed selector 1x/2x/4x/6x/8x/10x\n- Time range slider to trim the loaded track; only the selected range\n  is drawn, played and framed by the camera\n\nPeriod filter (replay and reports):\n- New presets: last hour, last 6 hours, last 24 hours\n- Custom range is rejected when start is not before end\n\nTimezone:\n- All displayed times use Asia/Jakarta (WIB) by default, or the user /\n  server 'timezone' attribute when set, regardless of device clock\n- Period boundaries (today, this week, ...) and custom inputs are\n  computed in that timezone",
+  "buildTime": "2026-11-02 17:43 WIB",
+  "buildTimeIso": "2026-11-02T10:43:50.221Z"
 }
