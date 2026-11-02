@@ -1,6 +1,35 @@
-# Deploy & Setup di Komputer Baru
+# Deploy & Setup
 
 Catatan khusus fork ini (tidak ada di README upstream Traccar).
+
+## Alur deploy (otomatis)
+
+1. Push / merge ke branch `master`.
+2. GitHub Actions (`.github/workflows/deploy.yml`) menjalankan lint + build,
+   lalu meng-commit hasil build ke branch `deploy`.
+3. Cron di VPS (`deploy-pull.sh`, tiap 5 menit) menjalankan
+   `git pull origin deploy` di folder `web-custom`. Folder itu di-bind mount
+   ke container Traccar, jadi **tidak perlu restart**.
+4. Cek versi live di `https://<domain>/version.json` (atau label versi di
+   halaman login). Browser mungkin perlu hard refresh karena PWA cache.
+
+Total jeda: ±5 menit + durasi build GitHub Actions (±2-3 menit).
+
+Aturan:
+
+- **Jangan push manual ke branch `deploy`** dan jangan force push. Cron
+  hanya bisa fast-forward; kalau riwayat ditulis ulang, pull gagal diam-diam
+  (cek `/home/ubuntu/apps/traccar/deploy-pull.log` di VPS).
+- Kalau build atau lint gagal, tidak ada yang ter-deploy. Lihat tab
+  **Actions** di GitHub.
+- Deploy ulang tanpa commit baru: tab Actions → Deploy → **Run workflow**.
+
+## Cara lama (tidak dipakai lagi)
+
+`deploy.ps1` (Windows/PowerShell) dulu mem-build lokal lalu push ke branch
+`deploy`. Jangan dijalankan bersamaan dengan workflow di atas. Petunjuk
+lamanya di bawah ini hanya untuk arsip.
+
 
 ## 1. Clone
 

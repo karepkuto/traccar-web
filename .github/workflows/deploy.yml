@@ -1,0 +1,58 @@
+name: Deploy
+
+# Build master lalu commit hasilnya ke branch `deploy`.
+# Cron di VPS menjalankan `git pull origin deploy` tiap 5 menit, dan folder
+# web-custom di-bind mount ke Traccar, jadi tidak perlu restart.
+# Branch `deploy` hanya diisi oleh workflow ini: jangan push manual ke sana,
+# dan jangan force push (cron hanya bisa fast-forward).
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+      - name: Checkout deploy branch
+        uses: actions/checkout@v6
+        with:
+          ref: deploy
+          path: deploy-repo
+
+      - name: Commit build to deploy branch
+        working-directory: deploy-repo
+        run: |
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -a ../build/. ./
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Tidak ada perubahan hasil build."
+            exit 0
+          fi
+          STAMP=$(TZ=Asia/Jakarta date '+%Y-%m-%d %H:%M WIB')
+          SUBJECT=$(git -C .. log -1 --format=%s)
+          git commit -q -m "deploy ${STAMP} from ${GITHUB_SHA::7}: ${SUBJECT}"
+          git push origin deploy
