@@ -148,26 +148,12 @@ const loadLocale = (language) => {
   return cache.get(language);
 };
 
-const getDefaultLanguage = () => {
-  const browserLanguages = window.navigator.languages ? window.navigator.languages.slice() : [];
-  const browserLanguage = window.navigator.userLanguage || window.navigator.language;
-  browserLanguages.push(browserLanguage);
-  browserLanguages.push(browserLanguage.substring(0, 2));
+// Pantauku defaults to Indonesian for everyone, regardless of the browser
+// language. A language picked by the user (login screen / preferences), or
+// the user / server `language` attribute, still takes priority.
+const DEFAULT_LANGUAGE = 'id';
 
-  for (let i = 0; i < browserLanguages.length; i += 1) {
-    let language = browserLanguages[i].replace('-', '_');
-    if (language in languages) {
-      return language;
-    }
-    if (language.length > 2) {
-      language = language.substring(0, 2);
-      if (language in languages) {
-        return language;
-      }
-    }
-  }
-  return 'en';
-};
+const getDefaultLanguage = () => DEFAULT_LANGUAGE;
 
 const LocalizationContext = createContext({
   languages,
