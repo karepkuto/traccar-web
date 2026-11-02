@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "5f073f8",
+  "gitHash": "4178108",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 20:57 WIB",
-  "commitMessage": "Hide the Drivers feature by default\n\nCurrent trackers have no RFID/iButton reader, so driver records would\nnever be filled. Hide the Drivers menu and the driver tab in device\nand group connections for everyone, including admins. Set the server\nattribute ui.enableDrivers = true to bring it back.",
-  "buildTime": "2026-11-02 20:58 WIB",
-  "buildTimeIso": "2026-11-02T13:58:12.260Z"
+  "commitTime": "2026-11-02 21:00 WIB",
+  "commitMessage": "Hide driver references across the app when Drivers is disabled\n\n- Drivers tab in user connections\n- 'Driver changed' in notification types and the event report filter\n- Driver column in the trip report (also dropped from saved columns)\n- Driver option for the device list title/detail preference and in the\n  device list itself\n- Driver in position attribute lists; drivers are no longer fetched\n- Position 'id' attribute gets its own 'Position ID' label instead of\n  reusing the device identifier label\n- SelectField gains an optional filter for endpoint-loaded options",
+  "buildTime": "2026-11-02 21:01 WIB",
+  "buildTimeIso": "2026-11-02T14:01:41.100Z"
 }
