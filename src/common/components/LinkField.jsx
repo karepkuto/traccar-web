@@ -17,6 +17,7 @@ const LinkField = ({
   titleGetter = defaultTitleGetter,
   beforeAdd,
   filter,
+  helperText,
 }) => {
   const t = useTranslation();
   const [active, setActive] = useState(false);
@@ -112,6 +113,7 @@ const LinkField = ({
           <TextField
             {...params}
             label={label}
+            helperText={helperText}
             placeholder={!active ? t('reportShow') : null}
             onFocus={() => setActive(true)}
             slotProps={{

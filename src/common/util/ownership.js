@@ -78,3 +78,21 @@ export const findOtherOwners = async ({ type, id, excludeUserId, signal }) => {
   );
   return results.filter(Boolean);
 };
+
+export const isReseller = (user) =>
+  Boolean(user) && !user.administrator && (user.userLimit || 0) !== 0;
+
+// Resellers other than `excludeResellerId` that already manage the customer.
+export const findOtherResellers = async ({ customerId, excludeResellerId, signal }) => {
+  const response = await fetchOrThrow('/api/users?excludeAttributes=true', { signal });
+  const resellers = (await response.json()).filter(
+    (user) => isReseller(user) && user.id !== excludeResellerId,
+  );
+  const results = await Promise.all(
+    resellers.map(async (reseller) => {
+      const ids = await listIds(`/api/users?userId=${reseller.id}&excludeAttributes=true`, signal);
+      return ids.includes(customerId) ? reseller : null;
+    }),
+  );
+  return results.filter(Boolean);
+};
