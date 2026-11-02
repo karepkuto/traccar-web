@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "d30ae59",
+  "gitHash": "ba8bfae",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 21:27 WIB",
-  "commitMessage": "Make CRUD screens feel like a familiar admin panel\n\nShared components only, so every list and form keeps its flow:\n- 'Tambah Data' button at the top right next to the search box (falls\n  back to a labelled floating button when a page has no search bar)\n- Row actions as labelled 'Ubah' / 'Hapus' buttons on desktop and an\n  'Aksi' dropdown on phones\n- Delete asks for confirmation in a modal dialog instead of a snackbar\n- Forms get an 'Add data' / 'Edit data' heading, wider layout and\n  right-aligned Batal / Simpan buttons\n- Flash message after saving or deleting ('Data berhasil disimpan')\n- Bold, shaded table headers and row hover",
-  "buildTime": "2026-11-02 21:28 WIB",
-  "buildTimeIso": "2026-11-02T14:28:25.905Z"
+  "commitTime": "2026-11-02 21:33 WIB",
+  "commitMessage": "Make tables usable on phones and narrow screens\n\nTheme-level, so every table benefits without page changes:\n- Phones: each table scrolls sideways on its own, rows stay one line,\n  the first column (name) stays visible on the left and long names are\n  shortened with an ellipsis; the table footer (export, switches) does\n  not scroll away\n- All sizes: the row actions column (Ubah / Hapus / Aksi) sticks to the\n  right edge so it is always reachable on wide tables\n- Subscription and reseller pages mark their action cells the same way",
+  "buildTime": "2026-11-02 21:34 WIB",
+  "buildTimeIso": "2026-11-02T14:34:36.422Z"
 }
