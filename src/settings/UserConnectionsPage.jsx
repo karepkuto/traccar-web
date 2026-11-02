@@ -1,3 +1,4 @@
+import { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Accordion,
@@ -14,6 +15,9 @@ import { formatNotificationTitle } from '../common/util/formatter';
 import PageLayout from '../common/components/PageLayout';
 import useFeatures from '../common/util/useFeatures';
 import useSettingsStyles from './common/useSettingsStyles';
+import fetchOrThrow from '../common/util/fetchOrThrow';
+import { useAsyncTask } from '../reactHelper';
+import { fetchDeviceOwners, findOtherOwners, isCustomer } from '../common/util/ownership';
 
 const UserConnectionsPage = () => {
   const { classes } = useSettingsStyles();
@@ -21,6 +25,64 @@ const UserConnectionsPage = () => {
   const features = useFeatures();
 
   const { id } = useParams();
+  const userId = Number(id);
+
+  // One device / group / geofence = one customer. Only checked when the
+  // user being edited is a customer (admins and resellers only oversee).
+  const [targetUser, setTargetUser] = useState(null);
+  useAsyncTask(
+    async ({ signal }) => {
+      const response = await fetchOrThrow(`/api/users/${userId}`, { signal });
+      setTargetUser(await response.json());
+    },
+    [userId],
+  );
+  const enforce = isCustomer(targetUser);
+
+  const conflictMessage = useCallback(
+    (item, owners) =>
+      t('ownershipConflict')
+        .replace('{item}', item)
+        .replace('{owners}', owners.map((owner) => owner.name).join(', ')),
+    [t],
+  );
+
+  const checkSimple = useCallback(
+    (type) => async (items) => {
+      for (const item of items) {
+        const owners = await findOtherOwners({ type, id: item.id, excludeUserId: userId });
+        if (owners.length) {
+          return conflictMessage(item.name, owners);
+        }
+      }
+      return null;
+    },
+    [userId, conflictMessage],
+  );
+
+  const checkGroups = useCallback(
+    async (items) => {
+      const groupProblem = await checkSimple('group')(items);
+      if (groupProblem) {
+        return groupProblem;
+      }
+      // Devices inside the group must not belong to another customer either.
+      const [devicesResponse, deviceOwners] = await Promise.all([
+        fetchOrThrow('/api/devices?all=true&excludeAttributes=true'),
+        fetchDeviceOwners(),
+      ]);
+      const devices = await devicesResponse.json();
+      const groupIds = items.map((item) => item.id);
+      for (const device of devices.filter((it) => groupIds.includes(it.groupId))) {
+        const owners = (deviceOwners.get(device.id) || []).filter((it) => it.id !== userId);
+        if (owners.length) {
+          return conflictMessage(device.name, owners);
+        }
+      }
+      return null;
+    },
+    [checkSimple, userId, conflictMessage],
+  );
 
   return (
     <PageLayout
@@ -41,6 +103,7 @@ const UserConnectionsPage = () => {
               keyLink="deviceId"
               titleGetter={(it) => `${it.name} (${it.uniqueId})`}
               label={t('deviceTitle')}
+              beforeAdd={enforce ? checkSimple('device') : undefined}
             />
             <LinkField
               endpointAll="/api/groups?all=true"
@@ -49,6 +112,7 @@ const UserConnectionsPage = () => {
               keyBase="userId"
               keyLink="groupId"
               label={t('settingsGroups')}
+              beforeAdd={enforce ? checkGroups : undefined}
             />
             <LinkField
               endpointAll="/api/geofences?all=true"
@@ -57,6 +121,7 @@ const UserConnectionsPage = () => {
               keyBase="userId"
               keyLink="geofenceId"
               label={t('sharedGeofences')}
+              beforeAdd={enforce ? checkSimple('geofence') : undefined}
             />
             <LinkField
               endpointAll="/api/notifications?all=true"

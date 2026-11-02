@@ -42,6 +42,7 @@ import {
   parseHistory,
 } from './billingLogic';
 import { fetchBillingDevices, fetchResellers } from './billingService';
+import { fetchDeviceOwners } from '../common/util/ownership';
 import BillingStatusChip, { statusLabelKey } from './BillingStatusChip';
 import ExtendDialog from './ExtendDialog';
 import useBillingTranslation from './useBillingTranslation';
@@ -77,6 +78,35 @@ const BillingPage = () => {
   const [tab, setTab] = useState('devices');
   const [historyDeviceId, setHistoryDeviceId] = useState(null);
   const [resellers, setResellers] = useState([]);
+  const [owners, setOwners] = useState(null);
+
+  useAsyncTask(
+    async ({ signal }) => {
+      void reloadKey;
+      setOwners(await fetchDeviceOwners({ signal }));
+    },
+    [reloadKey],
+  );
+
+  const ownerNames = (deviceId) => (owners?.get(deviceId) || []).map((owner) => owner.name);
+
+  const renderOwner = (deviceId) => {
+    if (!owners) {
+      return '…';
+    }
+    const names = ownerNames(deviceId);
+    if (names.length === 0) {
+      return <Chip size="small" variant="outlined" label={t('ownershipNone')} />;
+    }
+    if (names.length > 1) {
+      return (
+        <Tooltip title={t('ownershipMultiple')}>
+          <Chip size="small" color="error" label={names.join(', ')} />
+        </Tooltip>
+      );
+    }
+    return names[0];
+  };
 
   useAsyncTask(
     async ({ signal }) => {
@@ -128,6 +158,7 @@ const BillingPage = () => {
           !lower ||
           item.name?.toLowerCase().includes(lower) ||
           item.uniqueId?.toLowerCase().includes(lower) ||
+          (owners?.get(item.id) || []).some((owner) => owner.name?.toLowerCase().includes(lower)) ||
           item.attributes?.[BILLING_ATTRIBUTES.billedTo]?.toLowerCase().includes(lower),
       )
       .sort((a, b) => {
@@ -137,7 +168,7 @@ const BillingPage = () => {
         }
         return (a.expirationTime || '').localeCompare(b.expirationTime || '');
       });
-  }, [items, keyword, statusFilter, thresholds]);
+  }, [items, keyword, statusFilter, thresholds, owners]);
 
   const formatBilledTo = (value) => {
     if (!value) {
@@ -206,6 +237,7 @@ const BillingPage = () => {
   const handleExport = async () => {
     const data = rows.map((item) => ({
       [t('sharedName')]: item.name,
+      [t('ownershipOwner')]: ownerNames(item.id).join(', '),
       [t('deviceIdentifier')]: item.uniqueId,
       [bt('billingStatus')]: bt(statusLabelKey(item.billingStatus)),
       [bt('billingCurrentExpiration')]: formatTime(item.expirationTime, 'date'),
@@ -221,7 +253,7 @@ const BillingPage = () => {
     await exportExcel(bt('billingTitle'), 'billing.xlsx', sheets, theme);
   };
 
-  const columns = 8;
+  const columns = 9;
 
   return (
     <PageLayout menu={<SettingsMenu />} breadcrumbs={['settingsTitle', 'userBilling']}>
@@ -261,6 +293,7 @@ const BillingPage = () => {
             <TableHead>
               <TableRow>
                 <TableCell>{t('sharedName')}</TableCell>
+                <TableCell>{t('ownershipOwner')}</TableCell>
                 <TableCell>{t('deviceIdentifier')}</TableCell>
                 <TableCell>{bt('billingStatus')}</TableCell>
                 <TableCell>{bt('billingCurrentExpiration')}</TableCell>
@@ -277,6 +310,7 @@ const BillingPage = () => {
                 rows.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell>{item.name}</TableCell>
+                    <TableCell>{renderOwner(item.id)}</TableCell>
                     <TableCell>{item.uniqueId}</TableCell>
                     <TableCell>
                       <BillingStatusChip expirationTime={item.expirationTime} />

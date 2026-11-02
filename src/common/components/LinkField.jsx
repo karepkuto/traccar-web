@@ -1,4 +1,4 @@
-import { Autocomplete, Snackbar, TextField } from '@mui/material';
+import { Alert, Autocomplete, Snackbar, TextField } from '@mui/material';
 import { useState } from 'react';
 import { useCatchCallback, useAsyncTask } from '../../reactHelper';
 import { snackBarDurationShortMs } from '../util/duration';
@@ -15,12 +15,15 @@ const LinkField = ({
   keyBase,
   keyLink,
   titleGetter = defaultTitleGetter,
+  beforeAdd,
 }) => {
   const t = useTranslation();
   const [active, setActive] = useState(false);
   const [items, setItems] = useState();
   const [linked, setLinked] = useState();
   const [updated, setUpdated] = useState(false);
+  const [blocked, setBlocked] = useState(null);
+  const [checking, setChecking] = useState(false);
 
   useAsyncTask(
     async ({ signal }) => {
@@ -48,6 +51,21 @@ const LinkField = ({
       const oldValue = linked.map((it) => it.id);
       const newValue = value.map((it) => it.id);
       if (!newValue.find((it) => it < 0)) {
+        if (beforeAdd) {
+          const addedItems = value.filter((it) => !oldValue.includes(it.id));
+          if (addedItems.length) {
+            setChecking(true);
+            try {
+              const problem = await beforeAdd(addedItems);
+              if (problem) {
+                setBlocked(problem);
+                return;
+              }
+            } finally {
+              setChecking(false);
+            }
+          }
+        }
         const results = [];
         newValue
           .filter((it) => !oldValue.includes(it))
@@ -76,14 +94,15 @@ const LinkField = ({
         setLinked(value);
       }
     },
-    [linked, baseId, keyBase, keyLink],
+    [linked, baseId, keyBase, keyLink, beforeAdd],
   );
 
   return (
     <>
       <Autocomplete
         size="small"
-        loading={active && !items}
+        loading={(active && !items) || checking}
+        disabled={checking}
         isOptionEqualToValue={(i1, i2) => i1.id === i2.id}
         options={items || []}
         getOptionLabel={(item) => titleGetter(item)}
@@ -113,6 +132,11 @@ const LinkField = ({
         autoHideDuration={snackBarDurationShortMs}
         message={t('sharedSaved')}
       />
+      <Snackbar open={Boolean(blocked)} onClose={() => setBlocked(null)} autoHideDuration={8000}>
+        <Alert severity="error" onClose={() => setBlocked(null)} variant="filled">
+          {blocked}
+        </Alert>
+      </Snackbar>
     </>
   );
 };
