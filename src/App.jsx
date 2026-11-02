@@ -12,6 +12,7 @@ import MotionController from './main/MotionController';
 import TermsDialog from './common/components/TermsDialog';
 import Loader from './common/components/Loader';
 import { setTimezone } from './common/util/timezone';
+import ConsentGate, { needsConsent } from './legal/ConsentGate';
 import fetchOrThrow from './common/util/fetchOrThrow';
 
 const useStyles = makeStyles()(() => ({
@@ -76,6 +77,9 @@ const App = () => {
   }
   if (termsUrl && !user.attributes.termsAccepted) {
     return <TermsDialog open onCancel={() => navigate('/login')} onAccept={() => acceptTerms()} />;
+  }
+  if (needsConsent(user)) {
+    return <ConsentGate user={user} />;
   }
   return (
     <>

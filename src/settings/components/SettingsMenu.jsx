@@ -15,6 +15,7 @@ import PaymentIcon from '@mui/icons-material/Payment';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import GavelIcon from '@mui/icons-material/Gavel';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useTranslation } from '../../common/components/LocalizationProvider';
@@ -151,6 +152,12 @@ const SettingsMenu = () => {
               link="/settings/billing"
               icon={<ReceiptLongIcon />}
               selected={location.pathname === '/settings/billing'}
+            />
+            <MenuItem
+              title="Persetujuan"
+              link="/settings/consents"
+              icon={<GavelIcon />}
+              selected={location.pathname === '/settings/consents'}
             />
             <MenuItem
               title={t('settingsUsers')}

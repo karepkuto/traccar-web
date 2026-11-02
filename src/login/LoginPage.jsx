@@ -264,6 +264,14 @@ const LoginPage = () => {
                 {t('loginRegister')}
               </Link>
             )}
+            <Link
+              onClick={() => navigate('/legal')}
+              className={classes.link}
+              underline="none"
+              variant="caption"
+            >
+              Ketentuan & Privasi
+            </Link>
             {emailEnabled && (
               <Link
                 onClick={() => navigate('/reset-password')}

@@ -63,6 +63,8 @@ const EmulatorPage = lazy(() => import('./other/EmulatorPage'));
 const StreamPage = lazy(() => import('./other/StreamPage'));
 const AuditPage = lazy(() => import('./reports/AuditPage'));
 const BillingPage = lazy(() => import('./billing/BillingPage'));
+const ConsentsPage = lazy(() => import('./legal/ConsentsPage'));
+const LegalPage = lazy(() => import('./legal/LegalPage'));
 
 const Navigation = () => {
   const dispatch = useDispatch();
@@ -127,6 +129,7 @@ const Navigation = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/change-server" element={<ChangeServerPage />} />
+        <Route path="/legal" element={<LegalPage />} />
         <Route path="/" element={<App />}>
           <Route index element={<MainPage />} />
 
@@ -149,6 +152,7 @@ const Navigation = () => {
             <Route path="command/:id" element={<CommandPage />} />
             <Route path="command" element={<CommandPage />} />
             <Route path="billing" element={<BillingPage />} />
+            <Route path="consents" element={<ConsentsPage />} />
             <Route path="attributes" element={<ComputedAttributesPage />} />
             <Route path="attribute/:id" element={<ComputedAttributePage />} />
             <Route path="attribute" element={<ComputedAttributePage />} />
