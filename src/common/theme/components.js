@@ -128,6 +128,67 @@ export default {
       enterNextDelay: 500,
     },
   },
+  // Phones: every table scrolls sideways on its own instead of stretching
+  // the page, rows stay one line high, the first column (usually the name)
+  // stays visible on the left and the row actions stay visible on the right.
+  MuiTable: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        // Row actions (Ubah / Hapus) stay visible on the right on every screen
+        // size, even when a wide table has to scroll.
+        '& .MuiTableCell-root:has(.collection-actions)': {
+          position: 'sticky',
+          right: 0,
+          zIndex: 1,
+          backgroundColor: theme.palette.background.default,
+          boxShadow: `inset 1px 0 0 ${theme.palette.divider}`,
+        },
+        [theme.breakpoints.down('sm')]: {
+          display: 'block',
+          width: '100%',
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          '& .MuiTableCell-root': {
+            whiteSpace: 'nowrap',
+            padding: theme.spacing(1, 1.5),
+          },
+          '& .MuiTableRow-root > .MuiTableCell-root:first-of-type': {
+            position: 'sticky',
+            left: 0,
+            zIndex: 1,
+            maxWidth: '42vw',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            backgroundColor: theme.palette.background.default,
+            boxShadow: `inset -1px 0 0 ${theme.palette.divider}`,
+          },
+          '& .MuiTableHead-root .MuiTableCell-root:first-of-type': {
+            backgroundImage: `linear-gradient(${alpha(theme.palette.text.primary, 0.04)}, ${alpha(theme.palette.text.primary, 0.04)})`,
+          },
+          // Footer (export button, switches) stays put while rows scroll.
+          '& .MuiTableFooter-root': {
+            display: 'block',
+            position: 'sticky',
+            left: 0,
+          },
+          '& .MuiTableFooter-root .MuiTableRow-root': {
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          },
+          '& .MuiTableFooter-root .MuiTableCell-root': {
+            display: 'block',
+            position: 'static',
+            maxWidth: 'none',
+            border: 'none',
+            boxShadow: 'none',
+            backgroundColor: 'transparent',
+          },
+        },
+      }),
+    },
+  },
   MuiTableHead: {
     styleOverrides: {
       root: ({ theme }) => ({

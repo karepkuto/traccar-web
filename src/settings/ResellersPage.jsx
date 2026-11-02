@@ -178,7 +178,7 @@ const ResellersPage = () => {
                     {reseller.userLimit < 0 ? t('resellerUnlimited') : reseller.userLimit}
                   </TableCell>
                   <TableCell className={classes.columnAction} padding="none">
-                    <div style={{ display: 'flex' }}>
+                    <div className="collection-actions" style={{ display: 'flex' }}>
                       <Tooltip title={t('resellerManageCustomers')}>
                         <IconButton size="small" onClick={() => setManage(reseller)}>
                           <GroupAddIcon fontSize="small" />

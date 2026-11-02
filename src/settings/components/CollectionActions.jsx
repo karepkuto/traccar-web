@@ -68,6 +68,7 @@ const CollectionActions = ({ itemId, editPath, endpoint, onReload, customActions
       {phone ? (
         <>
           <Button
+            className="collection-actions"
             size="small"
             variant="outlined"
             endIcon={<ArrowDropDownIcon />}
@@ -103,7 +104,7 @@ const CollectionActions = ({ itemId, editPath, endpoint, onReload, customActions
           </Menu>
         </>
       ) : (
-        <div className={classes.row}>
+        <div className={`${classes.row} collection-actions`}>
           {customActions &&
             customActions.map((action) => (
               <Tooltip title={action.title} key={action.key}>

@@ -330,7 +330,7 @@ const BillingPage = () => {
                         ` (${formatRupiah(item.attributes[BILLING_ATTRIBUTES.lastPaidAmount])})`}
                     </TableCell>
                     <TableCell className={classes.columnAction} padding="none">
-                      <div style={{ display: 'flex' }}>
+                      <div className="collection-actions" style={{ display: 'flex' }}>
                         <Tooltip title={bt('billingHistory')}>
                           <IconButton size="small" onClick={() => showHistory(item.id)}>
                             <HistoryIcon fontSize="small" />
