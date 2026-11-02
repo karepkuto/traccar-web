@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "e8c6bc2",
+  "gitHash": "d172d4a",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 18:57 WIB",
-  "commitMessage": "Remove seeder script (not wanted for now)\n\nReverts the seeder and the Python cache ignore rule that came with it,\nreturning the repository to its state before the seeder was added.",
-  "buildTime": "2026-11-02 18:58 WIB",
-  "buildTimeIso": "2026-11-02T11:58:22.836Z"
+  "commitTime": "2026-11-02 19:15 WIB",
+  "commitMessage": "Billing: reseller accounts, rupiah inputs, auto period dates, payment history\n\n- 'Billed to' reseller is chosen from real reseller accounts (users with\n  a user limit) and stored as reseller:<userId>; older free-text\n  values still display and can be re-linked\n- Price and amount paid are rupiah inputs (digits only, shown as\n  Rp 150.000); amount defaults to price x periods and is required\n- Start date defaults to the current expiration (or today) in WIB; the\n  end date is calculated automatically; the device stays active until\n  23:59 WIB on the end date. Saving is blocked when the end date has\n  passed, with a warning when the subscription would get shorter\n- Every payment is appended to a per-device history (about the last\n  12 entries, limited by Traccar's attribute size), shown in a new\n  Payment history tab with filters, total and Excel export",
+  "buildTime": "2026-11-02 19:16 WIB",
+  "buildTimeIso": "2026-11-02T12:16:06.799Z"
 }
