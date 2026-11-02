@@ -253,6 +253,8 @@
     "deviceStatusUnknown": "Tidak Diketahui",
     "deviceRegisterFirst": "Daftarkan perangkat pertama Anda",
     "deviceIdentifierHelp": "IMEI, nomor seri, atau ID lain. Harus sama dengan identitas yang dikirim perangkat ke server.",
+    "driverIdentifier": "ID Kartu Pengemudi",
+    "driverIdentifierHelp": "Nomor kartu RFID / iButton milik pengemudi, sesuai yang dikirim alat GPS. Bukan IMEI perangkat.",
     "groupDialog": "Grup",
     "groupParent": "Grup Induk",
     "groupNoGroup": "Tanpa Grup",

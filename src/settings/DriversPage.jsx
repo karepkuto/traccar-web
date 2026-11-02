@@ -52,7 +52,7 @@ const DriversPage = () => {
         <TableHead>
           <TableRow>
             <TableCell>{t('sharedName')}</TableCell>
-            <TableCell>{t('deviceIdentifier')}</TableCell>
+            <TableCell>{t('driverIdentifier')}</TableCell>
             <TableCell className={classes.columnAction} />
           </TableRow>
         </TableHead>

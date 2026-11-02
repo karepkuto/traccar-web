@@ -253,6 +253,8 @@
     "deviceStatusUnknown": "Unknown",
     "deviceRegisterFirst": "Register your first device",
     "deviceIdentifierHelp": "IMEI, serial number or other id. It has to match the identifier device reports to the server.",
+    "driverIdentifier": "Driver card ID",
+    "driverIdentifierHelp": "Number of the driver's RFID / iButton card, as sent by the GPS device. Not the device IMEI.",
     "groupDialog": "Group",
     "groupParent": "Group",
     "groupNoGroup": "No Group",
