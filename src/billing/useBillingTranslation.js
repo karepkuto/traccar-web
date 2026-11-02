@@ -37,7 +37,7 @@ const strings = {
     billingSaved: 'Payment recorded',
     billingReadonlyNote: 'Only administrators can record payments.',
     billingLockNote:
-      'When the expiration passes, the server locks the device. Data sent while locked may not be stored.',
+      'After the expiration the server refuses new connections from the device, so new data is not stored.',
     billingStartDate: 'Start date',
     billingEndDate: 'End date',
     billingAuto: 'Calculated automatically',
@@ -103,7 +103,7 @@ const strings = {
     billingSaved: 'Pembayaran tercatat',
     billingReadonlyNote: 'Hanya administrator yang dapat mencatat pembayaran.',
     billingLockNote:
-      'Setelah lewat tanggal kedaluwarsa, server mengunci perangkat. Data yang dikirim saat terkunci mungkin tidak tersimpan.',
+      'Setelah lewat tanggal kedaluwarsa, server menolak koneksi baru dari perangkat sehingga data baru tidak tersimpan.',
     billingStartDate: 'Tanggal mulai',
     billingEndDate: 'Tanggal selesai',
     billingAuto: 'Dihitung otomatis',

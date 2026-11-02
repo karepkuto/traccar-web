@@ -2,6 +2,9 @@
 // the (i) button in the page header. First match wins.
 const MODULES = [
   [/^\/settings\/(device|group|user)\/\d+\/connections/, null], // own info in the page
+  [/^\/settings\/device\/\d+\/command/, 'moduleInfoDeviceCommand'],
+  [/^\/settings\/group\/\d+\/command/, 'moduleInfoGroupCommand'],
+  [/^\/settings\/[a-z]+\/\d+\/share/, 'moduleInfoShare'],
   [/^\/settings\/devices/, 'moduleInfoDevices'],
   [/^\/settings\/device(\/|$)/, 'moduleInfoDevice'],
   [/^\/settings\/groups/, 'moduleInfoGroups'],
@@ -21,7 +24,6 @@ const MODULES = [
   [/^\/settings\/server/, 'moduleInfoServer'],
   [/^\/settings\/preferences/, 'moduleInfoPreferences'],
   [/^\/settings\/accumulators/, 'moduleInfoAccumulators'],
-  [/^\/settings\/.*\/share/, 'moduleInfoShare'],
   [/^\/reports\/combined/, 'moduleInfoReportCombined'],
   [/^\/reports\/route/, 'moduleInfoReportRoute'],
   [/^\/reports\/events/, 'moduleInfoReportEvents'],
