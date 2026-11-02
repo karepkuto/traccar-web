@@ -38,6 +38,7 @@ import { useCatch } from '../reactHelper';
 import { sessionActions } from '../store';
 import { useAdministrator, useRestriction } from '../common/util/permissions';
 import useSettingsStyles from './common/useSettingsStyles';
+import { appVersionText } from '../common/components/AppVersion';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 
 const deviceFields = [
@@ -63,13 +64,7 @@ const PreferencesPage = () => {
   const user = useSelector((state) => state.session.user);
   const [attributes, setAttributes] = useState(user.attributes);
 
-  const versionApp = [
-    import.meta.env.VITE_APP_VERSION,
-    import.meta.env.VITE_APP_GIT_HASH,
-    import.meta.env.VITE_APP_BUILD_TIME,
-  ]
-    .filter(Boolean)
-    .join(' · ');
+  const versionApp = appVersionText;
   const versionServer = useSelector((state) => state.session.server.version);
   const socket = useSelector((state) => state.session.socket);
 
