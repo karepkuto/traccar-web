@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "35b1c7a",
+  "gitHash": "bc1f5ba",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 22:15 WIB",
-  "commitMessage": "Explanations behind (i) buttons on every module\n\n- Every settings and report page gets an (i) next to its title (top bar\n  on phones, above the content on desktop) that opens a short\n  description of the module\n- Relation fields on the Connections pages show their explanation\n  behind an (i) beside the field instead of always-visible helper text\n- Always-visible info notes on Subscriptions, Resellers and Connections\n  moved behind the (i) buttons",
-  "buildTime": "2026-11-02 22:16 WIB",
-  "buildTimeIso": "2026-11-02T15:16:44.576Z"
+  "commitTime": "2026-11-02 22:19 WIB",
+  "commitMessage": "Review module descriptions for accuracy and coverage\n\n- Send-command pages (device and group) and Share had picked up the\n  device/group form text because of route order; they now have their\n  own descriptions\n- Expiration wording follows the server's actual behaviour (verified in\n  Traccar's ConnectionManager): new connections from an expired device\n  are refused so new data is not stored, while an already connected\n  device may keep sending until it reconnects\n- Preferences, Account, Announcement, Notifications, Scheduled,\n  Statistics, Audit and Logs descriptions corrected to match what the\n  pages really contain and who can see them",
+  "buildTime": "2026-11-02 22:20 WIB",
+  "buildTimeIso": "2026-11-02T15:20:33.286Z"
 }
