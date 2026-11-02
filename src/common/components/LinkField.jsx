@@ -4,6 +4,7 @@ import { useCatchCallback, useAsyncTask } from '../../reactHelper';
 import { snackBarDurationShortMs } from '../util/duration';
 import { useTranslation } from './LocalizationProvider';
 import fetchOrThrow from '../util/fetchOrThrow';
+import InfoTip from './InfoTip';
 
 const defaultTitleGetter = (item) => item.name;
 
@@ -101,34 +102,38 @@ const LinkField = ({
 
   return (
     <>
-      <Autocomplete
-        size="small"
-        loading={(active && !items) || checking}
-        disabled={checking}
-        isOptionEqualToValue={(i1, i2) => i1.id === i2.id}
-        options={(filter ? items?.filter(filter) : items) || []}
-        getOptionLabel={(item) => titleGetter(item)}
-        slotProps={{ chip: { size: 'small' } }}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label={label}
-            helperText={helperText}
-            placeholder={!active ? t('reportShow') : null}
-            onFocus={() => setActive(true)}
-            slotProps={{
-              ...params.slotProps,
-              inputLabel: {
-                ...params.slotProps?.inputLabel,
-                shrink: !active || params.slotProps?.inputLabel?.shrink,
-              },
-            }}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 4 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <Autocomplete
+            size="small"
+            loading={(active && !items) || checking}
+            disabled={checking}
+            isOptionEqualToValue={(i1, i2) => i1.id === i2.id}
+            options={(filter ? items?.filter(filter) : items) || []}
+            getOptionLabel={(item) => titleGetter(item)}
+            slotProps={{ chip: { size: 'small' } }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label={label}
+                placeholder={!active ? t('reportShow') : null}
+                onFocus={() => setActive(true)}
+                slotProps={{
+                  ...params.slotProps,
+                  inputLabel: {
+                    ...params.slotProps?.inputLabel,
+                    shrink: !active || params.slotProps?.inputLabel?.shrink,
+                  },
+                }}
+              />
+            )}
+            value={(items && linked) || []}
+            onChange={(_, value) => onChange(value)}
+            multiple
           />
-        )}
-        value={(items && linked) || []}
-        onChange={(_, value) => onChange(value)}
-        multiple
-      />
+        </div>
+        {helperText && <InfoTip text={helperText} sx={{ mt: 0.5 }} />}
+      </div>
       <Snackbar
         open={Boolean(updated)}
         onClose={() => setUpdated(false)}

@@ -14,9 +14,11 @@ import { makeStyles } from 'tss-react/mui';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from './LocalizationProvider';
 import BackIcon from './BackIcon';
+import InfoTip from './InfoTip';
+import { moduleInfoKey } from '../util/moduleInfo';
 
 const useStyles = makeStyles()((theme, { miniVariant }) => ({
   root: {
@@ -107,6 +109,11 @@ const PageLayout = ({ menu, breadcrumbs, children }) => {
 
   const toggleDrawer = () => setMiniVariant(!miniVariant);
 
+  const t = useTranslation();
+  const location = useLocation();
+  const infoKey = moduleInfoKey(location.pathname);
+  const infoText = infoKey ? t(infoKey) : null;
+
   return (
     <div className={classes.root}>
       {desktop ? (
@@ -167,10 +174,19 @@ const PageLayout = ({ menu, breadcrumbs, children }) => {
               <MenuIcon />
             </IconButton>
             <PageTitle breadcrumbs={breadcrumbs} />
+            <InfoTip text={infoText} sx={{ ml: 'auto' }} />
           </Toolbar>
         </AppBar>
       )}
-      <div className={classes.content}>{children}</div>
+      <div className={classes.content}>
+        {desktop && infoText && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '12px 16px 0' }}>
+            <Typography variant="h6">{t(breadcrumbs[breadcrumbs.length - 1])}</Typography>
+            <InfoTip text={infoText} />
+          </div>
+        )}
+        {children}
+      </div>
     </div>
   );
 };

@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Alert, Button, Container, Paper, Stack, Typography } from '@mui/material';
+import { Button, Container, Paper, Stack, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PageLayout from '../../common/components/PageLayout';
 import SettingsMenu from './SettingsMenu';
 import { useTranslation } from '../../common/components/LocalizationProvider';
 import { useAsyncTask } from '../../reactHelper';
 import fetchOrThrow from '../../common/util/fetchOrThrow';
+import InfoTip from '../../common/components/InfoTip';
 
 // Shared layout for the "Koneksi" (relations) pages: says which record is
 // being edited, explains that changes save immediately, and offers a
@@ -27,12 +28,12 @@ const ConnectionsLayout = ({ endpoint, id, breadcrumbs, children }) => {
   return (
     <PageLayout menu={<SettingsMenu />} breadcrumbs={breadcrumbs}>
       <Container maxWidth="sm" sx={{ mt: 2, mb: 4 }}>
-        <Typography variant="h6">
-          {t('sharedConnections')}: {name}
-        </Typography>
-        <Alert severity="info" sx={{ my: 2 }}>
-          {t('connectionsIntro').replace('{name}', name)}
-        </Alert>
+        <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mb: 2 }}>
+          <Typography variant="h6">
+            {t('sharedConnections')}: {name}
+          </Typography>
+          <InfoTip text={t('connectionsIntro').replace('{name}', name)} />
+        </Stack>
         <Paper sx={{ p: 2 }}>
           <Stack spacing={2.5}>{children}</Stack>
         </Paper>

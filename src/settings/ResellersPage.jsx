@@ -17,7 +17,6 @@ import {
   TableRow,
   TextField,
   Tooltip,
-  Typography,
 } from '@mui/material';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import EditIcon from '@mui/icons-material/Edit';
@@ -149,9 +148,6 @@ const ResellersPage = () => {
           {t('resellerPromote')}
         </Button>
       </Stack>
-      <Alert severity="info" sx={{ mx: 2 }}>
-        {t('resellerHelp')}
-      </Alert>
       <div style={{ overflowX: 'auto' }}>
         <Table className={classes.table}>
           <TableHead>
@@ -220,9 +216,6 @@ const ResellersPage = () => {
             {t('resellerManageCustomers')}: {manage.name}
           </DialogTitle>
           <DialogContent>
-            <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-              {t('resellerManageHelp')}
-            </Typography>
             <LinkField
               endpointAll="/api/users?all=true&excludeAttributes=true"
               endpointLinked={`/api/users?userId=${manage.id}&excludeAttributes=true`}
@@ -233,6 +226,7 @@ const ResellersPage = () => {
               label={t('resellerCustomers')}
               filter={isCustomer}
               beforeAdd={checkCustomers}
+              helperText={t('resellerManageHelp')}
             />
           </DialogContent>
           <DialogActions>

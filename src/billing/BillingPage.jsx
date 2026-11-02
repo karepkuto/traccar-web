@@ -280,8 +280,6 @@ const BillingPage = () => {
           ))}
         </TextField>
       </Toolbar>
-      {!admin && <Alert severity="info">{bt('billingReadonlyNote')}</Alert>}
-      <Alert severity="warning">{bt('billingLockNote')}</Alert>
       {error && <Alert severity="error">{error}</Alert>}
       <Tabs value={tab} onChange={(_, value) => setTab(value)} sx={{ px: 2 }}>
         <Tab value="devices" label={bt('billingDevicesTab')} />
@@ -363,7 +361,6 @@ const BillingPage = () => {
       )}
       {tab === 'history' && (
         <>
-          <Alert severity="info">{bt('billingHistoryNote')}</Alert>
           {historyDeviceId && (
             <div style={{ padding: '8px 16px' }}>
               <Chip
