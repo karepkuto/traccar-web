@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "615d09c",
+  "gitHash": "ae9e70f",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 17:25 WIB",
-  "commitMessage": "Rebrand to Pantauku: name, logo, icons and page title\n\n- New Pantauku logo (map pin + wordmark) replaces the Traccar logo\n- Regenerated favicon and PWA icons from the new pin icon\n- Page title, description, PWA manifest name and theme color set to\n  Pantauku / #FF6A00 instead of server-provided placeholders\n- Login side panel logo rendered in white on the orange background",
-  "buildTime": "2026-11-02 17:26 WIB",
-  "buildTimeIso": "2026-11-02T10:26:16.907Z"
+  "commitTime": "2026-11-02 17:31 WIB",
+  "commitMessage": "Complete Indonesian translation and fall back to English\n\n- Translate ~330 remaining English strings in id.json and add the 5\n  missing keys (incl. eventGeofenceCrossed) that rendered as blank text\n- Fix mistranslations: Drivers was 'Antarmuka', plural menus were\n  'Semua ...'; use 'Geofence' and 'Kejadian' consistently\n- Missing keys in any language now fall back to English\n- Billing is labelled 'Langganan' in Indonesian\n- Remove the upstream Transifex workflow, which would overwrite the\n  fork's translations if run",
+  "buildTime": "2026-11-02 17:32 WIB",
+  "buildTimeIso": "2026-11-02T10:32:25.230Z"
 }
