@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "b2f8aa9",
+  "gitHash": "2b673f9",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 18:40 WIB",
-  "commitMessage": "Rename app icons so phones fetch the Pantauku icons\n\nChrome kept showing the cached Traccar icons in the install dialog\nbecause the icon URLs never changed. New file names force a fresh\ndownload. The old pwa-assets generator script is disabled since it\nwould recreate the old names and overwrite the orange maskable icon.",
-  "buildTime": "2026-11-02 18:41 WIB",
-  "buildTimeIso": "2026-11-02T11:41:31.216Z"
+  "commitTime": "2026-11-02 18:42 WIB",
+  "commitMessage": "Default language is Indonesian\n\nNew visitors see Indonesian regardless of browser language. A language\nchosen on the login screen or in preferences, and the user/server\n'language' attribute, still take priority.",
+  "buildTime": "2026-11-02 18:43 WIB",
+  "buildTimeIso": "2026-11-02T11:43:17.560Z"
 }
