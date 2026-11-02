@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "c1eee2d",
+  "gitHash": "bf66e6f",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 20:38 WIB",
-  "commitMessage": "Improve Indonesian wording across the app\n\n- Fix 90 awkward or wrong labels: driver fields were 'Antarmuka',\n  'Diperlukan/Ekstra' become 'Wajib/Tambahan', 'Grup Induk' for the\n  parent group, Online/Offline device status, clearer command names\n  (Blokir / Buka Blokir Mesin), report column names and typos\n  (Pengindetifikasi, Kadaluarsa, HIdupkan, DIam)\n- Billing and consent pages no longer hard-code English labels",
-  "buildTime": "2026-11-02 20:39 WIB",
-  "buildTimeIso": "2026-11-02T13:39:05.854Z"
+  "commitTime": "2026-11-02 20:51 WIB",
+  "commitMessage": "Driver page: label the unique ID as the driver card ID, not IMEI\n\nThe driver form reused the device identifier label, which was just\nrenamed to 'ID Perangkat (IMEI)', making the driver form ask for an\nIMEI. Use a dedicated 'driver card ID' label with a help text that it\nis the RFID/iButton card number sent by the tracker.",
+  "buildTime": "2026-11-02 20:51 WIB",
+  "buildTimeIso": "2026-11-02T13:51:50.351Z"
 }
