@@ -24,3 +24,7 @@ yarn-error.log*
 /deploy-repo
 deploy.config.ps1
 *.pem
+
+# python
+__pycache__/
+*.pyc
