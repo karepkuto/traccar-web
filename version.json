@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "8bf6748",
+  "gitHash": "45c69c4",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 18:21 WIB",
-  "commitMessage": "PWA: Pantauku manifest, orange app icon, automatic updates\n\n- Manifest: id, description, Indonesian lang, portrait, separate 'any'\n  and 'maskable' icons; maskable and Apple icons are a white pin on an\n  orange tile\n- iOS/Android meta tags so the installed app is titled Pantauku\n- Updates apply automatically when found within 15s of opening the app\n  or when it goes to the background; otherwise a prompt is shown\n- Update check runs on login screens too, every 10 minutes and whenever\n  the app becomes visible",
-  "buildTime": "2026-11-02 18:22 WIB",
-  "buildTimeIso": "2026-11-02T11:22:01.518Z"
+  "commitTime": "2026-11-02 18:29 WIB",
+  "commitMessage": "Add Pantauku install banner for Android and iOS\n\nChrome's own install prompt shows only occasionally and stays hidden\nfor months once dismissed. Show our own banner with an Install button\nwhen the browser allows installation, and Add to Home Screen steps on\niOS. Hidden when running as an installed app; closing it hides it for\n7 days.",
+  "buildTime": "2026-11-02 18:30 WIB",
+  "buildTimeIso": "2026-11-02T11:30:06.858Z"
 }
