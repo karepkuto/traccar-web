@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "8d2f132",
+  "gitHash": "490d030",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 21:18 WIB",
-  "commitMessage": "Enforce one customer per device, group and geofence\n\n- Linking a device, group or geofence to a customer is blocked when\n  another customer already owns it (directly or through the device's\n  group); linking a group is also blocked when any device inside it\n  belongs to another customer. A clear message names the owner.\n- Admins and resellers are never counted as owners, so they keep\n  overseeing their customers' data; admins still see everything.\n- Subscription page gets a Customer column that flags devices with no\n  owner or with more than one customer, covering links made outside\n  this screen.\n- LinkField gains an optional async beforeAdd check.",
-  "buildTime": "2026-11-02 21:19 WIB",
-  "buildTimeIso": "2026-11-02T14:19:06.625Z"
+  "commitTime": "2026-11-02 21:23 WIB",
+  "commitMessage": "Add Resellers page (admin) under Business\n\n- Lists resellers (users with a user limit) with their number of\n  customers and devices\n- 'Manage customers' links customers to a reseller; only customers are\n  offered and a customer already handled by another reseller is\n  rejected (one customer, one reseller)\n- Create a new reseller, or promote an existing customer by setting a\n  customer limit (at least 1)\n- LinkField gains an optional option filter",
+  "buildTime": "2026-11-02 21:24 WIB",
+  "buildTimeIso": "2026-11-02T14:24:25.102Z"
 }

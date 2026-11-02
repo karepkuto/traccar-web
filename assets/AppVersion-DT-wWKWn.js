@@ -1,0 +1,10 @@
+import{K as e}from"./createSimplePaletteValueFilter-CM2TmgJi.js";import{t}from"./Typography-gfXxHSwv.js";import{st as n}from"./index-DRO41O0X.js";var r=e(),i={BASE_URL:`/`,DEV:!1,MODE:`production`,PROD:!0,SSR:!1,VITE_APP_BUILD_TIME:`2026-11-02 21:24 WIB`,VITE_APP_COMMIT_MESSAGE:`Add Resellers page (admin) under Business
+
+- Lists resellers (users with a user limit) with their number of
+  customers and devices
+- 'Manage customers' links customers to a reseller; only customers are
+  offered and a customer already handled by another reseller is
+  rejected (one customer, one reseller)
+- Create a new reseller, or promote an existing customer by setting a
+  customer limit (at least 1)
+- LinkField gains an optional option filter`,VITE_APP_COMMIT_TIME:`2026-11-02 21:23 WIB`,VITE_APP_GIT_BRANCH:`master`,VITE_APP_GIT_HASH:`490d030`,VITE_APP_VERSION:`6.14.5`},a=[i.VITE_APP_VERSION,i.VITE_APP_GIT_HASH,i.VITE_APP_COMMIT_TIME].filter(Boolean).join(` · `),o=(0,r.jsxs)(r.Fragment,{children:[i.VITE_APP_COMMIT_MESSAGE&&(0,r.jsx)(t,{variant:`body2`,component:`div`,sx:{whiteSpace:`pre-line`,mb:1},children:i.VITE_APP_COMMIT_MESSAGE}),(0,r.jsxs)(t,{variant:`caption`,component:`div`,children:[`Branch: `,i.VITE_APP_GIT_BRANCH]}),(0,r.jsxs)(t,{variant:`caption`,component:`div`,children:[`Build: `,i.VITE_APP_BUILD_TIME]})]}),s=({align:e=`center`})=>(0,r.jsx)(n,{title:o,placement:`top`,enterTouchDelay:0,arrow:!0,children:(0,r.jsx)(t,{variant:`caption`,color:`textSecondary`,component:`div`,align:e,noWrap:!0,sx:{px:2,py:1,opacity:.8,cursor:`help`},children:a})});export{a as n,s as t};
