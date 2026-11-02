@@ -143,47 +143,92 @@ export default {
           backgroundColor: theme.palette.background.default,
           boxShadow: `inset 1px 0 0 ${theme.palette.divider}`,
         },
+        // Phones: expandable rows (labels come from MobileTableEnhancer).
         [theme.breakpoints.down('sm')]: {
           display: 'block',
           width: '100%',
-          overflowX: 'auto',
-          WebkitOverflowScrolling: 'touch',
-          '& .MuiTableCell-root': {
-            whiteSpace: 'nowrap',
-            padding: theme.spacing(1, 1.5),
+          '& .MuiTableHead-root': {
+            display: 'none',
           },
-          '& .MuiTableRow-root > .MuiTableCell-root:first-of-type': {
-            position: 'sticky',
-            left: 0,
-            zIndex: 1,
-            maxWidth: '42vw',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            backgroundColor: theme.palette.background.default,
-            boxShadow: `inset -1px 0 0 ${theme.palette.divider}`,
-          },
-          '& .MuiTableHead-root .MuiTableCell-root:first-of-type': {
-            backgroundImage: `linear-gradient(${alpha(theme.palette.text.primary, 0.04)}, ${alpha(theme.palette.text.primary, 0.04)})`,
-          },
-          // Footer (export button, switches) stays put while rows scroll.
-          '& .MuiTableFooter-root': {
+          '& .MuiTableBody-root, & .MuiTableFooter-root': {
             display: 'block',
-            position: 'sticky',
-            left: 0,
           },
-          '& .MuiTableFooter-root .MuiTableRow-root': {
+          '& .MuiTableRow-root': {
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'center',
+            borderBottom: `1px solid ${theme.palette.divider}`,
+          },
+          '& .MuiTableCell-root': {
+            borderBottom: 'none',
+            padding: theme.spacing(1, 1.5),
+          },
+          '& .MuiTableCell-root:has(.collection-actions)': {
+            position: 'static',
+            boxShadow: 'none',
+            backgroundColor: 'transparent',
+          },
+          '& td[data-cell-kind="fixed"]': {
+            flex: 'none',
+            width: 'auto !important',
+            display: 'flex',
+            alignItems: 'center',
+          },
+          '& td[data-cell-kind="primary"]': {
+            flex: 1,
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            fontWeight: 600,
+          },
+          '& tr[data-has-details]': {
+            cursor: 'pointer',
+          },
+          '& tr[data-has-details]::after': {
+            content: '"\\25BE"',
+            order: 1,
+            padding: theme.spacing(0, 1.5, 0, 0.5),
+            color: theme.palette.text.secondary,
+            transition: 'transform 0.15s',
+          },
+          '& tr.row-expanded::after': {
+            transform: 'rotate(180deg)',
+          },
+          '& tr.row-expanded': {
+            backgroundColor: alpha(theme.palette.primary.main, 0.05),
+          },
+          '& td[data-cell-kind="detail"]': {
+            display: 'none',
+            order: 2,
+            width: '100%',
             justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            gap: theme.spacing(2),
+            padding: theme.spacing(0.5, 2),
+            textAlign: 'right',
+            wordBreak: 'break-word',
+          },
+          '& tr.row-expanded td[data-cell-kind="detail"]': {
+            display: 'flex',
+          },
+          '& tr.row-expanded td[data-cell-kind="detail"]:last-of-type': {
+            paddingBottom: theme.spacing(1.5),
+          },
+          '& td[data-cell-kind="detail"]::before': {
+            content: 'attr(data-label)',
+            color: theme.palette.text.secondary,
+            fontWeight: 600,
+            textAlign: 'left',
+            flexShrink: 0,
+          },
+          // Footer (export button, switches) as a simple row.
+          '& .MuiTableFooter-root .MuiTableRow-root': {
+            justifyContent: 'space-between',
+            borderBottom: 'none',
           },
           '& .MuiTableFooter-root .MuiTableCell-root': {
             display: 'block',
-            position: 'static',
-            maxWidth: 'none',
-            border: 'none',
-            boxShadow: 'none',
-            backgroundColor: 'transparent',
           },
         },
       }),
