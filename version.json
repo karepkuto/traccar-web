@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "45c69c4",
+  "gitHash": "b2f8aa9",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 18:29 WIB",
-  "commitMessage": "Add Pantauku install banner for Android and iOS\n\nChrome's own install prompt shows only occasionally and stays hidden\nfor months once dismissed. Show our own banner with an Install button\nwhen the browser allows installation, and Add to Home Screen steps on\niOS. Hidden when running as an installed app; closing it hides it for\n7 days.",
-  "buildTime": "2026-11-02 18:30 WIB",
-  "buildTimeIso": "2026-11-02T11:30:06.858Z"
+  "commitTime": "2026-11-02 18:40 WIB",
+  "commitMessage": "Rename app icons so phones fetch the Pantauku icons\n\nChrome kept showing the cached Traccar icons in the install dialog\nbecause the icon URLs never changed. New file names force a fresh\ndownload. The old pwa-assets generator script is disabled since it\nwould recreate the old names and overwrite the orange maskable icon.",
+  "buildTime": "2026-11-02 18:41 WIB",
+  "buildTimeIso": "2026-11-02T11:41:31.216Z"
 }
