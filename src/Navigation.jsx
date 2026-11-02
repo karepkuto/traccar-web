@@ -11,6 +11,7 @@ import { useLocalization } from './common/components/LocalizationProvider';
 import fetchOrThrow from './common/util/fetchOrThrow';
 import UpdateController from './UpdateController';
 import InstallPrompt from './InstallPrompt';
+import FlashMessage from './common/components/FlashMessage';
 
 const CombinedReportPage = lazy(() => import('./reports/CombinedReportPage'));
 const PositionsReportPage = lazy(() => import('./reports/PositionsReportPage'));
@@ -129,6 +130,7 @@ const Navigation = () => {
     <Suspense fallback={<Loader />}>
       <UpdateController />
       <InstallPrompt />
+      <FlashMessage />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

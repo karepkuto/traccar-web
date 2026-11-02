@@ -128,6 +128,26 @@ export default {
       enterNextDelay: 500,
     },
   },
+  MuiTableHead: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        '& .MuiTableCell-head': {
+          fontWeight: 700,
+          backgroundColor: alpha(theme.palette.text.primary, 0.04),
+          whiteSpace: 'nowrap',
+        },
+      }),
+    },
+  },
+  MuiTableRow: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        '.MuiTableBody-root &:hover': {
+          backgroundColor: alpha(theme.palette.primary.main, 0.04),
+        },
+      }),
+    },
+  },
   MuiTableCell: {
     styleOverrides: {
       root: ({ theme }) => ({

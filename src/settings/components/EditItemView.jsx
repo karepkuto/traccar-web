@@ -14,6 +14,7 @@ import { useTranslation } from '../../common/components/LocalizationProvider';
 import PageLayout from '../../common/components/PageLayout';
 import useSettingsStyles from '../common/useSettingsStyles';
 import fetchOrThrow from '../../common/util/fetchOrThrow';
+import { setFlash } from '../../common/util/flash';
 
 const EditItemView = ({
   children,
@@ -61,12 +62,16 @@ const EditItemView = ({
     if (onItemSaved) {
       onItemSaved(await response.json());
     }
+    setFlash(t('crudSaved'));
     navigate(-1);
   });
 
   return (
     <PageLayout menu={menu} breadcrumbs={breadcrumbs}>
-      <Container maxWidth="xs" className={classes.container}>
+      <Container maxWidth="sm" className={classes.container}>
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          {id ? t('crudEditTitle') : t('crudCreateTitle')}
+        </Typography>
         {item ? (
           children
         ) : (
@@ -85,8 +90,16 @@ const EditItemView = ({
             </AccordionDetails>
           </Accordion>
         )}
-        <div className={classes.buttons}>
-          <Button color="primary" variant="outlined" onClick={() => navigate(-1)} disabled={!item}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            gap: 12,
+            marginTop: 16,
+            marginBottom: 16,
+          }}
+        >
+          <Button color="inherit" variant="outlined" onClick={() => navigate(-1)} disabled={!item}>
             {t('sharedCancel')}
           </Button>
           <Button
