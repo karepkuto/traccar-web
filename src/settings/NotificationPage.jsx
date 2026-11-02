@@ -19,11 +19,13 @@ import SelectField from '../common/components/SelectField';
 import SettingsMenu from './components/SettingsMenu';
 import { useCatch } from '../reactHelper';
 import useSettingsStyles from './common/useSettingsStyles';
+import useFeatures from '../common/util/useFeatures';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 
 const NotificationPage = () => {
   const { classes } = useSettingsStyles();
   const t = useTranslation();
+  const features = useFeatures();
 
   const [item, setItem] = useState();
 
@@ -70,6 +72,7 @@ const NotificationPage = () => {
                 value={item.type}
                 onChange={(e) => setItem({ ...item, type: e.target.value })}
                 endpoint="/api/notifications/types"
+                filter={(it) => !(features.disableDrivers && it.type === 'driverChanged')}
                 keyGetter={(it) => it.type}
                 titleGetter={(it) => t(prefixString('event', it.type))}
                 label={t('sharedType')}

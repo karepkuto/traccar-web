@@ -28,6 +28,7 @@ import SelectField from '../common/components/SelectField';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 import exportExcel from '../common/util/exportExcel';
 import AddressValue from '../common/components/AddressValue';
+import useFeatures from '../common/util/useFeatures';
 import { deviceEquality } from '../common/util/deviceEquality';
 
 const columnsArray = [
@@ -44,6 +45,7 @@ const EventReportPage = () => {
   const navigate = useNavigate();
   const { classes } = useReportStyles();
   const t = useTranslation();
+  const features = useFeatures();
   const theme = useTheme();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -93,14 +95,19 @@ const EventReportPage = () => {
     }
   }, [selectedItem, positions]);
 
-  useAsyncTask(async ({ signal }) => {
-    const response = await fetchOrThrow('/api/notifications/types', { signal });
-    const types = await response.json();
-    setAllEventTypes((previous) => [
-      ...previous,
-      ...types.map((it) => ({ id: it.type, label: prefixString('event', it.type) })),
-    ]);
-  }, []);
+  useAsyncTask(
+    async ({ signal }) => {
+      const response = await fetchOrThrow('/api/notifications/types', { signal });
+      const types = await response.json();
+      setAllEventTypes([
+        { id: 'allEvents', label: 'eventAll' },
+        ...types
+          .filter((it) => !(features.disableDrivers && it.type === 'driverChanged'))
+          .map((it) => ({ id: it.type, label: prefixString('event', it.type) })),
+      ]);
+    },
+    [features.disableDrivers],
+  );
 
   const onShow = useCatchCallback(
     async ({ deviceIds, groupIds, from, to }) => {

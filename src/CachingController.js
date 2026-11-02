@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
+import useFeatures from './common/util/useFeatures';
 import {
   geofencesActions,
   groupsActions,
@@ -11,6 +12,7 @@ import fetchOrThrow from './common/util/fetchOrThrow';
 
 const CachingController = () => {
   const authenticated = useSelector((state) => !!state.session.user);
+  const { disableDrivers } = useFeatures();
   const dispatch = useDispatch();
 
   useAsyncTask(
@@ -35,12 +37,12 @@ const CachingController = () => {
 
   useAsyncTask(
     async ({ signal }) => {
-      if (authenticated) {
+      if (authenticated && !disableDrivers) {
         const response = await fetchOrThrow('/api/drivers', { signal });
         dispatch(driversActions.refresh(await response.json()));
       }
     },
-    [authenticated, dispatch],
+    [authenticated, disableDrivers, dispatch],
   );
 
   useAsyncTask(

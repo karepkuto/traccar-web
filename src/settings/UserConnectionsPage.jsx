@@ -12,11 +12,13 @@ import { useTranslation } from '../common/components/LocalizationProvider';
 import SettingsMenu from './components/SettingsMenu';
 import { formatNotificationTitle } from '../common/util/formatter';
 import PageLayout from '../common/components/PageLayout';
+import useFeatures from '../common/util/useFeatures';
 import useSettingsStyles from './common/useSettingsStyles';
 
 const UserConnectionsPage = () => {
   const { classes } = useSettingsStyles();
   const t = useTranslation();
+  const features = useFeatures();
 
   const { id } = useParams();
 
@@ -90,15 +92,17 @@ const UserConnectionsPage = () => {
               titleGetter={(it) => it.description}
               label={t('sharedComputedAttributes')}
             />
-            <LinkField
-              endpointAll="/api/drivers?all=true"
-              endpointLinked={`/api/drivers?userId=${id}`}
-              baseId={id}
-              keyBase="userId"
-              keyLink="driverId"
-              titleGetter={(it) => `${it.name} (${it.uniqueId})`}
-              label={t('sharedDrivers')}
-            />
+            {!features.disableDrivers && (
+              <LinkField
+                endpointAll="/api/drivers?all=true"
+                endpointLinked={`/api/drivers?userId=${id}`}
+                baseId={id}
+                keyBase="userId"
+                keyLink="driverId"
+                titleGetter={(it) => `${it.name} (${it.uniqueId})`}
+                label={t('sharedDrivers')}
+              />
+            )}
             <LinkField
               endpointAll="/api/commands?all=true"
               endpointLinked={`/api/commands?userId=${id}`}

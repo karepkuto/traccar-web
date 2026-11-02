@@ -39,6 +39,7 @@ import { sessionActions } from '../store';
 import { useAdministrator, useRestriction } from '../common/util/permissions';
 import useSettingsStyles from './common/useSettingsStyles';
 import { appVersionText } from '../common/components/AppVersion';
+import useFeatures from '../common/util/useFeatures';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 
 const deviceFields = [
@@ -57,6 +58,10 @@ const PreferencesPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const t = useTranslation();
+  const features = useFeatures();
+  const visibleDeviceFields = deviceFields.filter(
+    (field) => !(features.disableDrivers && field.id === 'driverUniqueId'),
+  );
 
   const admin = useAdministrator();
   const readonly = useRestriction('readonly');
@@ -306,7 +311,7 @@ const PreferencesPage = () => {
                 <SelectField
                   value={attributes.devicePrimary || 'name'}
                   onChange={(e) => setAttributes({ ...attributes, devicePrimary: e.target.value })}
-                  data={deviceFields}
+                  data={visibleDeviceFields}
                   titleGetter={(it) => t(it.name)}
                   label={t('devicePrimaryInfo')}
                 />
@@ -315,7 +320,7 @@ const PreferencesPage = () => {
                   onChange={(e) =>
                     setAttributes({ ...attributes, deviceSecondary: e.target.value })
                   }
-                  data={deviceFields}
+                  data={visibleDeviceFields}
                   titleGetter={(it) => t(it.name)}
                   label={t('deviceSecondaryInfo')}
                 />

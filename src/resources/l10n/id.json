@@ -298,6 +298,7 @@
     "linkStreetView": "Street View",
     "linkLiveVideo": "Video Langsung",
     "positionFixTime": "Waktu GPS",
+    "positionId": "ID Posisi",
     "positionDeviceTime": "Waktu Perangkat",
     "positionServerTime": "Waktu Server",
     "positionValid": "Validitas",

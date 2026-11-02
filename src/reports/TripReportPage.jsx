@@ -35,6 +35,7 @@ import scheduleReport from './common/scheduleReport';
 import MapScale from '../map/MapScale';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 import exportExcel from '../common/util/exportExcel';
+import useFeatures from '../common/util/useFeatures';
 import { deviceEquality } from '../common/util/deviceEquality';
 
 const columnsArray = [
@@ -57,6 +58,10 @@ const TripReportPage = () => {
   const navigate = useNavigate();
   const { classes } = useReportStyles();
   const t = useTranslation();
+  const features = useFeatures();
+  const availableColumns = features.disableDrivers
+    ? columnsArray.filter(([key]) => key !== 'driverName')
+    : columnsArray;
   const theme = useTheme();
 
   const devices = useSelector((state) => state.devices.items, deviceEquality(['id', 'name']));
@@ -66,12 +71,13 @@ const TripReportPage = () => {
   const volumeUnit = useAttributePreference('volumeUnit');
   const coordinateFormat = usePreference('coordinateFormat');
 
-  const [columns, setColumns] = usePersistedState('tripColumns', [
+  const [storedColumns, setColumns] = usePersistedState('tripColumns', [
     'startTime',
     'endTime',
     'distance',
     'averageSpeed',
   ]);
+  const columns = storedColumns.filter((key) => availableColumns.some(([k]) => k === key));
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -246,7 +252,11 @@ const TripReportPage = () => {
               loading={loading}
               formats={['xlsx']}
             >
-              <ColumnSelect columns={columns} setColumns={setColumns} columnsArray={columnsArray} />
+              <ColumnSelect
+                columns={columns}
+                setColumns={setColumns}
+                columnsArray={availableColumns}
+              />
             </ReportFilter>
           </div>
           <Table>

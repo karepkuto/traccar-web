@@ -37,6 +37,7 @@ const SelectField = ({
   placeholder,
   singleLine,
   allValue,
+  filter,
 }) => {
   const { classes } = useStyles();
   const [items, setItems] = useState();
@@ -75,7 +76,7 @@ const SelectField = ({
         size={singleLine ? 'small' : 'medium'}
         multiple={multiple}
         className={multiple && singleLine ? classes.autocompleteMultiple : undefined}
-        options={items}
+        options={filter ? items.filter(filter) : items}
         getOptionLabel={getOptionLabel}
         renderOption={({ key, ...props }, option) => (
           <li key={keyGetter(option) || key} {...props}>

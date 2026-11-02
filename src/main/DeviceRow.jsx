@@ -34,6 +34,7 @@ import { useAttributePreference } from '../common/util/preferences';
 import GeofencesValue from '../common/components/GeofencesValue';
 import DriverValue from '../common/components/DriverValue';
 import MotionBar from './components/MotionBar';
+import useFeatures from '../common/util/useFeatures';
 import BillingCountdown from '../billing/BillingCountdown';
 
 dayjs.extend(relativeTime);
@@ -70,6 +71,7 @@ const DeviceRow = ({ devices, index, style }) => {
   const { classes } = useStyles();
   const dispatch = useDispatch();
   const t = useTranslation();
+  const features = useFeatures();
 
   const admin = useAdministrator();
   const selectedDeviceId = useSelector((state) => state.devices.selectedId);
@@ -86,6 +88,9 @@ const DeviceRow = ({ devices, index, style }) => {
       return geofenceIds?.length ? <GeofencesValue geofenceIds={geofenceIds} /> : null;
     }
     if (field === 'driverUniqueId') {
+      if (features.disableDrivers) {
+        return null;
+      }
       const driverUniqueId = position?.attributes?.driverUniqueId;
       return driverUniqueId ? <DriverValue driverUniqueId={driverUniqueId} /> : null;
     }

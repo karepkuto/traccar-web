@@ -1,10 +1,12 @@
 import { useMemo } from 'react';
+import useFeatures from '../util/useFeatures';
 
-export default (t) =>
-  useMemo(
+export default (t) => {
+  const { disableDrivers } = useFeatures();
+  return useMemo(
     () => ({
       id: {
-        name: t('deviceIdentifier'),
+        name: t('positionId'),
         type: 'number',
         property: true,
       },
@@ -362,10 +364,12 @@ export default (t) =>
         name: t('eventCommandResult'),
         type: 'string',
       },
-      driverUniqueId: {
-        name: t('sharedDriver'),
-        type: 'string',
-      },
+      ...(!disableDrivers && {
+        driverUniqueId: {
+          name: t('sharedDriver'),
+          type: 'string',
+        },
+      }),
       card: {
         name: t('positionCard'),
         type: 'string',
@@ -397,5 +401,6 @@ export default (t) =>
         dataType: 'speed',
       },
     }),
-    [t],
+    [t, disableDrivers],
   );
+};
