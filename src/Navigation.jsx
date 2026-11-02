@@ -9,6 +9,7 @@ import { devicesActions } from './store';
 import { generateLoginToken } from './common/components/NativeInterface';
 import { useLocalization } from './common/components/LocalizationProvider';
 import fetchOrThrow from './common/util/fetchOrThrow';
+import UpdateController from './UpdateController';
 
 const CombinedReportPage = lazy(() => import('./reports/CombinedReportPage'));
 const PositionsReportPage = lazy(() => import('./reports/PositionsReportPage'));
@@ -124,6 +125,7 @@ const Navigation = () => {
   }
   return (
     <Suspense fallback={<Loader />}>
+      <UpdateController />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

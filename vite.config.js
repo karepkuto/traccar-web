@@ -172,9 +172,17 @@ export default defineConfig(() => ({
         globPatterns: ['**/*.{js,css,html,woff,woff2,mp3}'],
       },
       manifest: {
+        id: '/',
         short_name: 'Pantauku',
         name: 'Pantauku',
+        description: 'Pelacakan GPS kendaraan secara real-time',
+        lang: 'id',
+        start_url: '/',
+        display: 'standalone',
+        orientation: 'portrait',
         theme_color: '#FF6A00',
+        background_color: '#FFFFFF',
+        categories: ['navigation', 'travel', 'utilities'],
         icons: [
           {
             src: 'pwa-64x64.png',
@@ -190,7 +198,13 @@ export default defineConfig(() => ({
             src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable',
+            purpose: 'any',
+          },
+          {
+            src: 'maskable-icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
           },
         ],
       },
