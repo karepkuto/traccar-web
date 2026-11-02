@@ -2,6 +2,7 @@ import { useMediaQuery, Paper } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTheme } from '@mui/material/styles';
 import LogoImage from './LogoImage';
+import AppVersion from '../common/components/AppVersion';
 
 const useStyles = makeStyles()((theme) => ({
   root: {
@@ -53,6 +54,7 @@ const LoginLayout = ({ children }) => {
       </div>
       <Paper className={classes.paper}>
         <form className={classes.form}>{children}</form>
+        <AppVersion />
       </Paper>
     </main>
   );

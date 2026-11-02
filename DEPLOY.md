@@ -63,3 +63,8 @@ Footer versi di **Settings → Preferences → Info** menampilkan
 `versi · git hash · waktu build`. Hash dan waktu diambil saat build
 (`vite.config.js`), jadi nilainya ikut berubah setiap `npm run build`
 atau restart dev server — bukan saat halaman dibuka.
+
+Versi yang sama juga tampil kecil di **halaman login** dan di **bawah menu
+Settings**. Untuk cek tanpa login, buka `https://<domain>/version.json`
+(berisi versi, git hash, branch, dan waktu build WIB). File ini tidak
+di-cache service worker, jadi selalu mencerminkan build yang sedang live.

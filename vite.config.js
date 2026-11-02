@@ -42,6 +42,26 @@ const gitHash = (() => {
   }
 })();
 
+const gitBranch = (() => {
+  try {
+    return execSync('git rev-parse --abbrev-ref HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
+      .toString()
+      .trim();
+  } catch {
+    try {
+      const head = readFileSync(
+        resolve(import.meta.dirname ?? process.cwd(), '.git', 'HEAD'),
+        'utf8',
+      ).trim();
+      return head.startsWith('ref:') ? head.replace(/^ref:\s*refs\/heads\//, '') : 'detached';
+    } catch {
+      return 'unknown';
+    }
+  }
+})();
+
+const buildDate = new Date();
+
 // Selalu WIB, tidak ikut zona waktu mesin/container yang menjalankan build.
 const buildTime = (() => {
   const parts = new Intl.DateTimeFormat('en-GB', {
@@ -53,14 +73,39 @@ const buildTime = (() => {
     hour: '2-digit',
     minute: '2-digit',
   })
-    .formatToParts(new Date())
+    .formatToParts(buildDate)
     .reduce((result, part) => ({ ...result, [part.type]: part.value }), {});
   return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute} WIB`;
 })();
 
+// version.json di root situs: cek versi yang sedang live tanpa login,
+// misalnya `curl https://domain/version.json`. Tidak di-precache service worker.
+const versionFile = () => ({
+  name: 'version-file',
+  apply: 'build',
+  generateBundle() {
+    this.emitFile({
+      type: 'asset',
+      fileName: 'version.json',
+      source: `${JSON.stringify(
+        {
+          version: process.env.npm_package_version || null,
+          gitHash,
+          gitBranch,
+          buildTime,
+          buildTimeIso: buildDate.toISOString(),
+        },
+        null,
+        2,
+      )}\n`,
+    });
+  },
+});
+
 export default defineConfig(() => ({
   define: {
     'import.meta.env.VITE_APP_GIT_HASH': JSON.stringify(gitHash),
+    'import.meta.env.VITE_APP_GIT_BRANCH': JSON.stringify(gitBranch),
     'import.meta.env.VITE_APP_BUILD_TIME': JSON.stringify(buildTime),
   },
   server: {
@@ -82,6 +127,7 @@ export default defineConfig(() => ({
     chunkSizeWarningLimit: 1100,
   },
   plugins: [
+    versionFile(),
     svgr(),
     react(),
     VitePWA({

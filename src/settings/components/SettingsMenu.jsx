@@ -21,6 +21,7 @@ import { useTranslation } from '../../common/components/LocalizationProvider';
 import { useAdministrator, useManager, useRestriction } from '../../common/util/permissions';
 import useFeatures from '../../common/util/useFeatures';
 import MenuItem from '../../common/components/MenuItem';
+import AppVersion from '../../common/components/AppVersion';
 
 const SettingsMenu = () => {
   const t = useTranslation();
@@ -163,6 +164,8 @@ const SettingsMenu = () => {
           </List>
         </>
       )}
+      <Divider />
+      <AppVersion align="left" />
     </>
   );
 };
