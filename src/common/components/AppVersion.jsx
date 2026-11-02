@@ -36,6 +36,7 @@ const AppVersion = ({ align = 'center' }) => (
       color="textSecondary"
       component="div"
       align={align}
+      noWrap
       sx={{ px: 2, py: 1, opacity: 0.8, cursor: 'help' }}
     >
       {appVersionText}

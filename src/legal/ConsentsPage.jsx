@@ -84,7 +84,7 @@ const ConsentsPage = () => {
   };
 
   return (
-    <PageLayout menu={<SettingsMenu />} breadcrumbs={['settingsTitle', 'settingsUsers']}>
+    <PageLayout menu={<SettingsMenu />} breadcrumbs={['settingsTitle', 'legalConsents']}>
       <SearchHeader keyword={keyword} setKeyword={setKeyword} />
       <Table className={classes.table}>
         <TableHead>
