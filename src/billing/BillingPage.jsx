@@ -45,6 +45,7 @@ import { fetchBillingDevices, fetchResellers } from './billingService';
 import BillingStatusChip, { statusLabelKey } from './BillingStatusChip';
 import ExtendDialog from './ExtendDialog';
 import useBillingTranslation from './useBillingTranslation';
+import { useTranslation } from '../common/components/LocalizationProvider';
 
 const statusOrder = [
   BILLING_STATUS.EXPIRED,
@@ -58,6 +59,7 @@ const BillingPage = () => {
   const { classes } = useSettingsStyles();
   const theme = useTheme();
   const bt = useBillingTranslation();
+  const t = useTranslation();
 
   const admin = useAdministrator();
   const sessionUser = useSelector((state) => state.session.user);
@@ -181,7 +183,7 @@ const BillingPage = () => {
     const data = historyRows.map((row) => ({
       [bt('billingPaidAt')]: formatTime(row.t, 'minutes'),
       [bt('billingDevice')]: row.device.name,
-      Identifier: row.device.uniqueId,
+      [t('deviceIdentifier')]: row.device.uniqueId,
       [bt('billingStartDate')]: row.s || '',
       [bt('billingEndDate')]: row.e || '',
       [bt('billingDuration')]: row.n ? unitLabel(row.n, row.u) : '',
@@ -203,8 +205,8 @@ const BillingPage = () => {
 
   const handleExport = async () => {
     const data = rows.map((item) => ({
-      Name: item.name,
-      Identifier: item.uniqueId,
+      [t('sharedName')]: item.name,
+      [t('deviceIdentifier')]: item.uniqueId,
       [bt('billingStatus')]: bt(statusLabelKey(item.billingStatus)),
       [bt('billingCurrentExpiration')]: formatTime(item.expirationTime, 'date'),
       [bt('billingRemaining')]: getRemainingDays(item.expirationTime),
@@ -226,7 +228,7 @@ const BillingPage = () => {
       <Toolbar sx={{ gap: 2, flexWrap: 'wrap', py: 1 }}>
         <TextField
           size="small"
-          placeholder="Search"
+          placeholder={t('sharedSearch')}
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
         />
@@ -258,8 +260,8 @@ const BillingPage = () => {
           <Table className={classes.table}>
             <TableHead>
               <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Identifier</TableCell>
+                <TableCell>{t('sharedName')}</TableCell>
+                <TableCell>{t('deviceIdentifier')}</TableCell>
                 <TableCell>{bt('billingStatus')}</TableCell>
                 <TableCell>{bt('billingCurrentExpiration')}</TableCell>
                 <TableCell>{bt('billingBilledTo')}</TableCell>
@@ -317,7 +319,7 @@ const BillingPage = () => {
               <TableRow>
                 <TableCell colSpan={columns}>
                   <Button onClick={handleExport} variant="text" disabled={rows.length === 0}>
-                    Export
+                    {t('reportExport')}
                   </Button>
                 </TableCell>
               </TableRow>
@@ -383,7 +385,7 @@ const BillingPage = () => {
                       variant="text"
                       disabled={historyRows.length === 0}
                     >
-                      Export
+                      {t('reportExport')}
                     </Button>
                   </TableCell>
                   <TableCell align="right">

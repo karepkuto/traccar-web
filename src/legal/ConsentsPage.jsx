@@ -129,7 +129,7 @@ const ConsentsPage = () => {
           <TableRow>
             <TableCell colSpan={6}>
               <Button onClick={handleExport} variant="text" disabled={rows.length === 0}>
-                Export
+                Ekspor
               </Button>
             </TableCell>
           </TableRow>
