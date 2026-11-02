@@ -66,6 +66,7 @@ const StreamPage = lazy(() => import('./other/StreamPage'));
 const AuditPage = lazy(() => import('./reports/AuditPage'));
 const BillingPage = lazy(() => import('./billing/BillingPage'));
 const ConsentsPage = lazy(() => import('./legal/ConsentsPage'));
+const ResellersPage = lazy(() => import('./settings/ResellersPage'));
 const LegalPage = lazy(() => import('./legal/LegalPage'));
 
 const Navigation = () => {
@@ -157,6 +158,7 @@ const Navigation = () => {
             <Route path="command" element={<CommandPage />} />
             <Route path="billing" element={<BillingPage />} />
             <Route path="consents" element={<ConsentsPage />} />
+            <Route path="resellers" element={<ResellersPage />} />
             <Route path="attributes" element={<ComputedAttributesPage />} />
             <Route path="attribute/:id" element={<ComputedAttributePage />} />
             <Route path="attribute" element={<ComputedAttributePage />} />

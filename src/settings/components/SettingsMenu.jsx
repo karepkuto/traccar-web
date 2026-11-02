@@ -19,6 +19,7 @@ import CampaignIcon from '@mui/icons-material/Campaign';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import GavelIcon from '@mui/icons-material/Gavel';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useTranslation } from '../../common/components/LocalizationProvider';
@@ -146,6 +147,12 @@ const SettingsMenu = () => {
               link: '/settings/billing',
               icon: <ReceiptLongIcon />,
               selected: path === '/settings/billing',
+            },
+            admin && {
+              title: t('resellerTitle'),
+              link: '/settings/resellers',
+              icon: <StorefrontIcon />,
+              selected: path === '/settings/resellers',
             },
             {
               title: t('settingsUsers'),

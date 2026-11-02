@@ -16,6 +16,7 @@ const LinkField = ({
   keyLink,
   titleGetter = defaultTitleGetter,
   beforeAdd,
+  filter,
 }) => {
   const t = useTranslation();
   const [active, setActive] = useState(false);
@@ -104,7 +105,7 @@ const LinkField = ({
         loading={(active && !items) || checking}
         disabled={checking}
         isOptionEqualToValue={(i1, i2) => i1.id === i2.id}
-        options={items || []}
+        options={(filter ? items?.filter(filter) : items) || []}
         getOptionLabel={(item) => titleGetter(item)}
         slotProps={{ chip: { size: 'small' } }}
         renderInput={(params) => (
