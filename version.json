@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "179866e",
+  "gitHash": "579f840",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 21:37 WIB",
-  "commitMessage": "Phones: expandable table rows instead of sideways scrolling\n\nEvery table on a phone now shows one compact row per item (name, icon\nand action buttons, a chevron). Tapping the row expands the remaining\ncolumns as 'Label: value' lines; tapping buttons or links inside the\nrow does not toggle it. Labels are copied from each table's header by\na small global enhancer, so no page had to change. Desktop layout is\nunchanged; row actions stay pinned to the right on wide tables.",
-  "buildTime": "2026-11-02 21:38 WIB",
-  "buildTimeIso": "2026-11-02T14:38:39.768Z"
+  "commitTime": "2026-11-02 21:53 WIB",
+  "commitMessage": "Fix lint error in ConnectionsLayout (unused prop)\n\nThe deploy workflow stopped at lint, so the previous change never\nreached the deploy branch.",
+  "buildTime": "2026-11-02 21:53 WIB",
+  "buildTimeIso": "2026-11-02T14:53:57.245Z"
 }
