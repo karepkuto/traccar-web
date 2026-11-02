@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "579f840",
+  "gitHash": "35b1c7a",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 21:53 WIB",
-  "commitMessage": "Fix lint error in ConnectionsLayout (unused prop)\n\nThe deploy workflow stopped at lint, so the previous change never\nreached the deploy branch.",
-  "buildTime": "2026-11-02 21:53 WIB",
-  "buildTimeIso": "2026-11-02T14:53:57.245Z"
+  "commitTime": "2026-11-02 22:15 WIB",
+  "commitMessage": "Explanations behind (i) buttons on every module\n\n- Every settings and report page gets an (i) next to its title (top bar\n  on phones, above the content on desktop) that opens a short\n  description of the module\n- Relation fields on the Connections pages show their explanation\n  behind an (i) beside the field instead of always-visible helper text\n- Always-visible info notes on Subscriptions, Resellers and Connections\n  moved behind the (i) buttons",
+  "buildTime": "2026-11-02 22:16 WIB",
+  "buildTimeIso": "2026-11-02T15:16:44.576Z"
 }
