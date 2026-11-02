@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import {
   Alert,
   Button,
+  Chip,
   IconButton,
   MenuItem,
   Snackbar,
@@ -12,11 +13,14 @@ import {
   TableFooter,
   TableHead,
   TableRow,
+  Tab,
+  Tabs,
   TextField,
   Toolbar,
   Tooltip,
 } from '@mui/material';
 import PaymentIcon from '@mui/icons-material/Payment';
+import HistoryIcon from '@mui/icons-material/History';
 import { useTheme } from '@mui/material/styles';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from '../settings/components/SettingsMenu';
@@ -29,11 +33,15 @@ import exportExcel from '../common/util/exportExcel';
 import {
   BILLING_ATTRIBUTES,
   BILLING_STATUS,
+  formatDateId,
+  formatRupiah,
   getBillingStatus,
   getBillingThresholds,
   getRemainingDays,
+  parseBilledTo,
+  parseHistory,
 } from './billingLogic';
-import { fetchBillingDevices } from './billingService';
+import { fetchBillingDevices, fetchResellers } from './billingService';
 import BillingStatusChip, { statusLabelKey } from './BillingStatusChip';
 import ExtendDialog from './ExtendDialog';
 import useBillingTranslation from './useBillingTranslation';
@@ -52,6 +60,7 @@ const BillingPage = () => {
   const bt = useBillingTranslation();
 
   const admin = useAdministrator();
+  const sessionUser = useSelector((state) => state.session.user);
   const server = useSelector((state) => state.session.server);
   const thresholds = useMemo(() => getBillingThresholds(server), [server]);
 
@@ -63,6 +72,26 @@ const BillingPage = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selected, setSelected] = useState(null);
   const [saved, setSaved] = useState(false);
+  const [tab, setTab] = useState('devices');
+  const [historyDeviceId, setHistoryDeviceId] = useState(null);
+  const [resellers, setResellers] = useState([]);
+
+  useAsyncTask(
+    async ({ signal }) => {
+      if (admin) {
+        setResellers(await fetchResellers({ signal }));
+      }
+    },
+    [admin],
+  );
+
+  const resellerNames = useMemo(() => {
+    const map = { [sessionUser.id]: sessionUser.name };
+    resellers.forEach((reseller) => {
+      map[reseller.id] = reseller.name;
+    });
+    return map;
+  }, [resellers, sessionUser]);
 
   useAsyncTask(
     async ({ signal }) => {
@@ -112,10 +141,64 @@ const BillingPage = () => {
     if (!value) {
       return '';
     }
-    if (value === 'direct') {
+    const billedTo = parseBilledTo(value);
+    if (billedTo.type === 'direct') {
       return bt('billingBilledToDirect');
     }
-    return value.replace(/^reseller:/, `${bt('billingBilledToReseller')}: `);
+    const name = billedTo.id ? resellerNames[billedTo.id] || `#${billedTo.id}` : billedTo.name;
+    return `${bt('billingBilledToReseller')}: ${name}`;
+  };
+
+  const unitLabel = (count, unit) =>
+    `${count} ${bt(unit === 'year' ? 'billingUnitYear' : 'billingUnitMonth')}`;
+
+  const historyRows = useMemo(() => {
+    const lower = keyword.trim().toLowerCase();
+    return items
+      .filter((item) => !historyDeviceId || item.id === historyDeviceId)
+      .flatMap((item) =>
+        parseHistory(item.attributes).map((entry, index) => ({
+          key: `${item.id}-${index}`,
+          device: item,
+          ...entry,
+        })),
+      )
+      .filter(
+        (row) =>
+          !lower ||
+          row.device.name?.toLowerCase().includes(lower) ||
+          row.device.uniqueId?.toLowerCase().includes(lower) ||
+          String(row.r || '')
+            .toLowerCase()
+            .includes(lower),
+      )
+      .sort((a, b) => String(b.t || '').localeCompare(String(a.t || '')));
+  }, [items, historyDeviceId, keyword]);
+
+  const historyTotal = historyRows.reduce((sum, row) => sum + (Number(row.a) || 0), 0);
+
+  const handleExportHistory = async () => {
+    const data = historyRows.map((row) => ({
+      [bt('billingPaidAt')]: formatTime(row.t, 'minutes'),
+      [bt('billingDevice')]: row.device.name,
+      Identifier: row.device.uniqueId,
+      [bt('billingStartDate')]: row.s || '',
+      [bt('billingEndDate')]: row.e || '',
+      [bt('billingDuration')]: row.n ? unitLabel(row.n, row.u) : '',
+      [bt('billingAmount')]: Number(row.a) || 0,
+      [bt('billingPrice')]: row.p ?? '',
+      [bt('billingReference')]: row.r || '',
+      [bt('billingBilledTo')]: formatBilledTo(row.b),
+      [bt('billingRecordedBy')]: row.by || '',
+    }));
+    const sheets = new Map();
+    sheets.set(bt('billingHistoryTab'), data);
+    await exportExcel(bt('billingHistoryTab'), 'riwayat-pembayaran.xlsx', sheets, theme);
+  };
+
+  const showHistory = (deviceId) => {
+    setHistoryDeviceId(deviceId);
+    setTab('history');
   };
 
   const handleExport = async () => {
@@ -126,9 +209,9 @@ const BillingPage = () => {
       [bt('billingCurrentExpiration')]: formatTime(item.expirationTime, 'date'),
       [bt('billingRemaining')]: getRemainingDays(item.expirationTime),
       [bt('billingBilledTo')]: formatBilledTo(item.attributes?.[BILLING_ATTRIBUTES.billedTo]),
-      [bt('billingPrice')]: item.attributes?.[BILLING_ATTRIBUTES.price],
+      [bt('billingPrice')]: Number(item.attributes?.[BILLING_ATTRIBUTES.price]) || '',
       [bt('billingLastPaid')]: formatTime(item.attributes?.[BILLING_ATTRIBUTES.lastPaidAt], 'date'),
-      [bt('billingAmount')]: item.attributes?.[BILLING_ATTRIBUTES.lastPaidAmount],
+      [bt('billingAmount')]: Number(item.attributes?.[BILLING_ATTRIBUTES.lastPaidAmount]) || '',
       [bt('billingReference')]: item.attributes?.[BILLING_ATTRIBUTES.lastPaidReference],
     }));
     const sheets = new Map();
@@ -136,7 +219,7 @@ const BillingPage = () => {
     await exportExcel(bt('billingTitle'), 'billing.xlsx', sheets, theme);
   };
 
-  const columns = admin ? 8 : 7;
+  const columns = 8;
 
   return (
     <PageLayout menu={<SettingsMenu />} breadcrumbs={['settingsTitle', 'userBilling']}>
@@ -166,63 +249,155 @@ const BillingPage = () => {
       {!admin && <Alert severity="info">{bt('billingReadonlyNote')}</Alert>}
       <Alert severity="warning">{bt('billingLockNote')}</Alert>
       {error && <Alert severity="error">{error}</Alert>}
-      <Table className={classes.table}>
-        <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Identifier</TableCell>
-            <TableCell>{bt('billingStatus')}</TableCell>
-            <TableCell>{bt('billingCurrentExpiration')}</TableCell>
-            <TableCell>{bt('billingBilledTo')}</TableCell>
-            <TableCell>{bt('billingPrice')}</TableCell>
-            <TableCell>{bt('billingLastPaid')}</TableCell>
-            {admin && <TableCell className={classes.columnAction} />}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {loading ? (
-            <TableShimmer columns={columns} />
-          ) : (
-            rows.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.name}</TableCell>
-                <TableCell>{item.uniqueId}</TableCell>
-                <TableCell>
-                  <BillingStatusChip expirationTime={item.expirationTime} />
-                </TableCell>
-                <TableCell>{formatTime(item.expirationTime, 'date')}</TableCell>
-                <TableCell>
-                  {formatBilledTo(item.attributes?.[BILLING_ATTRIBUTES.billedTo])}
-                </TableCell>
-                <TableCell>{item.attributes?.[BILLING_ATTRIBUTES.price]}</TableCell>
-                <TableCell>
-                  {formatTime(item.attributes?.[BILLING_ATTRIBUTES.lastPaidAt], 'date')}
-                  {item.attributes?.[BILLING_ATTRIBUTES.lastPaidAmount] != null &&
-                    ` (${item.attributes[BILLING_ATTRIBUTES.lastPaidAmount]})`}
-                </TableCell>
-                {admin && (
-                  <TableCell className={classes.columnAction} padding="none">
-                    <Tooltip title={bt('billingExtend')}>
-                      <IconButton size="small" onClick={() => setSelected(item)}>
-                        <PaymentIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                )}
+      <Tabs value={tab} onChange={(_, value) => setTab(value)} sx={{ px: 2 }}>
+        <Tab value="devices" label={bt('billingDevicesTab')} />
+        <Tab value="history" label={bt('billingHistoryTab')} />
+      </Tabs>
+      {tab === 'devices' && (
+        <div style={{ overflowX: 'auto' }}>
+          <Table className={classes.table}>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Identifier</TableCell>
+                <TableCell>{bt('billingStatus')}</TableCell>
+                <TableCell>{bt('billingCurrentExpiration')}</TableCell>
+                <TableCell>{bt('billingBilledTo')}</TableCell>
+                <TableCell>{bt('billingPrice')}</TableCell>
+                <TableCell>{bt('billingLastPaid')}</TableCell>
+                <TableCell className={classes.columnAction} />
               </TableRow>
-            ))
+            </TableHead>
+            <TableBody>
+              {loading ? (
+                <TableShimmer columns={columns} />
+              ) : (
+                rows.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell>{item.name}</TableCell>
+                    <TableCell>{item.uniqueId}</TableCell>
+                    <TableCell>
+                      <BillingStatusChip expirationTime={item.expirationTime} />
+                    </TableCell>
+                    <TableCell>{formatTime(item.expirationTime, 'date')}</TableCell>
+                    <TableCell>
+                      {formatBilledTo(item.attributes?.[BILLING_ATTRIBUTES.billedTo])}
+                    </TableCell>
+                    <TableCell>
+                      {item.attributes?.[BILLING_ATTRIBUTES.price]
+                        ? formatRupiah(item.attributes[BILLING_ATTRIBUTES.price])
+                        : ''}
+                    </TableCell>
+                    <TableCell>
+                      {formatTime(item.attributes?.[BILLING_ATTRIBUTES.lastPaidAt], 'date')}
+                      {item.attributes?.[BILLING_ATTRIBUTES.lastPaidAmount] != null &&
+                        ` (${formatRupiah(item.attributes[BILLING_ATTRIBUTES.lastPaidAmount])})`}
+                    </TableCell>
+                    <TableCell className={classes.columnAction} padding="none">
+                      <div style={{ display: 'flex' }}>
+                        <Tooltip title={bt('billingHistory')}>
+                          <IconButton size="small" onClick={() => showHistory(item.id)}>
+                            <HistoryIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        {admin && (
+                          <Tooltip title={bt('billingExtend')}>
+                            <IconButton size="small" onClick={() => setSelected(item)}>
+                              <PaymentIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={columns}>
+                  <Button onClick={handleExport} variant="text" disabled={rows.length === 0}>
+                    Export
+                  </Button>
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </div>
+      )}
+      {tab === 'history' && (
+        <>
+          <Alert severity="info">{bt('billingHistoryNote')}</Alert>
+          {historyDeviceId && (
+            <div style={{ padding: '8px 16px' }}>
+              <Chip
+                label={`${bt('billingDevice')}: ${
+                  items.find((item) => item.id === historyDeviceId)?.name || historyDeviceId
+                }`}
+                onDelete={() => setHistoryDeviceId(null)}
+              />
+            </div>
           )}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={columns}>
-              <Button onClick={handleExport} variant="text" disabled={rows.length === 0}>
-                Export
-              </Button>
-            </TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
+          <div style={{ overflowX: 'auto' }}>
+            <Table className={classes.table}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>{bt('billingPaidAt')}</TableCell>
+                  <TableCell>{bt('billingDevice')}</TableCell>
+                  <TableCell>{bt('billingPeriod')}</TableCell>
+                  <TableCell>{bt('billingDuration')}</TableCell>
+                  <TableCell align="right">{bt('billingAmount')}</TableCell>
+                  <TableCell>{bt('billingReference')}</TableCell>
+                  <TableCell>{bt('billingBilledTo')}</TableCell>
+                  <TableCell>{bt('billingRecordedBy')}</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {loading && <TableShimmer columns={8} />}
+                {!loading && historyRows.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={8}>{bt('billingNoHistory')}</TableCell>
+                  </TableRow>
+                )}
+                {!loading &&
+                  historyRows.map((row) => (
+                    <TableRow key={row.key}>
+                      <TableCell>{formatTime(row.t, 'minutes')}</TableCell>
+                      <TableCell>{row.device.name}</TableCell>
+                      <TableCell>
+                        {row.s ? `${formatDateId(row.s)} – ${formatDateId(row.e)}` : '-'}
+                      </TableCell>
+                      <TableCell>{row.n ? unitLabel(row.n, row.u) : '-'}</TableCell>
+                      <TableCell align="right">{formatRupiah(row.a)}</TableCell>
+                      <TableCell>{row.r || '-'}</TableCell>
+                      <TableCell>{formatBilledTo(row.b)}</TableCell>
+                      <TableCell>{row.by || '-'}</TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={4}>
+                    <Button
+                      onClick={handleExportHistory}
+                      variant="text"
+                      disabled={historyRows.length === 0}
+                    >
+                      Export
+                    </Button>
+                  </TableCell>
+                  <TableCell align="right">
+                    <b>
+                      {bt('billingTotalPaid')}: {formatRupiah(historyTotal)}
+                    </b>
+                  </TableCell>
+                  <TableCell colSpan={3} />
+                </TableRow>
+              </TableFooter>
+            </Table>
+          </div>
+        </>
+      )}
       {selected && (
         <ExtendDialog
           device={selected}

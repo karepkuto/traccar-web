@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import dayjs from 'dayjs';
 import {
   Alert,
   Button,
@@ -13,16 +14,22 @@ import {
   Typography,
 } from '@mui/material';
 import { formatTime } from '../common/util/formatter';
-import { BILLING_ATTRIBUTES, BILLING_UNITS, calculateNewExpiration } from './billingLogic';
-import { recordPaymentAndExtend } from './billingService';
+import { useAsyncTask } from '../reactHelper';
+import {
+  BILLING_ATTRIBUTES,
+  BILLING_UNITS,
+  defaultStartDate,
+  expirationFromEndDate,
+  formatDateId,
+  formatRupiah,
+  parseBilledTo,
+  periodEndDate,
+} from './billingLogic';
+import { fetchResellers, recordPaymentAndExtend } from './billingService';
+import RupiahField from './RupiahField';
 import useBillingTranslation from './useBillingTranslation';
 
-const parseBilledTo = (value) => {
-  if (value && value.startsWith('reseller:')) {
-    return { type: 'reseller', name: value.slice('reseller:'.length) };
-  }
-  return { type: 'direct', name: '' };
-};
+const MAX_PERIODS = 120;
 
 const ExtendDialog = ({ device, onClose, onSaved }) => {
   const bt = useBillingTranslation();
@@ -30,38 +37,65 @@ const ExtendDialog = ({ device, onClose, onSaved }) => {
 
   const attributes = device.attributes || {};
   const initialBilledTo = parseBilledTo(attributes[BILLING_ATTRIBUTES.billedTo]);
+  const storedPrice = Number(attributes[BILLING_ATTRIBUTES.price]);
 
-  const [periods, setPeriods] = useState(1);
+  const [periods, setPeriods] = useState('1');
   const [unit, setUnit] = useState(
     BILLING_UNITS.includes(attributes[BILLING_ATTRIBUTES.plan])
       ? attributes[BILLING_ATTRIBUTES.plan]
       : 'month',
   );
-  const [price, setPrice] = useState(attributes[BILLING_ATTRIBUTES.price] ?? '');
-  const [amount, setAmount] = useState('');
+  const [startDate, setStartDate] = useState(() => defaultStartDate(device.expirationTime));
+  const [price, setPrice] = useState(storedPrice > 0 ? storedPrice : null);
+  const [amount, setAmount] = useState(null);
+  const [amountTouched, setAmountTouched] = useState(false);
   const [reference, setReference] = useState('');
   const [billedToType, setBilledToType] = useState(initialBilledTo.type);
-  const [resellerName, setResellerName] = useState(initialBilledTo.name);
+  const [resellerId, setResellerId] = useState(initialBilledTo.id || '');
+  const [resellers, setResellers] = useState([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
-  const validPeriods = Number.isInteger(Number(periods)) && Number(periods) >= 1;
-  const preview = validPeriods
-    ? calculateNewExpiration(device.expirationTime, periods, unit).toISOString()
-    : null;
+  useAsyncTask(async ({ signal }) => {
+    setResellers(await fetchResellers({ signal }));
+  }, []);
+
+  const periodCount = Number(periods);
+  const validPeriods = /^\d+$/.test(periods) && periodCount >= 1 && periodCount <= MAX_PERIODS;
+  const endDate = validPeriods ? periodEndDate(startDate, periodCount, unit) : null;
+  const newExpiration = endDate ? expirationFromEndDate(endDate) : null;
+
+  const suggestedAmount = price && validPeriods ? price * periodCount : null;
+  const effectiveAmount = amountTouched ? amount : (amount ?? suggestedAmount);
+
+  const endInPast = newExpiration && !newExpiration.isAfter(dayjs());
+  const shorter =
+    newExpiration && device.expirationTime && newExpiration.isBefore(dayjs(device.expirationTime));
+  const legacyReseller = billedToType === 'reseller' && !resellerId && initialBilledTo.name;
+
+  const problems = useMemo(() => {
+    const list = [];
+    if (!validPeriods) list.push(bt('billingErrorPeriods', { max: MAX_PERIODS }));
+    if (!startDate || !endDate) list.push(bt('billingErrorStart'));
+    if (!effectiveAmount || effectiveAmount <= 0) list.push(bt('billingErrorAmount'));
+    if (billedToType === 'reseller' && !resellerId) list.push(bt('billingErrorReseller'));
+    if (endInPast) list.push(bt('billingErrorEndInPast'));
+    return list;
+  }, [validPeriods, startDate, endDate, effectiveAmount, billedToType, resellerId, endInPast, bt]);
 
   const handleSave = async () => {
     setSaving(true);
     setError(null);
     try {
       await recordPaymentAndExtend(device.id, {
-        periods: Number(periods),
+        startDate,
+        endDate,
+        periods: periodCount,
         unit,
-        amount,
+        amount: effectiveAmount,
         price,
-        reference,
-        plan: unit,
-        billedTo: billedToType === 'reseller' ? `reseller:${resellerName.trim()}` : 'direct',
+        reference: reference.trim(),
+        billedTo: billedToType === 'reseller' ? `reseller:${resellerId}` : 'direct',
         paidBy: user.email || user.name,
       });
       onSaved();
@@ -84,10 +118,9 @@ const ExtendDialog = ({ device, onClose, onSaved }) => {
           <Stack direction="row" spacing={2}>
             <TextField
               label={bt('billingPeriods')}
-              type="number"
               value={periods}
-              onChange={(e) => setPeriods(e.target.value)}
-              slotProps={{ htmlInput: { min: 1, step: 1 } }}
+              onChange={(e) => setPeriods(e.target.value.replace(/[^0-9]/g, '').slice(0, 3))}
+              slotProps={{ htmlInput: { inputMode: 'numeric' } }}
               error={!validPeriods}
               fullWidth
             />
@@ -102,25 +135,51 @@ const ExtendDialog = ({ device, onClose, onSaved }) => {
               <MenuItem value="year">{bt('billingUnitYear')}</MenuItem>
             </TextField>
           </Stack>
-          <TextField
+          <Stack direction="row" spacing={2}>
+            <TextField
+              label={bt('billingStartDate')}
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              slotProps={{ inputLabel: { shrink: true } }}
+              fullWidth
+            />
+            <TextField
+              label={bt('billingEndDate')}
+              type="date"
+              value={endDate || ''}
+              slotProps={{ inputLabel: { shrink: true }, htmlInput: { readOnly: true } }}
+              helperText={bt('billingAuto')}
+              fullWidth
+            />
+          </Stack>
+          <RupiahField
             label={bt('billingPrice')}
-            type="number"
             value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            onChange={setPrice}
+            helperText={bt('billingPriceHelp')}
           />
-          <TextField
+          <RupiahField
             label={bt('billingAmount')}
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            value={effectiveAmount}
+            onChange={(value) => {
+              setAmountTouched(true);
+              setAmount(value);
+            }}
+            error={!effectiveAmount}
             helperText={
-              price !== '' && validPeriods ? `${Number(price) * Number(periods)}` : undefined
+              suggestedAmount && effectiveAmount !== suggestedAmount
+                ? `${bt('billingTotalByPrice')}: ${formatRupiah(suggestedAmount)}`
+                : bt('billingAmountHelp')
             }
+            required
           />
           <TextField
             label={bt('billingReference')}
             value={reference}
             onChange={(e) => setReference(e.target.value)}
+            helperText={bt('billingReferenceHelp')}
+            slotProps={{ htmlInput: { maxLength: 60 } }}
           />
           <TextField
             select
@@ -133,14 +192,39 @@ const ExtendDialog = ({ device, onClose, onSaved }) => {
           </TextField>
           {billedToType === 'reseller' && (
             <TextField
-              label={bt('billingBilledToReseller')}
-              value={resellerName}
-              onChange={(e) => setResellerName(e.target.value)}
-            />
+              select
+              label={bt('billingSelectReseller')}
+              value={resellerId}
+              onChange={(e) => setResellerId(e.target.value)}
+              error={!resellerId}
+              helperText={
+                legacyReseller
+                  ? `${bt('billingLegacyReseller')}: "${initialBilledTo.name}"`
+                  : resellers.length === 0
+                    ? bt('billingNoResellers')
+                    : undefined
+              }
+            >
+              {resellers.map((reseller) => (
+                <MenuItem key={reseller.id} value={reseller.id}>
+                  {reseller.name} ({reseller.email})
+                </MenuItem>
+              ))}
+            </TextField>
           )}
-          {preview && (
+          {newExpiration && !endInPast && (
             <Alert severity="info">
-              {bt('billingNewExpiration')}: {formatTime(preview, 'date')}
+              {bt('billingActiveUntil')}: <b>{formatDateId(endDate)} 23:59 WIB</b>
+              <br />
+              {bt('billingPeriod')}: {formatDateId(startDate)} – {formatDateId(endDate)}
+            </Alert>
+          )}
+          {shorter && !endInPast && <Alert severity="warning">{bt('billingWarnShorter')}</Alert>}
+          {problems.length > 0 && (
+            <Alert severity="error">
+              {problems.map((problem) => (
+                <div key={problem}>{problem}</div>
+              ))}
             </Alert>
           )}
           {error && <Alert severity="error">{error}</Alert>}
@@ -150,13 +234,7 @@ const ExtendDialog = ({ device, onClose, onSaved }) => {
         <Button onClick={onClose} disabled={saving}>
           {bt('billingCancel')}
         </Button>
-        <Button
-          onClick={handleSave}
-          variant="contained"
-          disabled={
-            saving || !validPeriods || (billedToType === 'reseller' && !resellerName.trim())
-          }
-        >
+        <Button onClick={handleSave} variant="contained" disabled={saving || problems.length > 0}>
           {bt('billingSave')}
         </Button>
       </DialogActions>
