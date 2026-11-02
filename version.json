@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "2cbb2eb",
+  "gitHash": "21ff94e",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 17:43 WIB",
-  "commitMessage": "Replay speed up to 10x, time range trimming, WIB timezone\n\nReplay (per-device history):\n- Playback speed selector 1x/2x/4x/6x/8x/10x\n- Time range slider to trim the loaded track; only the selected range\n  is drawn, played and framed by the camera\n\nPeriod filter (replay and reports):\n- New presets: last hour, last 6 hours, last 24 hours\n- Custom range is rejected when start is not before end\n\nTimezone:\n- All displayed times use Asia/Jakarta (WIB) by default, or the user /\n  server 'timezone' attribute when set, regardless of device clock\n- Period boundaries (today, this week, ...) and custom inputs are\n  computed in that timezone",
-  "buildTime": "2026-11-02 17:43 WIB",
-  "buildTimeIso": "2026-11-02T10:43:50.221Z"
+  "commitTime": "2026-11-02 18:14 WIB",
+  "commitMessage": "Add legal consent gate with recorded proof and public legal page\n\n- Terms of use, privacy/location consent (UU PDP), reseller terms and\n  open-source attribution (Traccar, Apache 2.0) in one versioned file\n- Non-admin users must tick every statement before using the app; the\n  version, time, items, role and browser are stored on the user\n- Bumping LEGAL_VERSION asks everyone to agree again\n- Consent records page for admin/resellers with Excel export\n- Public /legal page linked from the login screen",
+  "buildTime": "2026-11-02 18:15 WIB",
+  "buildTimeIso": "2026-11-02T11:15:07.461Z"
 }

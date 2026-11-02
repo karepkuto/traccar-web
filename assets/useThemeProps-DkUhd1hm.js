@@ -1,0 +1,1 @@
+import{D as e,M as t}from"./createSimplePaletteValueFilter-CM2TmgJi.js";import{t as n}from"./getThemeProps-BTWjVHFM.js";var r=e();function i(e){let{props:r,name:i,defaultTheme:a,themeId:o}=e,s=t(a);return o&&(s=s[o]||s),n({theme:s,name:i,props:r})}export{r as n,i as t};
