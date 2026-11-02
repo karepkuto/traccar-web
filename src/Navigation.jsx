@@ -62,6 +62,7 @@ const AnnouncementPage = lazy(() => import('./settings/AnnouncementPage'));
 const EmulatorPage = lazy(() => import('./other/EmulatorPage'));
 const StreamPage = lazy(() => import('./other/StreamPage'));
 const AuditPage = lazy(() => import('./reports/AuditPage'));
+const BillingPage = lazy(() => import('./billing/BillingPage'));
 
 const Navigation = () => {
   const dispatch = useDispatch();
@@ -147,6 +148,7 @@ const Navigation = () => {
             <Route path="commands" element={<CommandsPage />} />
             <Route path="command/:id" element={<CommandPage />} />
             <Route path="command" element={<CommandPage />} />
+            <Route path="billing" element={<BillingPage />} />
             <Route path="attributes" element={<ComputedAttributesPage />} />
             <Route path="attribute/:id" element={<ComputedAttributePage />} />
             <Route path="attribute" element={<ComputedAttributePage />} />

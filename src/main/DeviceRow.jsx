@@ -34,6 +34,7 @@ import { useAttributePreference } from '../common/util/preferences';
 import GeofencesValue from '../common/components/GeofencesValue';
 import DriverValue from '../common/components/DriverValue';
 import MotionBar from './components/MotionBar';
+import BillingCountdown from '../billing/BillingCountdown';
 
 dayjs.extend(relativeTime);
 
@@ -113,6 +114,7 @@ const DeviceRow = ({ devices, index, style }) => {
           </>
         )}
         <span className={classes[getStatusColor(item.status)]}>{status}</span>
+        <BillingCountdown expirationTime={item.expirationTime} />
       </>
     );
   };
