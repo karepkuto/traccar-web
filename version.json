@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "e305b90",
+  "gitHash": "2bda558",
   "gitBranch": "master",
   "commitTime": "2026-11-02 18:51 WIB",
-  "commitMessage": "Add seeder for initial Pantauku accounts and device assignment\n\nscripts/seed-pantauku.py uses the Traccar REST API to create a direct\ncustomer (soka9), a reseller (tempeCorp) with its customer (soka23),\nand driver accounts, then links chosen devices and tags them with the\nbilling payer. Dry run by default; --apply writes. Credentials come\nfrom environment variables only.",
-  "buildTime": "2026-11-02 18:51 WIB",
-  "buildTimeIso": "2026-11-02T11:51:44.840Z"
+  "commitMessage": "Ignore Python cache files",
+  "buildTime": "2026-11-02 18:52 WIB",
+  "buildTimeIso": "2026-11-02T11:52:40.191Z"
 }
