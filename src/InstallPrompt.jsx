@@ -91,7 +91,7 @@ const InstallPrompt = () => {
         mx: 'auto',
       }}
     >
-      <img src="/pwa-64x64.png" alt="" width={40} height={40} />
+      <img src="/pantauku-64.png" alt="" width={40} height={40} />
       <div style={{ flex: 1 }}>
         <Typography variant="subtitle2">Pasang aplikasi Pantauku</Typography>
         {deferredPrompt ? (
