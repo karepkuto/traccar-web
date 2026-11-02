@@ -14,6 +14,7 @@ import {
   volumeUnitString,
 } from './converter';
 import { prefixString } from './stringUtils';
+import { getTimezone } from './timezone';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -35,8 +36,13 @@ export const formatConsumption = (value, t) =>
 export const formatTime = (value, format) => {
   if (value) {
     const d = dayjs(value).toDate();
-    const dateConfig = { year: 'numeric', month: '2-digit', day: '2-digit' };
-    const minuteConfig = { hour: '2-digit', minute: '2-digit' };
+    const dateConfig = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: getTimezone(),
+    };
+    const minuteConfig = { hour: '2-digit', minute: '2-digit', timeZone: getTimezone() };
     const secondConfig = { ...minuteConfig, second: '2-digit' };
     switch (format) {
       case 'date':

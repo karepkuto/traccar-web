@@ -10,13 +10,13 @@ import {
   Typography,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
-import dayjs from 'dayjs';
 import { useTranslation } from '../../common/components/LocalizationProvider';
 import useReportStyles from '../common/useReportStyles';
 import SplitButton from '../../common/components/SplitButton';
 import SelectField from '../../common/components/SelectField';
 import { useRestriction } from '../../common/util/permissions';
 import { deviceEquality } from '../../common/util/deviceEquality';
+import { fromInputValue, nowInTimezone, toInputValue } from '../../common/util/timezone';
 
 export const updateReportParams = (searchParams, setSearchParams, key, values) => {
   const newParams = new URLSearchParams(searchParams);
@@ -58,9 +58,9 @@ const ReportFilter = ({ children, onShow, onExport, onSchedule, deviceType, load
   const to = searchParams.get('to');
   const [period, setPeriod] = useState('today');
   const [customFrom, setCustomFrom] = useState(() =>
-    dayjs().subtract(1, 'hour').locale('en').format('YYYY-MM-DDTHH:mm'),
+    toInputValue(nowInTimezone().subtract(1, 'hour')),
   );
-  const [customTo, setCustomTo] = useState(() => dayjs().locale('en').format('YYYY-MM-DDTHH:mm'));
+  const [customTo, setCustomTo] = useState(() => toInputValue(nowInTimezone()));
   const [selectedOption, setSelectedOption] = useState('json');
 
   const [description, setDescription] = useState();
@@ -74,6 +74,13 @@ const ReportFilter = ({ children, onShow, onExport, onSchedule, deviceType, load
       return true;
     }
     if (selectedOption === 'schedule' && (!description || !calendarId)) {
+      return true;
+    }
+    if (
+      selectedOption !== 'schedule' &&
+      period === 'custom' &&
+      !fromInputValue(customFrom).isBefore(fromInputValue(customTo))
+    ) {
       return true;
     }
     return loading;
@@ -107,34 +114,49 @@ const ReportFilter = ({ children, onShow, onExport, onSchedule, deviceType, load
   const showReport = () => {
     let selectedFrom;
     let selectedTo;
+    // Period boundaries follow the app timezone (default WIB), not the
+    // timezone of the phone or computer.
+    const now = nowInTimezone();
     switch (period) {
+      case 'lastHour':
+        selectedFrom = now.subtract(1, 'hour');
+        selectedTo = now;
+        break;
+      case 'last6Hours':
+        selectedFrom = now.subtract(6, 'hour');
+        selectedTo = now;
+        break;
+      case 'last24Hours':
+        selectedFrom = now.subtract(24, 'hour');
+        selectedTo = now;
+        break;
       case 'today':
-        selectedFrom = dayjs().startOf('day');
-        selectedTo = dayjs().endOf('day');
+        selectedFrom = now.startOf('day');
+        selectedTo = now.endOf('day');
         break;
       case 'yesterday':
-        selectedFrom = dayjs().subtract(1, 'day').startOf('day');
-        selectedTo = dayjs().subtract(1, 'day').endOf('day');
+        selectedFrom = now.subtract(1, 'day').startOf('day');
+        selectedTo = now.subtract(1, 'day').endOf('day');
         break;
       case 'thisWeek':
-        selectedFrom = dayjs().startOf('week');
-        selectedTo = dayjs().endOf('week');
+        selectedFrom = now.startOf('week');
+        selectedTo = now.endOf('week');
         break;
       case 'previousWeek':
-        selectedFrom = dayjs().subtract(1, 'week').startOf('week');
-        selectedTo = dayjs().subtract(1, 'week').endOf('week');
+        selectedFrom = now.subtract(1, 'week').startOf('week');
+        selectedTo = now.subtract(1, 'week').endOf('week');
         break;
       case 'thisMonth':
-        selectedFrom = dayjs().startOf('month');
-        selectedTo = dayjs().endOf('month');
+        selectedFrom = now.startOf('month');
+        selectedTo = now.endOf('month');
         break;
       case 'previousMonth':
-        selectedFrom = dayjs().subtract(1, 'month').startOf('month');
-        selectedTo = dayjs().subtract(1, 'month').endOf('month');
+        selectedFrom = now.subtract(1, 'month').startOf('month');
+        selectedTo = now.subtract(1, 'month').endOf('month');
         break;
       default:
-        selectedFrom = dayjs(customFrom, 'YYYY-MM-DDTHH:mm');
-        selectedTo = dayjs(customTo, 'YYYY-MM-DDTHH:mm');
+        selectedFrom = fromInputValue(customFrom);
+        selectedTo = fromInputValue(customTo);
         break;
     }
 
@@ -236,6 +258,9 @@ const ReportFilter = ({ children, onShow, onExport, onSchedule, deviceType, load
                 value={period}
                 onChange={(e) => setPeriod(e.target.value)}
               >
+                <MenuItem value="lastHour">{t('reportLastHour')}</MenuItem>
+                <MenuItem value="last6Hours">{t('reportLast6Hours')}</MenuItem>
+                <MenuItem value="last24Hours">{t('reportLast24Hours')}</MenuItem>
                 <MenuItem value="today">{t('reportToday')}</MenuItem>
                 <MenuItem value="yesterday">{t('reportYesterday')}</MenuItem>
                 <MenuItem value="thisWeek">{t('reportThisWeek')}</MenuItem>

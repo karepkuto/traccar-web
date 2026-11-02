@@ -11,6 +11,7 @@ import UpdateController from './UpdateController';
 import MotionController from './main/MotionController';
 import TermsDialog from './common/components/TermsDialog';
 import Loader from './common/components/Loader';
+import { setTimezone } from './common/util/timezone';
 import fetchOrThrow from './common/util/fetchOrThrow';
 
 const useStyles = makeStyles()(() => ({
@@ -37,6 +38,10 @@ const App = () => {
   const newServer = useSelector((state) => state.session.server.newServer);
   const termsUrl = useSelector((state) => state.session.server.attributes.termsUrl);
   const user = useSelector((state) => state.session.user);
+  const serverTimezone = useSelector((state) => state.session.server.attributes.timezone);
+
+  // Before children render, so every formatted time uses the same zone.
+  setTimezone(user?.attributes?.timezone || serverTimezone);
 
   const acceptTerms = useCatch(async () => {
     const response = await fetchOrThrow(`/api/users/${user.id}`, {
