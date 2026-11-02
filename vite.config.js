@@ -172,9 +172,9 @@ export default defineConfig(() => ({
         globPatterns: ['**/*.{js,css,html,woff,woff2,mp3}'],
       },
       manifest: {
-        short_name: '${title}',
-        name: '${description}',
-        theme_color: '${colorPrimary}',
+        short_name: 'Pantauku',
+        name: 'Pantauku',
+        theme_color: '#FF6A00',
         icons: [
           {
             src: 'pwa-64x64.png',

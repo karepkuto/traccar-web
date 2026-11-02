@@ -49,7 +49,7 @@ const LoginLayout = ({ children }) => {
     <main className={classes.root}>
       <div className={classes.sidebar}>
         {!useMediaQuery(theme.breakpoints.down('lg')) && (
-          <LogoImage color={theme.palette.secondary.contrastText} />
+          <LogoImage color={theme.palette.common.white} />
         )}
       </div>
       <Paper className={classes.paper}>
