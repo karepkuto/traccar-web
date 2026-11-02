@@ -11,13 +11,7 @@ import fetchOrThrow from '../../common/util/fetchOrThrow';
 // Shared layout for the "Koneksi" (relations) pages: says which record is
 // being edited, explains that changes save immediately, and offers a
 // Back button, like a typical admin-panel relation form.
-const ConnectionsLayout = ({
-  endpoint,
-  id,
-  breadcrumbs,
-  nameGetter = (it) => it.name,
-  children,
-}) => {
+const ConnectionsLayout = ({ endpoint, id, breadcrumbs, children }) => {
   const t = useTranslation();
   const navigate = useNavigate();
   const [name, setName] = useState('');
