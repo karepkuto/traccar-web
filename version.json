@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "490d030",
+  "gitHash": "d30ae59",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 21:23 WIB",
-  "commitMessage": "Add Resellers page (admin) under Business\n\n- Lists resellers (users with a user limit) with their number of\n  customers and devices\n- 'Manage customers' links customers to a reseller; only customers are\n  offered and a customer already handled by another reseller is\n  rejected (one customer, one reseller)\n- Create a new reseller, or promote an existing customer by setting a\n  customer limit (at least 1)\n- LinkField gains an optional option filter",
-  "buildTime": "2026-11-02 21:24 WIB",
-  "buildTimeIso": "2026-11-02T14:24:25.102Z"
+  "commitTime": "2026-11-02 21:27 WIB",
+  "commitMessage": "Make CRUD screens feel like a familiar admin panel\n\nShared components only, so every list and form keeps its flow:\n- 'Tambah Data' button at the top right next to the search box (falls\n  back to a labelled floating button when a page has no search bar)\n- Row actions as labelled 'Ubah' / 'Hapus' buttons on desktop and an\n  'Aksi' dropdown on phones\n- Delete asks for confirmation in a modal dialog instead of a snackbar\n- Forms get an 'Add data' / 'Edit data' heading, wider layout and\n  right-aligned Batal / Simpan buttons\n- Flash message after saving or deleting ('Data berhasil disimpan')\n- Bold, shaded table headers and row hover",
+  "buildTime": "2026-11-02 21:28 WIB",
+  "buildTimeIso": "2026-11-02T14:28:25.905Z"
 }
