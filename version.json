@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "2b673f9",
+  "gitHash": "e305b90",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 18:42 WIB",
-  "commitMessage": "Default language is Indonesian\n\nNew visitors see Indonesian regardless of browser language. A language\nchosen on the login screen or in preferences, and the user/server\n'language' attribute, still take priority.",
-  "buildTime": "2026-11-02 18:43 WIB",
-  "buildTimeIso": "2026-11-02T11:43:17.560Z"
+  "commitTime": "2026-11-02 18:51 WIB",
+  "commitMessage": "Add seeder for initial Pantauku accounts and device assignment\n\nscripts/seed-pantauku.py uses the Traccar REST API to create a direct\ncustomer (soka9), a reseller (tempeCorp) with its customer (soka23),\nand driver accounts, then links chosen devices and tags them with the\nbilling payer. Dry run by default; --apply writes. Credentials come\nfrom environment variables only.",
+  "buildTime": "2026-11-02 18:51 WIB",
+  "buildTimeIso": "2026-11-02T11:51:44.840Z"
 }
