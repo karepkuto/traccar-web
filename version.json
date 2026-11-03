@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "aefafae",
+  "gitHash": "d84e756",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 14:55 WIB",
-  "commitMessage": "Device card: clear 'Lokasi' and 'Bagikan' buttons; short notice for shared links\n\n- The ambiguous 'Lainnya' (three dots) button is replaced by 'Lokasi'\n  (menu 'Buka lokasi di': Google Maps, Apple Maps, Street View, the\n  user's navigation app, then Buat Geofence and live video for JT808\n  only) and a separate 'Bagikan' button.\n- People who open a shared location link (temporary, read-only account)\n  no longer get the full EULA: a short 'Lokasi yang Dibagikan' notice with\n  four points and one checkbox, remembered in the browser.\n- Docs updated.",
-  "buildTime": "2026-11-03 14:56 WIB",
-  "buildTimeIso": "2026-11-03T07:56:53.204Z"
+  "commitTime": "2026-11-03 14:58 WIB",
+  "commitMessage": "Replay trips: newest trip on top\n\nThe Perjalanan tab lists the day's trips newest first. Trip numbers and\nthe previous/next buttons keep chronological order, and the parking gap\nis shown below each trip. Docs updated.",
+  "buildTime": "2026-11-03 14:59 WIB",
+  "buildTimeIso": "2026-11-03T07:59:32.031Z"
 }
