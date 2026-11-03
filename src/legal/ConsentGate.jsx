@@ -35,7 +35,8 @@ const localConsentVersion = (user) => {
 };
 
 export const needsConsent = (user) => {
-  if (!user || user.administrator) {
+  // Shared-link viewers (temporary accounts) get the short ShareNotice instead.
+  if (!user || user.administrator || user.temporary) {
     return false;
   }
   if (user.attributes?.[CONSENT_ATTRIBUTES.version] === LEGAL_VERSION) {

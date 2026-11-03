@@ -14,6 +14,8 @@ import {
   TableCell,
   Menu,
   MenuItem,
+  ListSubheader,
+  Divider,
   CardMedia,
   Link,
   Avatar,
@@ -26,7 +28,8 @@ import RouteIcon from '@mui/icons-material/Route';
 import SendIcon from '@mui/icons-material/Send';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import PendingIcon from '@mui/icons-material/Pending';
+import MapIcon from '@mui/icons-material/Map';
+import ShareIcon from '@mui/icons-material/Share';
 
 import { useTranslation } from './LocalizationProvider';
 import RemoveDialog from './RemoveDialog';
@@ -360,11 +363,19 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
                   />
                 )}
                 <ActionButton
-                  icon={<PendingIcon />}
-                  label={t('statusMore')}
+                  icon={<MapIcon />}
+                  label={t('statusLocation')}
                   onClick={(e) => setAnchorEl(e.currentTarget)}
                   disabled={!position}
                 />
+                {!shareDisabled && !user.temporary && (
+                  <ActionButton
+                    icon={<ShareIcon />}
+                    label={t('sharedShare')}
+                    onClick={() => navigate(`/settings/device/${deviceId}/share`)}
+                    disabled={disableActions}
+                  />
+                )}
               </CardActions>
             </Card>
           </Rnd>
@@ -372,13 +383,7 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
       </div>
       {position && (
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-          <MenuItem
-            onClick={() => navigate(`/stream?deviceId=${deviceId}`)}
-            disabled={position.protocol !== 'jt808'}
-          >
-            {t('linkLiveVideo')}
-          </MenuItem>
-          {!readonly && <MenuItem onClick={handleGeofence}>{t('sharedCreateGeofence')}</MenuItem>}
+          <ListSubheader sx={{ lineHeight: '32px' }}>{t('statusOpenIn')}</ListSubheader>
           <MenuItem
             component="a"
             target="_blank"
@@ -411,9 +416,11 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
               {navigationAppTitle}
             </MenuItem>
           )}
-          {!shareDisabled && !user.temporary && (
-            <MenuItem onClick={() => navigate(`/settings/device/${deviceId}/share`)}>
-              <Typography color="secondary">{t('sharedShare')}</Typography>
+          {(!readonly || position.protocol === 'jt808') && <Divider />}
+          {!readonly && <MenuItem onClick={handleGeofence}>{t('sharedCreateGeofence')}</MenuItem>}
+          {position.protocol === 'jt808' && (
+            <MenuItem onClick={() => navigate(`/stream?deviceId=${deviceId}`)}>
+              {t('linkLiveVideo')}
             </MenuItem>
           )}
         </Menu>

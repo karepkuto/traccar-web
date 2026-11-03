@@ -22,7 +22,25 @@
 - Banner pengingat langganan: lihat [03 §3.8](03-langganan.md).
 
 ## 5.2 Kartu status perangkat
-Tombol berlabel: Putar Ulang, Perintah, Ubah, Hapus (**admin saja**), Lainnya.
+Tombol berlabel: Putar Ulang, Perintah, Ubah, Hapus (**admin saja**),
+**Lokasi** (menu "Buka lokasi di": Google Maps, Apple Maps, Street View,
+aplikasi navigasi pilihan pengguna; lalu Buat Geofence dan Video Langsung
+khusus protokol JT808), dan **Bagikan** (tidak tampil bila atribut server
+`disableShare` aktif atau bagi akun sementara).
+
+## 5.2a Tautan bagikan (share)
+- Membuat **akun sementara** di server (`temporary`, `readonly`, tertaut hanya
+  ke perangkat itu, `expirationTime` = batas tautan; perintah dan laporan
+  dimatikan kecuali diaktifkan di konfigurasi server) dan token bertanda tangan
+  yang berlaku sampai batas itu.
+- Penerima membuka tautan dan melihat pop-up **"Lokasi yang Dibagikan"** berisi
+  4 poin ketentuan ringkas, satu centang, dan tombol *Lihat Lokasi*
+  (`src/legal/ShareNotice.jsx`). Persetujuannya disimpan di browser
+  (`shareNotice:<userId>`), bukan di server, karena akun sementara bersifat
+  hanya-baca. EULA lengkap tidak ditampilkan untuk akun sementara.
+- Mencabut akses: hapus akun sementara di Pengguna (aktifkan *Sementara*).
+  Satu pengguna hanya bisa punya satu tautan aktif per perangkat; membagikan
+  ulang sebelum dihapus menghasilkan konflik.
 
 ## 5.3 Putar Ulang (Replay)
 - Kecepatan sampai **10x**, rentang waktu bisa dipotong, waktu dalam WIB.

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMediaQuery, useTheme } from '@mui/material';
@@ -12,6 +13,7 @@ import TermsDialog from './common/components/TermsDialog';
 import Loader from './common/components/Loader';
 import { setTimezone } from './common/util/timezone';
 import ConsentGate, { needsConsent } from './legal/ConsentGate';
+import ShareNotice, { needsShareNotice } from './legal/ShareNotice';
 import fetchOrThrow from './common/util/fetchOrThrow';
 
 const useStyles = makeStyles()(() => ({
@@ -34,6 +36,7 @@ const App = () => {
   const navigate = useNavigate();
 
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
+  const [shareNoticeAccepted, setShareNoticeAccepted] = useState(false);
 
   const newServer = useSelector((state) => state.session.server.newServer);
   const termsUrl = useSelector((state) => state.session.server.attributes.termsUrl);
@@ -79,6 +82,9 @@ const App = () => {
   }
   if (needsConsent(user)) {
     return <ConsentGate user={user} />;
+  }
+  if (needsShareNotice(user) && !shareNoticeAccepted) {
+    return <ShareNotice user={user} onAccept={() => setShareNoticeAccepted(true)} />;
   }
   return (
     <>

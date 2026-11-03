@@ -894,5 +894,7 @@
     "deviceClockOther": "Other",
     "deviceClockHelp": "Pick WIB when the tracker has no time zone setting and its positions are 7 hours ahead. Applies to new data after the device reconnects; old data is not changed. Not every GPS protocol uses this setting.",
     "deviceClockDetected": "The device clock is {n} hours ahead of the server. It probably sends local time; suggested: {zone}.",
-    "deviceClockUse": "Use"
+    "deviceClockUse": "Use",
+    "statusLocation": "Location",
+    "statusOpenIn": "Open location in"
 }

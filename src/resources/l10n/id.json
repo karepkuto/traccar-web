@@ -896,5 +896,7 @@
     "deviceClockOther": "Lainnya",
     "deviceClockHelp": "Pilih WIB kalau alat tidak punya pengaturan zona waktu dan waktu posisinya maju 7 jam. Berlaku untuk data baru setelah alat tersambung ulang ke server; data lama tidak berubah. Tidak semua protokol GPS memakai pengaturan ini.",
     "deviceClockDetected": "Jam alat terdeteksi {n} jam lebih cepat dari server. Kemungkinan alat mengirim jam lokal; disarankan {zone}.",
-    "deviceClockUse": "Pakai"
+    "deviceClockUse": "Pakai",
+    "statusLocation": "Lokasi",
+    "statusOpenIn": "Buka lokasi di"
 }
