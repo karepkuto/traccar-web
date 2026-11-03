@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "44bd9d0",
+  "gitHash": "4de3336",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 09:16 WIB",
-  "commitMessage": "Map screen: card-style device list and clearer device card\n\n- Device list items are rounded cards: status-coloured avatar with a\n  status dot, bold name, coloured status / last-seen text, subscription\n  countdown and chips for speed, engine ON/OFF and battery\n- Device card: avatar and status in the header, speed / engine /\n  battery chips, address with a pin icon, remaining details, and\n  labelled actions (Replay, Command, Edit, Delete, More)\n- Speeds default to km/h when no unit is configured (was knots)",
-  "buildTime": "2026-11-03 09:17 WIB",
-  "buildTimeIso": "2026-11-03T02:17:44.503Z"
+  "commitTime": "2026-11-03 09:19 WIB",
+  "commitMessage": "Forms: always-open titled sections instead of collapsible panels\n\n- Every form section (Wajib, Tambahan, Atribut, …) is shown open as a\n  bordered card with a bold title, like a classic admin form; section\n  headers no longer collapse\n- Sections that used to start collapsed (attributes, account) now start\n  open so nothing becomes unreachable\n- Speed unit selects on Account and Server show km/h when unset,\n  matching what the app displays",
+  "buildTime": "2026-11-03 09:20 WIB",
+  "buildTimeIso": "2026-11-03T02:20:27.721Z"
 }
