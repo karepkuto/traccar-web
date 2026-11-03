@@ -1,0 +1,1 @@
+import{K as e}from"./createSimplePaletteValueFilter-CM2TmgJi.js";import{A as t}from"./mui-uEXxZ_jQ.js";var n=e(),r=t((0,n.jsx)(`path`,{d:`M5 20h14v-2H5zM19 9h-4V3H9v6H5l7 7z`}),`Download`);export{r as t};

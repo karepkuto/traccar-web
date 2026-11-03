@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "fb05a94",
+  "gitHash": "1dfc50b",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 11:10 WIB",
-  "commitMessage": "Move customers between resellers, audit patterns, activation reminders, EULA update\n\n- Admin-only 'Pindahkan Pelanggan': move one customer (Users page) or all\n  or selected customers of a reseller (Resellers page) to another\n  reseller or to direct management. Moves the reseller->customer links,\n  the reseller->device links of those customers' devices (and optionally\n  the reseller's unassigned stock), and the billed-to marker. Payment\n  history is kept.\n- 'Perlu Diperiksa' reads the server audit log (30 days): devices or users\n  deleted by non-admins, devices created again after a deletion (new\n  installation test), 5+ failed logins from one IP in a day, and who last\n  edited each flagged device. New issue: installation test running for\n  more than 24 hours without activation (1x24h activation promise).\n- Reminder banner above the device list: admins see devices waiting for\n  activation and those past 24 hours; resellers see devices needing\n  activation or extension. 'Lihat' applies the matching filter.\n- EULA 2026-11-03: engine cut-off only on request and at the user's risk,\n  support access by admin/reseller is logged, 3-day installation test and\n  1x24h activation, activity logging, reseller payment per device, ban on\n  manipulation, and the right to move customers when a partnership ends.",
-  "buildTime": "2026-11-03 11:11 WIB",
-  "buildTimeIso": "2026-11-03T04:11:49.418Z"
+  "commitTime": "2026-11-03 11:42 WIB",
+  "commitMessage": "Readable audit log for administrators\n\nLaporan > Audit now turns the server audit log into sentences such as\n'Reseller Solo mengubah perangkat Avanza Budi' with the actor's name and\naccount type, time in WIB grouped by day, and the IP address. Linking\nshows both sides ('menautkan perangkat X ke pengguna Y'), reports show\ntheir type and period, deleted objects are marked as such.\n\n- Filters: free-text search, actor, activity group (sign-ins, data\n  changes, access links, commands, reports) and 'sensitive only'.\n- Sensitive entries are highlighted: deletions and failed sign-ins in\n  red; commands, link changes, server settings, counter resets, API\n  tokens and device edits by non-admins in orange.\n- Export to Excel, 150 entries at a time with 'show more', and a layout\n  that works the same on phones and desktop.",
+  "buildTime": "2026-11-03 11:43 WIB",
+  "buildTimeIso": "2026-11-03T04:43:39.578Z"
 }
