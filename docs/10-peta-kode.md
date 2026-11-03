@@ -29,3 +29,8 @@
 | Fitur yang disembunyikan | `src/common/util/useFeatures.js` |
 | Tabel di HP | `src/common/components/MobileTableEnhancer.jsx`, `src/common/theme/components.js` |
 | Deploy | `.github/workflows/deploy.yml`, `DEPLOY.md` |
+| Privasi reseller | `src/common/util/privacy.js` |
+| Izin impersonate | `src/common/util/impersonation.js`, `src/settings/components/ImpersonationGrantsDialog.jsx` |
+| Tautan bagikan | `src/settings/SharePage.jsx`, `src/legal/ShareNotice.jsx` |
+| Jam GPS | `src/settings/components/DeviceTimezoneField.jsx` |
+| Modul lain | lihat [11-modul-lainnya.md](11-modul-lainnya.md) |

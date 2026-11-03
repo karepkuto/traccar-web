@@ -23,6 +23,7 @@ cukup membaca folder ini untuk memahami cara kerja aplikasi.
 | [08-keterbatasan-dan-risiko.md](08-keterbatasan-dan-risiko.md) | Hal yang tidak bisa dijaga aplikasi dan cara memitigasinya |
 | [09-riwayat-perubahan.md](09-riwayat-perubahan.md) | Catatan perubahan per commit |
 | [10-peta-kode.md](10-peta-kode.md) | File mana mengatur apa |
+| [11-modul-lainnya.md](11-modul-lainnya.md) | Modul bawaan Traccar lainnya: fungsi dan penyesuaian Pantauku |
 
 ## Istilah
 
