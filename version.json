@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "bef052f",
+  "gitHash": "aefafae",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 14:46 WIB",
-  "commitMessage": "Device form: GPS clock time zone (decoder.timezone) with radio buttons\n\nSome trackers have no time zone setting and send local time, so every\nposition is 7 hours ahead. The device form gets a 'Jam GPS' section with\nradio buttons for UTC (default, attribute removed), WIB, WITA and WIT,\nstored as the standard Traccar device attribute 'decoder.timezone' that\nthe server applies when decoding (e.g. GT06 reads it at device login, so\nit takes effect after the device reconnects). When the last position's\nfix time is 7/8/9 hours ahead of the server time and nothing is set, a\nsuggestion with a 'Pakai' button appears. Docs updated.",
-  "buildTime": "2026-11-03 14:47 WIB",
-  "buildTimeIso": "2026-11-03T07:47:34.627Z"
+  "commitTime": "2026-11-03 14:55 WIB",
+  "commitMessage": "Device card: clear 'Lokasi' and 'Bagikan' buttons; short notice for shared links\n\n- The ambiguous 'Lainnya' (three dots) button is replaced by 'Lokasi'\n  (menu 'Buka lokasi di': Google Maps, Apple Maps, Street View, the\n  user's navigation app, then Buat Geofence and live video for JT808\n  only) and a separate 'Bagikan' button.\n- People who open a shared location link (temporary, read-only account)\n  no longer get the full EULA: a short 'Lokasi yang Dibagikan' notice with\n  four points and one checkbox, remembered in the browser.\n- Docs updated.",
+  "buildTime": "2026-11-03 14:56 WIB",
+  "buildTimeIso": "2026-11-03T07:56:53.204Z"
 }
