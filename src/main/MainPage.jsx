@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useCallback, useEffect } from 'react';
+import { lazy, Suspense, useState, useCallback, useEffect, useMemo } from 'react';
 import { Paper } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTheme } from '@mui/material/styles';
@@ -12,6 +12,10 @@ import usePersistedState from '../common/util/usePersistedState';
 import EventsDrawer from './EventsDrawer';
 import useFilter from './useFilter';
 import MainToolbar from './MainToolbar';
+import FilterBar from './FilterBar';
+import useOwnerOptions from './useOwnerOptions';
+import { EMPTY_FILTER, normalizeFilter } from './filterLogic';
+import { useManager } from '../common/util/permissions';
 import { useAttributePreference } from '../common/util/preferences';
 
 const MainMap = lazy(() => import('./MainMap'));
@@ -83,11 +87,8 @@ const MainPage = () => {
   const [filteredDevices, setFilteredDevices] = useState([]);
 
   const [keyword, setKeyword] = useState('');
-  const [filter, setFilter] = usePersistedState('deviceFilter', {
-    statuses: [],
-    groups: [],
-    geofences: [],
-  });
+  const [storedFilter, setFilter] = usePersistedState('deviceFilter', EMPTY_FILTER);
+  const filter = useMemo(() => normalizeFilter(storedFilter), [storedFilter]);
   const [filterSort, setFilterSort] = usePersistedState('filterSort', '');
   const [filterMap, setFilterMap] = usePersistedState('filterMap', false);
 
@@ -102,6 +103,14 @@ const MainPage = () => {
     }
   }, [desktop, mapOnSelect, selectedDeviceId]);
 
+  const manager = useManager();
+  const ownerOptions = useOwnerOptions(manager);
+
+  const resetFilter = useCallback(() => {
+    setFilter(EMPTY_FILTER);
+    setFilterSort('');
+  }, [setFilter, setFilterSort]);
+
   useFilter(
     keyword,
     filter,
@@ -110,6 +119,7 @@ const MainPage = () => {
     positions,
     setFilteredDevices,
     setFilteredPositions,
+    ownerOptions,
   );
 
   return (
@@ -137,6 +147,18 @@ const MainPage = () => {
             setFilterSort={setFilterSort}
             filterMap={filterMap}
             setFilterMap={setFilterMap}
+            ownerOptions={ownerOptions}
+            manager={manager}
+            onReset={resetFilter}
+          />
+          <FilterBar
+            filter={filter}
+            setFilter={setFilter}
+            filterSort={filterSort}
+            filteredCount={filteredDevices.length}
+            ownerOptions={ownerOptions}
+            manager={manager}
+            onReset={resetFilter}
           />
         </Paper>
         <div className={classes.middle}>
