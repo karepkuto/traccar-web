@@ -883,5 +883,6 @@
     "resellerRepairDone": "{n} device link(s) to resellers added.",
     "deviceOwnerSaved": "Device owner saved.",
     "deviceNoCustomer": "No customer",
-    "deviceOwnerHelp": "One device belongs to one customer. That customer's reseller automatically gets access; the previous owner's reseller loses it."
+    "deviceOwnerHelp": "One device belongs to one customer. That customer's reseller automatically gets access; the previous owner's reseller loses it.",
+    "usersConsentLimited": "Accepted (read-only)"
 }

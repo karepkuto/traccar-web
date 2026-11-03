@@ -885,5 +885,6 @@
     "resellerRepairDone": "{n} tautan perangkat ke reseller ditambahkan.",
     "deviceOwnerSaved": "Pemilik perangkat disimpan.",
     "deviceNoCustomer": "Tanpa pelanggan",
-    "deviceOwnerHelp": "Satu perangkat milik satu pelanggan. Reseller pelanggan ini otomatis ikut mendapat akses ke perangkat; reseller pemilik lama kehilangan aksesnya."
+    "deviceOwnerHelp": "Satu perangkat milik satu pelanggan. Reseller pelanggan ini otomatis ikut mendapat akses ke perangkat; reseller pemilik lama kehilangan aksesnya.",
+    "usersConsentLimited": "Setuju (hanya-baca)"
 }

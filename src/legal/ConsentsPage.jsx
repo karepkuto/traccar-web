@@ -32,6 +32,10 @@ const statusOf = (user) => {
   if (version) {
     return { label: 'Versi lama', color: 'warning' };
   }
+  if (user.readonly && user.attributes?.termsAccepted) {
+    // Read-only accounts cannot store the detailed record on the server.
+    return { label: 'Setuju (akun hanya-baca)', color: 'info' };
+  }
   return { label: 'Belum', color: 'error' };
 };
 

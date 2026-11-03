@@ -20,10 +20,35 @@ import fetchOrThrow from '../common/util/fetchOrThrow';
 import { CONSENT_ATTRIBUTES, LEGAL_VERSION, getConsentItems } from './legalContent';
 import LegalDocuments from './LegalDocuments';
 
-export const needsConsent = (user) =>
-  Boolean(user) &&
-  !user.administrator &&
-  user.attributes?.[CONSENT_ATTRIBUTES.version] !== LEGAL_VERSION;
+// Read-only accounts (user or server "Hanya-baca") may only change the
+// 'termsAccepted' attribute of their own account: the server rejects any
+// other edit. For them the full record is kept on this device and the
+// server keeps termsAccepted = true (plus the audit log entry).
+const localKey = (user) => `legalConsent:${user.id}`;
+
+const localConsentVersion = (user) => {
+  try {
+    return JSON.parse(window.localStorage.getItem(localKey(user)) || 'null')?.version;
+  } catch {
+    return null;
+  }
+};
+
+export const needsConsent = (user) => {
+  if (!user || user.administrator) {
+    return false;
+  }
+  if (user.attributes?.[CONSENT_ATTRIBUTES.version] === LEGAL_VERSION) {
+    return false;
+  }
+  return !(user.attributes?.termsAccepted && localConsentVersion(user) === LEGAL_VERSION);
+};
+
+// Server errors arrive as a Java stack trace; show only the first line.
+const shortError = (message) =>
+  String(message || '')
+    .split(/\n| at /)[0]
+    .replace(/^java\.lang\.\w+:\s*/, '');
 
 export const isManagerUser = (user) => Boolean(user) && (user.userLimit || 0) !== 0;
 
@@ -58,14 +83,42 @@ const ConsentGate = ({ user }) => {
         [CONSENT_ATTRIBUTES.role]: manager ? 'reseller' : 'user',
         [CONSENT_ATTRIBUTES.userAgent]: navigator.userAgent.slice(0, 250),
       };
-      const response = await fetchOrThrow(`/api/users/${user.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...user, attributes }),
-      });
+      const save = (body) =>
+        fetchOrThrow(`/api/users/${user.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+      let response;
+      try {
+        response = await save({ ...user, attributes });
+      } catch (e) {
+        if (!String(e.message).includes('Write access denied')) {
+          throw e;
+        }
+        // Read-only account: the server accepts only termsAccepted.
+        response = await save({
+          ...user,
+          attributes: { ...user.attributes, termsAccepted: true },
+        });
+        try {
+          window.localStorage.setItem(
+            localKey(user),
+            JSON.stringify({
+              version: LEGAL_VERSION,
+              at: attributes[CONSENT_ATTRIBUTES.acceptedAt],
+              items: attributes[CONSENT_ATTRIBUTES.items],
+            }),
+          );
+        } catch {
+          // Storage unavailable: the gate will ask again next time.
+        }
+      }
       dispatch(sessionActions.updateUser(await response.json()));
     } catch (e) {
-      setError(e.message || 'Gagal menyimpan persetujuan.');
+      setError(
+        `Gagal menyimpan persetujuan: ${shortError(e.message) || 'kesalahan tidak diketahui'}. Hubungi admin.`,
+      );
       setSaving(false);
     }
   };

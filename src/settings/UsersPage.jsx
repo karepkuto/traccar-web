@@ -66,7 +66,8 @@ const consentStatus = (user) => {
   if (user.administrator) return 'na';
   const version = user.attributes?.[CONSENT_ATTRIBUTES.version];
   if (version === LEGAL_VERSION) return 'ok';
-  return version ? 'old' : 'none';
+  if (version) return 'old';
+  return user.readonly && user.attributes?.termsAccepted ? 'limited' : 'none';
 };
 
 const initials = (name) =>
@@ -250,6 +251,7 @@ const UsersPage = () => {
     const config = {
       ok: { color: 'success', label: t('usersConsentOk') },
       old: { color: 'warning', label: t('usersConsentOld') },
+      limited: { color: 'info', label: t('usersConsentLimited') },
       none: { color: 'default', label: t('usersConsentNone') },
     }[consent];
     return <Chip size="small" variant="outlined" color={config.color} label={config.label} />;

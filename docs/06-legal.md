@@ -10,6 +10,14 @@ UU 27/2022 PDP, UU ITE).
 - Persetujuan disimpan di atribut pengguna: `legalConsentVersion`,
   `legalConsentAt`, `legalConsentItems`, `legalConsentRole`,
   `legalConsentUserAgent`.
+- **Akun Hanya-baca** (`readonly` di akun atau server): server hanya
+  mengizinkan akun itu mengubah atribut `termsAccepted`. Saat setuju, aplikasi
+  mencoba menyimpan rekaman lengkap; kalau ditolak ("Write access denied"),
+  aplikasi menyimpan `termsAccepted = true` di server dan rincian (versi, waktu,
+  butir) di browser (`localStorage` kunci `legalConsent:<userId>`). Statusnya
+  tampil sebagai "Setuju (hanya-baca)". Bukti ini lebih lemah (tanpa versi di
+  server, dan diminta ulang di perangkat lain), jadi sebaiknya akun pelanggan
+  biasa tidak diberi Hanya-baca.
 - Admin melihat rekap di Pengaturan → Bisnis → **Persetujuan**, dan status per
   akun di kolom *Persetujuan* halaman Pengguna.
 - Halaman publik dokumen legal tersedia (LegalPage).

@@ -11,4 +11,5 @@
 | Riwayat pembayaran sekitar 12 entri per perangkat | Arsip lama terpotong | Ekspor rutin |
 | Tautan yang dibuat di luar aplikasi tidak mengikuti aturan akses reseller | Reseller tidak melihat perangkat pelanggannya | *Perbaiki Akses Perangkat* |
 | Hanya satu admin | Akun bermasalah = bisnis berhenti | 2FA + kode cadangan; pertimbangkan admin cadangan |
+| Akun Hanya-baca tidak bisa menyimpan rekaman persetujuan lengkap di server | Bukti persetujuan lemah, diminta ulang di perangkat lain | Hindari Hanya-baca untuk pelanggan biasa; lihat [06](06-legal.md) |
 | Teks legal masih draf | Risiko hukum | Tinjauan ahli hukum |
