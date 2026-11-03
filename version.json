@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "0c17a45",
+  "gitHash": "f25264f",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 09:44 WIB",
-  "commitMessage": "Simpler user / reseller form with Laravel-style validation\n\nUser form:\n- Only the essentials up front: name, login email, password, phone,\n  and an 'Account type & limits' card (Customer / Reseller /\n  Administrator, customer limit for resellers, device limit, optional\n  account expiration, disable account)\n- Map preferences, location, restrictions, token and attributes moved\n  behind 'Show advanced settings'\n- 'New reseller' opens the form with Reseller preselected (limit 10)\n- Account expiration can be left empty (no limit) instead of 2099\n\nAll forms:\n- Save stays clickable; pressing it on an invalid form shows a red\n  summary at the top and keeps the user on the page\n- User form shows field errors under the inputs (required, password at\n  least 6 characters, reseller customer limit)",
-  "buildTime": "2026-11-03 09:45 WIB",
-  "buildTimeIso": "2026-11-03T02:45:40.525Z"
+  "commitTime": "2026-11-03 09:53 WIB",
+  "commitMessage": "Apply required markers, Save-time validation and advanced toggle to all settings forms\n\nDevice, group, geofence, maintenance, calendar, computed attribute,\nnotification and saved command forms now mark required fields, show red\nerrors when Simpan is pressed on an invalid form, and hide attributes and\nextra sections behind 'Tampilkan pengaturan lanjutan'.",
+  "buildTime": "2026-11-03 09:54 WIB",
+  "buildTimeIso": "2026-11-03T02:54:48.011Z"
 }

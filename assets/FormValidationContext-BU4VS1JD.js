@@ -1,0 +1,1 @@
+import{i as e}from"./rolldown-runtime-Dd_uD5pT.js";import{lt as t}from"./createSimplePaletteValueFilter-CM2TmgJi.js";var n=e(t(),1),r=(0,n.createContext)({submitted:!1,showAdvanced:!0}),i=()=>(0,n.use)(r).submitted,a=()=>(0,n.use)(r).showAdvanced;export{i as n,a as r,r as t};
