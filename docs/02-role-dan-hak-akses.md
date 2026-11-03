@@ -25,7 +25,12 @@ dibuat; strukturnya disiapkan agar bisa ditambahkan nanti.
 - `readonly` (Hanya-baca) dan `disableReports` tetap opsional per akun.
 - Memilih jenis akun di form pengguna otomatis menyetel preset ini, dan
   centangannya dikunci.
-- Akun lama dirapikan dengan tombol **Samakan Hak Akses** di bawah tabel Pengguna.
+- Tombol **Samakan Hak Akses** (bawah tabel Pengguna, admin) melakukan dua hal:
+  menyamakan preset role semua akun non-admin, **dan** melengkapi tautan
+  reseller ke perangkat pelanggannya (sama dengan *Perbaiki Akses Perangkat*
+  di halaman Reseller). Dialognya juga memperingatkan pelanggan yang
+  berstatus Hanya-baca (tidak diubah otomatis, karena bisa jadi akun penonton
+  yang disengaja). Jalankan setelah impor data atau perubahan di luar aplikasi.
 - `deviceLimit` dan `userLimit` hanya bisa diubah admin (aturan server).
   Pelanggan yang dibuat reseller otomatis mendapat batas 0 dari server.
 

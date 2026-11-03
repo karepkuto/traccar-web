@@ -813,8 +813,8 @@
     "userRoleSync": "Sync permissions",
     "userRoleSyncTitle": "Sync permissions with account types?",
     "userRoleSyncBody": "{n} account(s) have permissions that do not match their account type. They will be corrected.",
-    "userRoleSyncNone": "All accounts already match their account type.",
-    "userRoleSyncDone": "{n} account(s) corrected.",
+    "userRoleSyncNone": "All accounts already match their account type preset.",
+    "userRoleSyncDone": "{n} account(s) synced, {links} reseller device link(s) added.",
     "filterTitle": "Filter & Sort",
     "filterOwner": "Owner",
     "filterOwnerHelpAdmin": "Pick a reseller to see all their customers' devices, or pick a customer.",
@@ -931,5 +931,7 @@
     "grant2h": "2 hours",
     "grantRequest": "Request impersonation permission",
     "grantRequestMessage": "Hello Pantauku admin, I am {reseller} and ask permission to impersonate customer account {customer} for support at the customer's request.",
-    "grantRequestCopied": "Request message copied. Send it to the admin."
+    "grantRequestCopied": "Request message copied. Send it to the admin.",
+    "userRoleSyncLinks": "Reseller access to their customers' devices is also checked and completed.",
+    "userRoleSyncReadonly": "{n} customer(s) are read-only (not changed automatically). Their EULA consent cannot be fully recorded on the server; untick read-only unless they are viewer accounts:"
 }

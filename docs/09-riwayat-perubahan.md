@@ -6,7 +6,8 @@ Setiap commit yang mengubah perilaku aplikasi **wajib** menambah baris di sini
 
 | Commit | Tanggal | Perubahan |
 |---|---|---|
-| (commit ini) | 2026-11-03 | Impersonate oleh reseller hanya dengan izin admin per pelanggan + batas waktu; tombol *Minta izin*; jejak impersonate di Audit |
+| (commit ini) | 2026-11-03 | Perbaikan: status persetujuan akun Hanya-baca tidak lagi "Versi lama"; *Samakan Hak Akses* sekaligus melengkapi akses perangkat reseller dan memperingatkan pelanggan Hanya-baca |
+| `04ceeb4` | 2026-11-03 | Impersonate oleh reseller hanya dengan izin admin per pelanggan + batas waktu; tombol *Minta izin*; jejak impersonate di Audit |
 | `c7cc4b1` | 2026-11-03 | Privasi reseller: perangkat milik pelanggan hanya tampil status dan langganan (tanpa lokasi, riwayat, laporan, perintah, bagikan); perangkat stok tetap penuh |
 | `cccc99f` | 2026-11-03 | Bagikan: bawaan 24 jam dengan pilihan cepat, tombol Salin/WhatsApp, daftar *Tautan Aktif* dengan tombol Cabut (admin), pesan jelas saat tautan sudah ada; akun sementara tidak melihat Putar Ulang, Perintah, Ubah, maupun Laporan |
 | `d84e756` | 2026-11-03 | Replay tab Perjalanan: urutan terbaru di atas (nomor dan tombol sebelumnya/berikutnya tetap kronologis) |

@@ -15,7 +15,9 @@ UU 27/2022 PDP, UU ITE).
   mencoba menyimpan rekaman lengkap; kalau ditolak ("Write access denied"),
   aplikasi menyimpan `termsAccepted = true` di server dan rincian (versi, waktu,
   butir) di browser (`localStorage` kunci `legalConsent:<userId>`). Statusnya
-  tampil sebagai "Setuju (hanya-baca)". Bukti ini lebih lemah (tanpa versi di
+  tampil sebagai "Setuju (hanya-baca)". Status ini diperiksa **sebelum**
+  "Versi lama", karena versi di server tidak bisa diperbarui oleh akun itu.
+  Hanya-baca di level server juga dihitung. Bukti ini lebih lemah (tanpa versi di
   server, dan diminta ulang di perangkat lain), jadi sebaiknya akun pelanggan
   biasa tidak diberi Hanya-baca.
 - Admin melihat rekap di Pengaturan → Bisnis → **Persetujuan**, dan status per

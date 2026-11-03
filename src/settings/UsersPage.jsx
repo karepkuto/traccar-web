@@ -2,6 +2,7 @@ import { useMemo, useReducer, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import {
+  Alert,
   Avatar,
   Box,
   Button,
@@ -32,6 +33,7 @@ import TransferDialog from './components/TransferDialog';
 import { useSelector } from 'react-redux';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { activeGrant, recordImpersonation } from '../common/util/impersonation';
+import { repairResellerAccess } from '../common/util/resellerAccess';
 import { useCatch, useAsyncTask } from '../reactHelper';
 import { formatTime } from '../common/util/formatter';
 import { useTranslation } from '../common/components/LocalizationProvider';
@@ -65,12 +67,15 @@ const accountStatus = (user) => {
   return 'active';
 };
 
-const consentStatus = (user) => {
+// Read-only accounts (account or server "Hanya-baca") can only store
+// termsAccepted on the server; their version stays in their browser, so a
+// stored older version does not mean they did not agree again.
+const consentStatus = (user, serverReadonly) => {
   if (user.administrator) return 'na';
   const version = user.attributes?.[CONSENT_ATTRIBUTES.version];
   if (version === LEGAL_VERSION) return 'ok';
-  if (version) return 'old';
-  return user.readonly && user.attributes?.termsAccepted ? 'limited' : 'none';
+  if ((user.readonly || serverReadonly) && user.attributes?.termsAccepted) return 'limited';
+  return version ? 'old' : 'none';
 };
 
 const initials = (name) =>
@@ -102,6 +107,7 @@ const UsersPage = () => {
   const manager = useManager();
   const admin = useAdministrator();
 
+  const serverReadonly = useSelector((state) => state.session.server.readonly);
   const [reloadKey, reload] = useReducer((k) => k + 1, 0);
   const [items, setItems] = useState(null);
   const [managerOf, setManagerOf] = useState(() => new Map());
@@ -177,11 +183,11 @@ const UsersPage = () => {
           user,
           role,
           status: accountStatus(user),
-          consent: consentStatus(user),
+          consent: consentStatus(user, serverReadonly),
           info: infoText(user, role),
         };
       });
-  }, [items, temporary, managerOf, customerCount, t]);
+  }, [items, temporary, managerOf, customerCount, t, serverReadonly]);
 
   const counts = useMemo(() => {
     const result = { all: rows.length };
@@ -325,8 +331,16 @@ const UsersPage = () => {
   const [syncTargets, setSyncTargets] = useState(null);
   const [syncMessage, setSyncMessage] = useState(null);
 
+  // One button for everything role-related: role presets on the accounts
+  // and the reseller -> customer device links (see util/resellerAccess).
+  const [syncing, setSyncing] = useState(false);
+  const [readonlyCustomers, setReadonlyCustomers] = useState([]);
+
   const handleSyncCheck = useCatch(async () => {
     const users = await (await fetchOrThrow('/api/users')).json();
+    setReadonlyCustomers(
+      users.filter((user) => getUserRole(user) === ROLES.CUSTOMER && user.readonly),
+    );
     setSyncTargets(
       users.filter(
         (user) => getUserRole(user) !== ROLES.ADMIN && roleMismatches(user, { admin: true }).length,
@@ -336,17 +350,25 @@ const UsersPage = () => {
 
   const handleSyncApply = useCatch(async () => {
     const targets = syncTargets;
-    setSyncTargets(null);
-    await Promise.all(
-      targets.map((user) =>
-        fetchOrThrow(`/api/users/${user.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(applyRolePreset(user, { admin: true })),
-        }),
-      ),
-    );
-    setSyncMessage(t('userRoleSyncDone').replace('{n}', targets.length));
+    setSyncing(true);
+    try {
+      await Promise.all(
+        targets.map((user) =>
+          fetchOrThrow(`/api/users/${user.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(applyRolePreset(user, { admin: true })),
+          }),
+        ),
+      );
+      const links = await repairResellerAccess();
+      setSyncMessage(
+        t('userRoleSyncDone').replace('{n}', targets.length).replace('{links}', links),
+      );
+    } finally {
+      setSyncing(false);
+      setSyncTargets(null);
+    }
     reload();
   });
 
@@ -549,19 +571,30 @@ const UsersPage = () => {
       <Dialog open={Boolean(syncTargets)} onClose={() => setSyncTargets(null)} maxWidth="xs">
         <DialogTitle>{t('userRoleSyncTitle')}</DialogTitle>
         <DialogContent>
-          {syncTargets?.length
-            ? `${t('userRoleSyncBody').replace('{n}', syncTargets.length)} ${syncTargets
-                .map((user) => user.name)
-                .join(', ')}`
-            : t('userRoleSyncNone')}
+          <Typography variant="body2" sx={{ mb: 1.5 }}>
+            {syncTargets?.length
+              ? `${t('userRoleSyncBody').replace('{n}', syncTargets.length)} ${syncTargets
+                  .map((user) => user.name)
+                  .join(', ')}`
+              : t('userRoleSyncNone')}
+          </Typography>
+          <Typography variant="body2" sx={{ mb: 1.5 }}>
+            {t('userRoleSyncLinks')}
+          </Typography>
+          {readonlyCustomers.length > 0 && (
+            <Alert severity="warning">
+              {t('userRoleSyncReadonly').replace('{n}', readonlyCustomers.length)}{' '}
+              {readonlyCustomers.map((user) => user.name).join(', ')}
+            </Alert>
+          )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setSyncTargets(null)}>{t('sharedCancel')}</Button>
-          {Boolean(syncTargets?.length) && (
-            <Button variant="contained" onClick={handleSyncApply}>
-              {t('userRoleSync')}
-            </Button>
-          )}
+          <Button onClick={() => setSyncTargets(null)} disabled={syncing}>
+            {t('sharedCancel')}
+          </Button>
+          <Button variant="contained" onClick={handleSyncApply} disabled={syncing}>
+            {t('userRoleSync')}
+          </Button>
         </DialogActions>
       </Dialog>
       <Snackbar

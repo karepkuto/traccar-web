@@ -17,11 +17,12 @@ import TableShimmer from '../common/components/TableShimmer';
 import useSettingsStyles from '../settings/common/useSettingsStyles';
 import { useAsyncTask } from '../reactHelper';
 import { formatTime } from '../common/util/formatter';
+import { useSelector } from 'react-redux';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 import exportExcel from '../common/util/exportExcel';
 import { CONSENT_ATTRIBUTES, LEGAL_VERSION } from './legalContent';
 
-const statusOf = (user) => {
+const statusOf = (user, serverReadonly) => {
   if (user.administrator) {
     return { label: 'Admin', color: 'default' };
   }
@@ -29,18 +30,20 @@ const statusOf = (user) => {
   if (version === LEGAL_VERSION) {
     return { label: 'Setuju', color: 'success' };
   }
+  if ((user.readonly || serverReadonly) && user.attributes?.termsAccepted) {
+    // Read-only accounts cannot store the detailed record (or a newer
+    // version) on the server; checked before "old version" on purpose.
+    return { label: 'Setuju (akun hanya-baca)', color: 'info' };
+  }
   if (version) {
     return { label: 'Versi lama', color: 'warning' };
-  }
-  if (user.readonly && user.attributes?.termsAccepted) {
-    // Read-only accounts cannot store the detailed record on the server.
-    return { label: 'Setuju (akun hanya-baca)', color: 'info' };
   }
   return { label: 'Belum', color: 'error' };
 };
 
 // Consent records of all users visible to the admin / reseller.
 const ConsentsPage = () => {
+  const serverReadonly = useSelector((state) => state.session.server.readonly);
   const { classes } = useSettingsStyles();
   const theme = useTheme();
 
@@ -74,7 +77,7 @@ const ConsentsPage = () => {
     const data = rows.map((item) => ({
       Nama: item.name,
       Email: item.email,
-      Status: statusOf(item).label,
+      Status: statusOf(item, serverReadonly).label,
       Peran: item.attributes?.[CONSENT_ATTRIBUTES.role] || '',
       Versi: item.attributes?.[CONSENT_ATTRIBUTES.version] || '',
       'Waktu Setuju (WIB)': formatTime(item.attributes?.[CONSENT_ATTRIBUTES.acceptedAt]),
@@ -106,7 +109,7 @@ const ConsentsPage = () => {
             <TableShimmer columns={6} />
           ) : (
             rows.map((item) => {
-              const status = statusOf(item);
+              const status = statusOf(item, serverReadonly);
               return (
                 <TableRow key={item.id}>
                   <TableCell>{item.name}</TableCell>
