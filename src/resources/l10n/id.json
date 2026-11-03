@@ -841,5 +841,22 @@
     "filterShowing": "Menampilkan {n} dari {total} perangkat",
     "filterSortedBy": "Urut:",
     "filterReset": "Reset",
-    "filterApply": "Tampilkan {n} perangkat"
+    "filterApply": "Tampilkan {n} perangkat",
+    "transferTitle": "Pindahkan Pelanggan",
+    "transferCustomerAction": "Pindah reseller",
+    "transferFrom": "Dari",
+    "transferTo": "Pindahkan ke",
+    "transferDirect": "Dikelola langsung (Admin)",
+    "transferSelectAll": "Semua pelanggan ({n})",
+    "transferStock": "Pindahkan juga {n} perangkat stok yang belum ditautkan ke pelanggan",
+    "transferNote": "Akses reseller lama ke pelanggan dan perangkatnya dicabut, lalu diberikan ke tujuan. Riwayat pembayaran tetap; tagihan berikutnya ditujukan ke tujuan baru.",
+    "transferAction": "Pindahkan",
+    "transferDone": "{customers} pelanggan dan {devices} perangkat dipindahkan ke {target}.",
+    "transferClose": "Tutup",
+    "transferNoCustomers": "Reseller ini belum punya pelanggan.",
+    "attentionAdmin": "{n} perangkat menunggu aktivasi",
+    "attentionAdminOverdue": "{n} perangkat menunggu aktivasi · {late} lewat 24 jam",
+    "attentionReseller": "{n} perangkat perlu aktivasi/perpanjangan",
+    "attentionView": "Lihat",
+    "attentionResellerLocked": "{n} perangkat perlu aktivasi/perpanjangan · {locked} terkunci"
 }

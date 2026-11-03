@@ -18,6 +18,8 @@ import {
 } from '@mui/material';
 import LoginIcon from '@mui/icons-material/Login';
 import LinkIcon from '@mui/icons-material/Link';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import TransferDialog from './components/TransferDialog';
 import { useCatch, useAsyncTask, useScrollToLoad, pageSize } from '../reactHelper';
 import { formatBoolean, formatTime } from '../common/util/formatter';
 import { useTranslation } from '../common/components/LocalizationProvider';
@@ -27,7 +29,7 @@ import CollectionFab from './components/CollectionFab';
 import CollectionActions from './components/CollectionActions';
 import TableShimmer from '../common/components/TableShimmer';
 import { useAdministrator, useManager } from '../common/util/permissions';
-import { applyRolePreset, getUserRole, roleMismatches } from '../common/util/roles';
+import { ROLES, applyRolePreset, getUserRole, roleMismatches } from '../common/util/roles';
 import SearchHeader from './components/SearchHeader';
 import useSettingsStyles from './common/useSettingsStyles';
 import fetchOrThrow from '../common/util/fetchOrThrow';
@@ -47,6 +49,15 @@ const UsersPage = () => {
       reseller: t('userTypeReseller'),
       customer: t('userTypeCustomer'),
     })[getUserRole(user)];
+
+  const [transfer, setTransfer] = useState(null);
+
+  const actionTransfer = {
+    key: 'transfer',
+    title: t('transferCustomerAction'),
+    icon: <SwapHorizIcon fontSize="small" />,
+    handler: (userId) => setTransfer({ customer: items.find((user) => user.id === userId) }),
+  };
 
   // One-off clean-up: apply role restrictions to accounts made before roles.
   const [syncTargets, setSyncTargets] = useState(null);
@@ -163,7 +174,11 @@ const UsersPage = () => {
                     endpoint="users"
                     onReload={reload}
                     removable={admin}
-                    customActions={manager ? [actionLogin, actionConnections] : [actionConnections]}
+                    customActions={[
+                      ...(manager ? [actionLogin] : []),
+                      actionConnections,
+                      ...(admin && getUserRole(item) === ROLES.CUSTOMER ? [actionTransfer] : []),
+                    ]}
                   />
                 </TableCell>
               </TableRow>
@@ -196,6 +211,9 @@ const UsersPage = () => {
         </TableFooter>
       </Table>
       <CollectionFab editPath="/settings/user" />
+      {transfer && (
+        <TransferDialog source={transfer} onClose={() => setTransfer(null)} onDone={reload} />
+      )}
       <Dialog open={Boolean(syncTargets)} onClose={() => setSyncTargets(null)} maxWidth="xs">
         <DialogTitle>{t('userRoleSyncTitle')}</DialogTitle>
         <DialogContent>

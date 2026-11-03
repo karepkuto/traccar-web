@@ -839,5 +839,22 @@
     "filterShowing": "Showing {n} of {total} devices",
     "filterSortedBy": "Sort:",
     "filterReset": "Reset",
-    "filterApply": "Show {n} devices"
+    "filterApply": "Show {n} devices",
+    "transferTitle": "Move Customers",
+    "transferCustomerAction": "Change reseller",
+    "transferFrom": "From",
+    "transferTo": "Move to",
+    "transferDirect": "Managed directly (Admin)",
+    "transferSelectAll": "All customers ({n})",
+    "transferStock": "Also move {n} stock device(s) not yet linked to a customer",
+    "transferNote": "The old reseller loses access to these customers and their devices, and the target gets it. Payment history stays; the next bill goes to the new target.",
+    "transferAction": "Move",
+    "transferDone": "{customers} customer(s) and {devices} device(s) moved to {target}.",
+    "transferClose": "Close",
+    "transferNoCustomers": "This reseller has no customers yet.",
+    "attentionAdmin": "{n} device(s) waiting for activation",
+    "attentionAdminOverdue": "{n} device(s) waiting for activation · {late} past 24 hours",
+    "attentionReseller": "{n} device(s) need activation/extension",
+    "attentionView": "View",
+    "attentionResellerLocked": "{n} device(s) need activation/extension · {locked} locked"
 }

@@ -21,6 +21,8 @@ import {
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import TransferDialog from './components/TransferDialog';
 import PageLayout from '../common/components/PageLayout';
 import TableShimmer from '../common/components/TableShimmer';
 import LinkField from '../common/components/LinkField';
@@ -46,6 +48,7 @@ const ResellersPage = () => {
   const [deviceOwners, setDeviceOwners] = useState(() => new Map());
   const [loading, setLoading] = useState(true);
   const [manage, setManage] = useState(null);
+  const [transfer, setTransfer] = useState(null);
   const [promoteOpen, setPromoteOpen] = useState(false);
   const [promoteUserId, setPromoteUserId] = useState('');
   const [promoteLimit, setPromoteLimit] = useState('20');
@@ -180,6 +183,11 @@ const ResellersPage = () => {
                           <GroupAddIcon fontSize="small" />
                         </IconButton>
                       </Tooltip>
+                      <Tooltip title={t('transferTitle')}>
+                        <IconButton size="small" onClick={() => setTransfer({ reseller })}>
+                          <SwapHorizIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                       <Tooltip title={t('sharedEdit')}>
                         <IconButton
                           size="small"
@@ -240,6 +248,10 @@ const ResellersPage = () => {
             </Button>
           </DialogActions>
         </Dialog>
+      )}
+
+      {transfer && (
+        <TransferDialog source={transfer} onClose={() => setTransfer(null)} onDone={reload} />
       )}
 
       <Dialog open={promoteOpen} onClose={() => setPromoteOpen(false)} fullWidth maxWidth="xs">

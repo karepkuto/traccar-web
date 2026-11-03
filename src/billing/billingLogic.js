@@ -22,6 +22,15 @@ export const BILLING_STATUS = {
 // activates them by recording the first payment.
 export const TRIAL_DAYS = 3;
 
+// Promise to resellers: a device in its installation test is activated
+// within this many hours once paid.
+export const ACTIVATION_SLA_HOURS = 24;
+
+export const isActivationOverdue = (attributes, now = dayjs()) => {
+  const start = attributes?.billingTrialStart;
+  return Boolean(start) && now.diff(dayjs(start), 'hour', true) > ACTIVATION_SLA_HOURS;
+};
+
 // Device attribute keys used to store the current billing state.
 // Traccar attributes are a flat map, so keys are prefixed instead of nested.
 export const BILLING_ATTRIBUTES = {
@@ -247,6 +256,7 @@ export const BILLING_ISSUES = {
   UNPAID_EXTENSION: 'unpaidExtension',
   NO_PAYMENT: 'noPayment',
   MULTIPLE_OWNERS: 'multipleOwners',
+  ACTIVATION_OVERDUE: 'activationOverdue',
 };
 
 const HOUR = 3600000;
@@ -263,6 +273,9 @@ export const findBillingIssues = (device, ownerCount = 0) => {
     const start = dayjs(attributes[BILLING_ATTRIBUTES.trialStart]);
     if (!start.isValid() || expiration.diff(start) > TRIAL_DAYS * 24 * HOUR + HOUR) {
       issues.push({ key: BILLING_ISSUES.TRIAL_TOO_LONG });
+    }
+    if (isActivationOverdue(attributes)) {
+      issues.push({ key: BILLING_ISSUES.ACTIVATION_OVERDUE });
     }
   } else {
     const history = parseHistory(attributes);

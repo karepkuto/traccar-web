@@ -13,6 +13,8 @@ import EventsDrawer from './EventsDrawer';
 import useFilter from './useFilter';
 import MainToolbar from './MainToolbar';
 import FilterBar from './FilterBar';
+import AttentionBanner from './AttentionBanner';
+import { useCurrentRole } from '../common/util/roles';
 import useOwnerOptions from './useOwnerOptions';
 import { EMPTY_FILTER, normalizeFilter } from './filterLogic';
 import { useManager } from '../common/util/permissions';
@@ -104,6 +106,7 @@ const MainPage = () => {
   }, [desktop, mapOnSelect, selectedDeviceId]);
 
   const manager = useManager();
+  const role = useCurrentRole();
   const ownerOptions = useOwnerOptions(manager);
 
   const resetFilter = useCallback(() => {
@@ -160,6 +163,7 @@ const MainPage = () => {
             manager={manager}
             onReset={resetFilter}
           />
+          <AttentionBanner role={role} filter={filter} setFilter={setFilter} />
         </Paper>
         <div className={classes.middle}>
           {!desktop && (

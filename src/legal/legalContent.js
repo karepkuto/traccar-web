@@ -6,7 +6,7 @@
 // Changing any text that users agree to? Bump LEGAL_VERSION. Every non-admin
 // user is then asked to agree again, and the new version is recorded.
 
-export const LEGAL_VERSION = '2026-11-02';
+export const LEGAL_VERSION = '2026-11-03';
 
 // Fill these in. Empty values are simply left out of the documents.
 export const LEGAL_OPERATOR = {
@@ -62,13 +62,15 @@ export const getDocuments = () => [
         heading: '3. Akun, Perintah Perangkat, dan Keamanan',
         paragraphs: [
           'Pengguna bertanggung jawab menjaga kerahasiaan kata sandi dan atas seluruh aktivitas pada akunnya.',
-          'Perintah jarak jauh (misalnya blokir mesin) hanya boleh dikirim dalam kondisi aman. Pengguna bertanggung jawab penuh atas akibat pengiriman perintah, termasuk risiko mematikan kendaraan yang sedang melaju.',
+          'Perintah jarak jauh (misalnya blokir mesin) hanya tersedia bagi Pengguna yang memintanya dan hanya boleh dikirim dalam kondisi aman, sebaiknya saat kendaraan berhenti. Pengguna bertanggung jawab penuh atas akibat pengiriman perintah, termasuk risiko mematikan kendaraan yang sedang melaju. Kami dan reseller tidak bertanggung jawab atas kerugian akibat perintah yang dikirim dari akun Pengguna.',
+          'Untuk keperluan dukungan teknis, administrator Layanan atau reseller yang mengelola akun Pengguna dapat masuk ke akun Pengguna. Akses tersebut hanya dilakukan untuk membantu Pengguna dan tercatat dalam log sistem.',
         ],
       },
       {
         heading: '4. Langganan dan Penonaktifan',
         paragraphs: [
-          'Layanan bersifat prabayar per perangkat. Perangkat yang masa langganannya berakhir akan dikunci secara otomatis, dan data yang dikirim selama terkunci dapat tidak tersimpan.',
+          'Layanan bersifat prabayar per perangkat. Perangkat baru mendapat masa uji pasang 3 (tiga) hari dan terkunci otomatis apabila belum diaktivasi. Aktivasi diproses paling lambat 1x24 jam setelah pembayaran diterima.',
+          'Perangkat yang masa langganannya berakhir akan dikunci secara otomatis, dan data yang dikirim selama terkunci dapat tidak tersimpan.',
           'Biaya yang telah dibayarkan tidak dapat dikembalikan, kecuali ditentukan lain secara tertulis.',
         ],
       },
@@ -106,7 +108,8 @@ export const getDocuments = () => [
       {
         heading: '3. Akses dan Pihak Lain',
         paragraphs: [
-          'Data perangkat dapat dilihat oleh Pengguna pemilik akun, reseller yang mengelola akun tersebut, dan administrator Layanan untuk keperluan dukungan teknis. Data dapat diproses oleh penyedia server dan peta yang Kami gunakan, serta diberikan kepada aparat penegak hukum berdasarkan permintaan yang sah.',
+          'Data perangkat dapat dilihat oleh Pengguna pemilik akun, reseller yang mengelola akun tersebut, dan administrator Layanan untuk keperluan dukungan teknis. Reseller memproses data Pengguna atas nama Kami dan terikat kewajiban kerahasiaan. Data dapat diproses oleh penyedia server dan peta yang Kami gunakan, serta diberikan kepada aparat penegak hukum berdasarkan permintaan yang sah.',
+          'Kami mencatat aktivitas akun (antara lain login, perubahan data, dan pengiriman perintah) untuk keamanan dan penyelesaian sengketa.',
         ],
       },
       {
@@ -133,7 +136,10 @@ export const getDocuments = () => [
           'Reseller wajib memastikan setiap pelanggannya membaca dan menyetujui Syarat dan Ketentuan serta Kebijakan Privasi ini sebelum menggunakan Layanan.',
           'Reseller wajib menjaga kerahasiaan data pelanggan, hanya mengakses data untuk keperluan dukungan pelanggan, dan tidak membagikannya kepada pihak lain.',
           'Reseller tidak boleh membuat janji kepada pelanggan yang melebihi ketentuan Layanan, dan bertanggung jawab atas penagihan kepada pelanggannya sendiri.',
-          'Kami dapat menonaktifkan akun reseller beserta akun di bawahnya apabila terjadi pelanggaran ketentuan ini.',
+          'Reseller membayar biaya layanan kepada Kami per perangkat. Aktivasi dan perpanjangan perangkat hanya dilakukan oleh Kami setelah pembayaran diterima, paling lambat 1x24 jam.',
+          'Reseller dilarang memanipulasi sistem, termasuk mengubah masa aktif, menghapus lalu mendaftarkan ulang perangkat untuk memperoleh masa uji pasang baru, atau mengakses data di luar keperluan dukungan. Seluruh aktivitas tercatat dalam log sistem.',
+          'Reseller hanya boleh masuk ke akun pelanggan atas permintaan pelanggan untuk keperluan dukungan.',
+          'Apabila kerja sama berakhir atau terjadi pelanggaran, Kami berhak memindahkan pelanggan beserta perangkatnya kepada reseller lain atau mengelolanya secara langsung, dan menonaktifkan akun reseller.',
         ],
       },
     ],
