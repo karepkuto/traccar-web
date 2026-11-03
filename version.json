@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "30335bb",
+  "gitHash": "7fa6b6b",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 14:15 WIB",
-  "commitMessage": "Informative users page with role tabs and sortable columns; reseller tweaks\n\n- Users: tabs per account type with counts (admin), avatar with name,\n  email and phone, coloured account-type chip, details column (which\n  reseller manages a customer, or a reseller's customer quota), account\n  status (active, expiring within 7 days, expired, disabled), account\n  validity, consent status against the current EULA version, devices.\n  Click a column title to sort ascending/descending; tab and sort are\n  remembered. All accounts are loaded at once, 100 rows shown at a time.\n- 'Masuk' (login as user) is now labelled 'Impersonate'.\n- Resellers no longer see the 'Aturan & Otomasi' settings group.\n- New device form for admins and resellers has an optional 'Pelanggan\n  (pemilik)' field that links the device to that customer on save.",
-  "buildTime": "2026-11-03 14:16 WIB",
-  "buildTimeIso": "2026-11-03T07:16:58.855Z"
+  "commitTime": "2026-11-03 14:30 WIB",
+  "commitMessage": "Keep reseller access to their customers' devices in every linking path\n\nTraccar gives a reseller only the devices linked directly to it, so a\ndevice an admin linked to a customer stayed invisible to that customer's\nreseller. New helpers in util/resellerAccess keep the reseller -> device\nlinks in step:\n\n- Linking devices to a customer (user Connections, new device form)\n  also links them to the customer's reseller.\n- Adding customers to a reseller (Resellers > manage customers, user\n  Connections) links their devices to the reseller; removing a customer\n  revokes them, except devices of the reseller's other customers.\n- Device Connections gets a 'Pelanggan (pemilik)' field: changing the\n  owner moves the reseller link (old reseller loses it, new one gets it).\n- Moving customers to another reseller or to direct management already\n  moved the device links and keeps doing so.\n- Resellers page: 'Perbaiki Akses Perangkat' adds missing links for\n  existing data.",
+  "buildTime": "2026-11-03 14:31 WIB",
+  "buildTimeIso": "2026-11-03T07:31:41.092Z"
 }
