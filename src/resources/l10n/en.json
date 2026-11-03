@@ -878,5 +878,10 @@
     "usersMore": "Show more",
     "userImpersonate": "Impersonate",
     "deviceCustomer": "Customer (owner)",
-    "deviceCustomerHelp": "Optional. The device is linked to this customer once saved. You can also do it later in Connections."
+    "deviceCustomerHelp": "Optional. The device is linked to this customer once saved. You can also do it later in Connections.",
+    "resellerRepair": "Repair device access",
+    "resellerRepairDone": "{n} device link(s) to resellers added.",
+    "deviceOwnerSaved": "Device owner saved.",
+    "deviceNoCustomer": "No customer",
+    "deviceOwnerHelp": "One device belongs to one customer. That customer's reseller automatically gets access; the previous owner's reseller loses it."
 }

@@ -17,12 +17,15 @@ import {
   TableRow,
   TextField,
   Tooltip,
+  Snackbar,
 } from '@mui/material';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import TransferDialog from './components/TransferDialog';
+import { repairResellerAccess, syncResellerCustomers } from '../common/util/resellerAccess';
+import BuildIcon from '@mui/icons-material/Build';
 import PageLayout from '../common/components/PageLayout';
 import TableShimmer from '../common/components/TableShimmer';
 import LinkField from '../common/components/LinkField';
@@ -49,6 +52,19 @@ const ResellersPage = () => {
   const [loading, setLoading] = useState(true);
   const [manage, setManage] = useState(null);
   const [transfer, setTransfer] = useState(null);
+  const [repairing, setRepairing] = useState(false);
+  const [repairMessage, setRepairMessage] = useState(null);
+
+  const handleRepair = useCatch(async () => {
+    setRepairing(true);
+    try {
+      const fixed = await repairResellerAccess();
+      setRepairMessage(t('resellerRepairDone').replace('{n}', fixed));
+      reload();
+    } finally {
+      setRepairing(false);
+    }
+  });
   const [promoteOpen, setPromoteOpen] = useState(false);
   const [promoteUserId, setPromoteUserId] = useState('');
   const [promoteLimit, setPromoteLimit] = useState('20');
@@ -150,6 +166,14 @@ const ResellersPage = () => {
         <Button variant="outlined" onClick={() => setPromoteOpen(true)}>
           {t('resellerPromote')}
         </Button>
+        <Button
+          variant="text"
+          startIcon={<BuildIcon />}
+          onClick={handleRepair}
+          disabled={repairing}
+        >
+          {t('resellerRepair')}
+        </Button>
       </Stack>
       <div style={{ overflowX: 'auto' }}>
         <Table className={classes.table}>
@@ -234,6 +258,7 @@ const ResellersPage = () => {
               label={t('resellerCustomers')}
               filter={isCustomer}
               beforeAdd={checkCustomers}
+              afterChange={(added, removed) => syncResellerCustomers(manage.id, added, removed)}
               helperText={t('resellerManageHelp')}
             />
           </DialogContent>
@@ -250,6 +275,12 @@ const ResellersPage = () => {
         </Dialog>
       )}
 
+      <Snackbar
+        open={Boolean(repairMessage)}
+        autoHideDuration={5000}
+        onClose={() => setRepairMessage(null)}
+        message={repairMessage}
+      />
       {transfer && (
         <TransferDialog source={transfer} onClose={() => setTransfer(null)} onDone={reload} />
       )}

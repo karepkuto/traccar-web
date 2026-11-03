@@ -7,12 +7,15 @@ import useFeatures from '../common/util/useFeatures';
 import { useAsyncTask } from '../reactHelper';
 import { fetchDeviceOwners } from '../common/util/ownership';
 import ConnectionsLayout from './components/ConnectionsLayout';
+import DeviceOwnerField from './components/DeviceOwnerField';
+import { useManager } from '../common/util/permissions';
 
 const DeviceConnectionsPage = () => {
   const t = useTranslation();
   const { id } = useParams();
   const deviceId = Number(id);
   const features = useFeatures();
+  const manager = useManager();
 
   // Linked devices: never the device itself, and only devices of the same
   // customer (or devices without a customer yet).
@@ -40,6 +43,7 @@ const DeviceConnectionsPage = () => {
       id={id}
       breadcrumbs={['settingsTitle', 'deviceTitle', 'sharedConnections']}
     >
+      {manager && <DeviceOwnerField deviceId={deviceId} />}
       <LinkField
         endpointAll="/api/geofences"
         endpointLinked={`/api/geofences?deviceId=${id}`}

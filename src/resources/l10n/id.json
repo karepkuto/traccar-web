@@ -880,5 +880,10 @@
     "usersMore": "Tampilkan lebih banyak",
     "userImpersonate": "Impersonate",
     "deviceCustomer": "Pelanggan (pemilik)",
-    "deviceCustomerHelp": "Opsional. Perangkat langsung tertaut ke pelanggan ini setelah disimpan. Bisa juga diatur nanti lewat Koneksi."
+    "deviceCustomerHelp": "Opsional. Perangkat langsung tertaut ke pelanggan ini setelah disimpan. Bisa juga diatur nanti lewat Koneksi.",
+    "resellerRepair": "Perbaiki Akses Perangkat",
+    "resellerRepairDone": "{n} tautan perangkat ke reseller ditambahkan.",
+    "deviceOwnerSaved": "Pemilik perangkat disimpan.",
+    "deviceNoCustomer": "Tanpa pelanggan",
+    "deviceOwnerHelp": "Satu perangkat milik satu pelanggan. Reseller pelanggan ini otomatis ikut mendapat akses ke perangkat; reseller pemilik lama kehilangan aksesnya."
 }

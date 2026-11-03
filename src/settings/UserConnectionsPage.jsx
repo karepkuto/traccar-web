@@ -14,6 +14,10 @@ import {
   isCustomer,
   isReseller,
 } from '../common/util/ownership';
+import {
+  grantCustomerDevicesToReseller,
+  syncResellerCustomers,
+} from '../common/util/resellerAccess';
 
 const UserConnectionsPage = () => {
   const t = useTranslation();
@@ -111,6 +115,7 @@ const UserConnectionsPage = () => {
         label={t('deviceTitle')}
         helperText={t(enforce ? 'connectionsUserDevicesCustomer' : 'connectionsUserDevices')}
         beforeAdd={enforce ? checkSimple('device') : undefined}
+        afterChange={enforce ? (added) => grantCustomerDevicesToReseller(userId, added) : undefined}
       />
       <LinkField
         endpointAll="/api/groups?all=true"
@@ -166,6 +171,7 @@ const UserConnectionsPage = () => {
           helperText={t('resellerManageHelp')}
           filter={(it) => isCustomer(it) && it.id !== userId}
           beforeAdd={checkManagedCustomers}
+          afterChange={(added, removed) => syncResellerCustomers(userId, added, removed)}
         />
       )}
       {!features.disableCalendars && (

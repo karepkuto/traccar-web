@@ -20,6 +20,7 @@ import { useTranslation } from '../common/components/LocalizationProvider';
 import useDeviceAttributes from '../common/attributes/useDeviceAttributes';
 import { useAdministrator, useManager } from '../common/util/permissions';
 import { isCustomer } from '../common/util/ownership';
+import { setDeviceOwner } from '../common/util/resellerAccess';
 import { trialDefaults } from '../billing/billingLogic';
 import SettingsMenu from './components/SettingsMenu';
 import useCommonDeviceAttributes from '../common/attributes/useCommonDeviceAttributes';
@@ -40,11 +41,7 @@ const DevicePage = () => {
   // New device: link it to the chosen customer right after it is created.
   const onItemSaved = async (result) => {
     if (!item.id && customerId) {
-      await fetchOrThrow('/api/permissions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: customerId, deviceId: result.id }),
-      });
+      await setDeviceOwner(result.id, customerId);
     }
   };
 

@@ -17,6 +17,7 @@ const LinkField = ({
   keyLink,
   titleGetter = defaultTitleGetter,
   beforeAdd,
+  afterChange,
   filter,
   helperText,
 }) => {
@@ -93,11 +94,17 @@ const LinkField = ({
             );
           });
         await Promise.all(results);
+        if (afterChange && results.length) {
+          await afterChange(
+            newValue.filter((it) => !oldValue.includes(it)),
+            oldValue.filter((it) => !newValue.includes(it)),
+          );
+        }
         setUpdated(results.length > 0);
         setLinked(value);
       }
     },
-    [linked, baseId, keyBase, keyLink, beforeAdd],
+    [linked, baseId, keyBase, keyLink, beforeAdd, afterChange],
   );
 
   return (
