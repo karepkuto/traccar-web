@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "1dfc50b",
+  "gitHash": "30335bb",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 11:42 WIB",
-  "commitMessage": "Readable audit log for administrators\n\nLaporan > Audit now turns the server audit log into sentences such as\n'Reseller Solo mengubah perangkat Avanza Budi' with the actor's name and\naccount type, time in WIB grouped by day, and the IP address. Linking\nshows both sides ('menautkan perangkat X ke pengguna Y'), reports show\ntheir type and period, deleted objects are marked as such.\n\n- Filters: free-text search, actor, activity group (sign-ins, data\n  changes, access links, commands, reports) and 'sensitive only'.\n- Sensitive entries are highlighted: deletions and failed sign-ins in\n  red; commands, link changes, server settings, counter resets, API\n  tokens and device edits by non-admins in orange.\n- Export to Excel, 150 entries at a time with 'show more', and a layout\n  that works the same on phones and desktop.",
-  "buildTime": "2026-11-03 11:43 WIB",
-  "buildTimeIso": "2026-11-03T04:43:39.578Z"
+  "commitTime": "2026-11-03 14:15 WIB",
+  "commitMessage": "Informative users page with role tabs and sortable columns; reseller tweaks\n\n- Users: tabs per account type with counts (admin), avatar with name,\n  email and phone, coloured account-type chip, details column (which\n  reseller manages a customer, or a reseller's customer quota), account\n  status (active, expiring within 7 days, expired, disabled), account\n  validity, consent status against the current EULA version, devices.\n  Click a column title to sort ascending/descending; tab and sort are\n  remembered. All accounts are loaded at once, 100 rows shown at a time.\n- 'Masuk' (login as user) is now labelled 'Impersonate'.\n- Resellers no longer see the 'Aturan & Otomasi' settings group.\n- New device form for admins and resellers has an optional 'Pelanggan\n  (pemilik)' field that links the device to that customer on save.",
+  "buildTime": "2026-11-03 14:16 WIB",
+  "buildTimeIso": "2026-11-03T07:16:58.855Z"
 }
