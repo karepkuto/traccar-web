@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
+  Alert,
   Container,
   Button,
   Accordion,
@@ -15,6 +17,7 @@ import PageLayout from '../../common/components/PageLayout';
 import useSettingsStyles from '../common/useSettingsStyles';
 import fetchOrThrow from '../../common/util/fetchOrThrow';
 import { setFlash } from '../../common/util/flash';
+import { FormValidationContext } from './FormValidationContext';
 
 const EditItemView = ({
   children,
@@ -32,6 +35,7 @@ const EditItemView = ({
   const t = useTranslation();
 
   const { id } = useParams();
+  const [submitted, setSubmitted] = useState(false);
 
   useAsyncTask(
     async ({ signal }) => {
@@ -72,8 +76,13 @@ const EditItemView = ({
         <Typography variant="h6" sx={{ mb: 2 }}>
           {id ? t('crudEditTitle') : t('crudCreateTitle')}
         </Typography>
+        {submitted && item && !validate() && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {t('formInvalid')}
+          </Alert>
+        )}
         {item ? (
-          children
+          <FormValidationContext value={{ submitted }}>{children}</FormValidationContext>
         ) : (
           <Accordion defaultExpanded>
             <AccordionSummary>
@@ -105,8 +114,17 @@ const EditItemView = ({
           <Button
             color="primary"
             variant="contained"
-            onClick={handleSave}
-            disabled={!item || !validate()}
+            onClick={() => {
+              if (validate()) {
+                handleSave();
+              } else {
+                // Keep the button usable and explain what is missing.
+                setSubmitted(true);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                document.querySelector('main, [class*="content"]')?.scrollTo?.({ top: 0 });
+              }
+            }}
+            disabled={!item}
           >
             {t('sharedSave')}
           </Button>

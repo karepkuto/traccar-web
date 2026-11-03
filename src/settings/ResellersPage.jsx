@@ -140,7 +140,7 @@ const ResellersPage = () => {
         <Button
           variant="contained"
           startIcon={<PersonAddIcon />}
-          onClick={() => navigate('/settings/user')}
+          onClick={() => navigate('/settings/user?type=reseller')}
         >
           {t('resellerCreate')}
         </Button>
