@@ -6,7 +6,8 @@ Setiap commit yang mengubah perilaku aplikasi **wajib** menambah baris di sini
 
 | Commit | Tanggal | Perubahan |
 |---|---|---|
-| (commit ini) | 2026-11-03 | Persetujuan EULA untuk akun Hanya-baca: server hanya menerima `termsAccepted`, rincian disimpan di perangkat; pesan error tidak lagi berupa stack trace Java |
+| (commit ini) | 2026-11-03 | Form perangkat: bagian *Jam GPS* (radio UTC/WIB/WITA/WIT untuk `decoder.timezone`) dengan deteksi otomatis selisih 7/8/9 jam |
+| `b03db03` | 2026-11-03 | Persetujuan EULA untuk akun Hanya-baca: server hanya menerima `termsAccepted`, rincian disimpan di perangkat; pesan error tidak lagi berupa stack trace Java |
 | `65f1beb` | 2026-11-03 | Folder `docs/` dan aturan pembaruan dokumentasi di `CLAUDE.md` |
 | `34815ad` | 2026-11-03 | Positions report: only administrators can delete positions |
 | `7fa6b6b` | 2026-11-03 | Keep reseller access to their customers' devices in every linking path |

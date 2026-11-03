@@ -884,5 +884,15 @@
     "deviceOwnerSaved": "Device owner saved.",
     "deviceNoCustomer": "No customer",
     "deviceOwnerHelp": "One device belongs to one customer. That customer's reseller automatically gets access; the previous owner's reseller loses it.",
-    "usersConsentLimited": "Accepted (read-only)"
+    "usersConsentLimited": "Accepted (read-only)",
+    "deviceClockSection": "GPS clock",
+    "deviceClockTitle": "Time zone of the device clock",
+    "deviceClockUtc": "UTC (default, most trackers)",
+    "deviceClockWib": "WIB · Asia/Jakarta (UTC+7)",
+    "deviceClockWita": "WITA · Asia/Makassar (UTC+8)",
+    "deviceClockWit": "WIT · Asia/Jayapura (UTC+9)",
+    "deviceClockOther": "Other",
+    "deviceClockHelp": "Pick WIB when the tracker has no time zone setting and its positions are 7 hours ahead. Applies to new data after the device reconnects; old data is not changed. Not every GPS protocol uses this setting.",
+    "deviceClockDetected": "The device clock is {n} hours ahead of the server. It probably sends local time; suggested: {zone}.",
+    "deviceClockUse": "Use"
 }

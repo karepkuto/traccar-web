@@ -31,6 +31,7 @@ lewat skrip JSON (`indent=4`), jangan diformat ulang semua bahasa.
 | `support` | Tautan bantuan; isi `https://wa.me/62xxxx` agar *Minta aktivasi* membuka WhatsApp |
 | `billingWarningDays`, `billingCriticalDays` | Batas peringatan langganan (bawaan 14 dan 3) |
 | `ui.enableDrivers` | `true` untuk memunculkan fitur Pengemudi |
+| `decoder.timezone` (atribut perangkat/grup) | Zona waktu jam GPS; diatur per perangkat lewat form *Jam GPS*. Jangan diisi di level server kalau tidak semua alat sama |
 | `report.trip.*` | Parameter deteksi perjalanan (lihat [05 §5.3](05-layar-dan-fitur.md)) |
 | Pendaftaran (registration) | **Matikan** (pelanggan dibuat oleh reseller/admin) |
 
@@ -45,3 +46,4 @@ lewat skrip JSON (`indent=4`), jangan diformat ulang semua bahasa.
 - [ ] Kebijakan pembersihan tabel audit (mis. simpan 12 bulan).
 - [ ] Isi data operator di `legalContent.js` dan tinjauan ahli hukum.
 - [ ] Kontrak reseller tertulis.
+- [ ] **Diskusi berikutnya:** tinjau ulang aksi pelanggan dan reseller (akses riwayat/histori, dll.). Pemilik merasa ada yang belum pas.

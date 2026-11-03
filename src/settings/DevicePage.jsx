@@ -27,6 +27,7 @@ import useCommonDeviceAttributes from '../common/attributes/useCommonDeviceAttri
 import { useCatch } from '../reactHelper';
 import useSettingsStyles from './common/useSettingsStyles';
 import QrCodeDialog from '../common/components/QrCodeDialog';
+import DeviceTimezoneField from './components/DeviceTimezoneField';
 import { AdvancedSection, ValidatedTextField } from './components/ValidatedFields';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 
@@ -120,6 +121,14 @@ const DevicePage = () => {
                   helperText={t('deviceCustomerHelp')}
                 />
               )}
+            </AccordionDetails>
+          </Accordion>
+          <Accordion defaultExpanded>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="subtitle1">{t('deviceClockSection')}</Typography>
+            </AccordionSummary>
+            <AccordionDetails className={classes.details}>
+              <DeviceTimezoneField item={item} setItem={setItem} />
             </AccordionDetails>
           </Accordion>
           <Accordion>

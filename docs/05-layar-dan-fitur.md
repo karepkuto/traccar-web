@@ -66,6 +66,16 @@ Tombol berlabel: Putar Ulang, Perintah, Ubah, Hapus (**admin saja**), Lainnya.
 - Judul "Tambah Data" / "Ubah Data", pesan flash setelah simpan, dialog
   konfirmasi hapus.
 - Form perangkat: isian *Pelanggan (pemilik)* saat menambah (admin/reseller).
+- Form perangkat, bagian **Jam GPS**: radio zona waktu jam di dalam alat, yang
+  disimpan sebagai atribut perangkat `decoder.timezone`. Pilihannya UTC
+  (bawaan, atribut dihapus), WIB `Asia/Jakarta`, WITA `Asia/Makassar`, WIT
+  `Asia/Jayapura`; nilai lain tampil sebagai "Lainnya". Kalau posisi terakhir
+  menunjukkan `fixTime` 7/8/9 jam (±20 menit) di depan `serverTime` dan atribut
+  belum diisi, muncul saran dengan tombol **Pakai**.
+  - Server memakai atribut ini saat mendekode data dari protokol yang
+    mendukungnya, misalnya GT06 (dibaca saat alat login, jadi berlaku setelah
+    **alat tersambung ulang**) dan JT808 (bawaannya GMT+8 kalau atribut kosong).
+  - Data lama tidak berubah. Tidak semua protokol memakai atribut ini.
   IMEI, masa aktif, dan nonaktif hanya bisa diubah admin.
 
 ## 5.7 Menu Pengaturan
