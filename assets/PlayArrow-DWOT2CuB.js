@@ -1,1 +1,0 @@
-import{K as e}from"./createSimplePaletteValueFilter-CM2TmgJi.js";import{A as t}from"./mui-uEXxZ_jQ.js";var n=e(),r=t((0,n.jsx)(`path`,{d:`M8 5v14l11-7z`}),`PlayArrow`);export{r as t};

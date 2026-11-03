@@ -1,0 +1,1 @@
+import{K as e}from"./createSimplePaletteValueFilter-CM2TmgJi.js";import{A as t}from"./mui-BTs0BtIo.js";var n=e(),r=t((0,n.jsx)(`path`,{d:`m7 10 5 5 5-5z`}),`ArrowDropDown`);export{r as t};

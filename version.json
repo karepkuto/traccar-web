@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "d84e756",
+  "gitHash": "cccc99f",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 14:58 WIB",
-  "commitMessage": "Replay trips: newest trip on top\n\nThe Perjalanan tab lists the day's trips newest first. Trip numbers and\nthe previous/next buttons keep chronological order, and the parking gap\nis shown below each trip. Docs updated.",
-  "buildTime": "2026-11-03 14:59 WIB",
-  "buildTimeIso": "2026-11-03T07:59:32.031Z"
+  "commitTime": "2026-11-03 15:04 WIB",
+  "commitMessage": "Sharing: 24-hour default, active links with revoke, live location only\n\n- Share page redesigned: default validity 24 hours with quick choices\n  (1 hour, 24 hours, 3 days, 7 days) or a custom date, Create Link, Copy\n  and WhatsApp buttons, and a clear message when a link from the same\n  account already exists (the server answers 409).\n- 'Tautan Aktif' lists the temporary accounts behind a device's links\n  (creator, valid until, active/expired) with a Revoke button for\n  administrators; deleting the temporary account invalidates the token.\n  Others are told that only the admin can revoke.\n- Shared-link viewers no longer see Replay, Commands, Edit or Reports;\n  /replay and /reports redirect to the map. The server API still allows\n  reading the device history.\n- Docs updated.",
+  "buildTime": "2026-11-03 15:05 WIB",
+  "buildTimeIso": "2026-11-03T08:05:21.211Z"
 }
