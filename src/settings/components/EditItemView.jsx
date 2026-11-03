@@ -66,7 +66,7 @@ const EditItemView = ({
     });
 
     if (onItemSaved) {
-      onItemSaved(await response.json());
+      await onItemSaved(await response.json());
     }
     setFlash(t('crudSaved'));
     navigate(-1);

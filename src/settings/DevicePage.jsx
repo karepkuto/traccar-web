@@ -18,7 +18,8 @@ import SelectField from '../common/components/SelectField';
 import deviceCategories from '../common/util/deviceCategories';
 import { useTranslation } from '../common/components/LocalizationProvider';
 import useDeviceAttributes from '../common/attributes/useDeviceAttributes';
-import { useAdministrator } from '../common/util/permissions';
+import { useAdministrator, useManager } from '../common/util/permissions';
+import { isCustomer } from '../common/util/ownership';
 import { trialDefaults } from '../billing/billingLogic';
 import SettingsMenu from './components/SettingsMenu';
 import useCommonDeviceAttributes from '../common/attributes/useCommonDeviceAttributes';
@@ -33,6 +34,19 @@ const DevicePage = () => {
   const t = useTranslation();
 
   const admin = useAdministrator();
+  const manager = useManager();
+  const [customerId, setCustomerId] = useState(null);
+
+  // New device: link it to the chosen customer right after it is created.
+  const onItemSaved = async (result) => {
+    if (!item.id && customerId) {
+      await fetchOrThrow('/api/permissions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: customerId, deviceId: result.id }),
+      });
+    }
+  };
 
   const commonDeviceAttributes = useCommonDeviceAttributes(t);
   const deviceAttributes = useDeviceAttributes(t);
@@ -72,6 +86,7 @@ const DevicePage = () => {
       setItem={setItem}
       defaultItem={defaultItem}
       validate={validate}
+      onItemSaved={onItemSaved}
       menu={<SettingsMenu />}
       breadcrumbs={['settingsTitle', 'sharedDevice']}
     >
@@ -98,6 +113,16 @@ const DevicePage = () => {
                 helperText={t('deviceIdentifierHelp')}
                 disabled={Boolean(uniqueId) || (Boolean(item.id) && !admin)}
               />
+              {manager && !item.id && (
+                <SelectField
+                  value={customerId}
+                  onChange={(event) => setCustomerId(event.target.value || null)}
+                  endpoint="/api/users?excludeAttributes=true"
+                  filter={isCustomer}
+                  label={t('deviceCustomer')}
+                  helperText={t('deviceCustomerHelp')}
+                />
+              )}
             </AccordionDetails>
           </Accordion>
           <Accordion>

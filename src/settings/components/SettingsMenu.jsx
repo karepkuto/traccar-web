@@ -102,40 +102,42 @@ const SettingsMenu = () => {
     {
       key: 'rules',
       title: t('menuGroupRules'),
-      items: readonly
-        ? []
-        : [
-            {
-              title: t('sharedNotifications'),
-              link: '/settings/notifications',
-              icon: <NotificationsIcon />,
-              selected: path.startsWith('/settings/notification'),
-            },
-            !features.disableSavedCommands && {
-              title: t('sharedSavedCommands'),
-              link: '/settings/commands',
-              icon: <SendIcon />,
-              selected: path.startsWith('/settings/command'),
-            },
-            !features.disableMaintenance && {
-              title: t('sharedMaintenance'),
-              link: '/settings/maintenances',
-              icon: <BuildIcon />,
-              selected: path.startsWith('/settings/maintenance'),
-            },
-            !features.disableCalendars && {
-              title: t('sharedCalendars'),
-              link: '/settings/calendars',
-              icon: <TodayIcon />,
-              selected: path.startsWith('/settings/calendar'),
-            },
-            !features.disableComputedAttributes && {
-              title: t('sharedComputedAttributes'),
-              link: '/settings/attributes',
-              icon: <CalculateIcon />,
-              selected: path.startsWith('/settings/attribute'),
-            },
-          ],
+      // Resellers manage accounts and devices; rules belong to customers.
+      items:
+        readonly || (manager && !admin)
+          ? []
+          : [
+              {
+                title: t('sharedNotifications'),
+                link: '/settings/notifications',
+                icon: <NotificationsIcon />,
+                selected: path.startsWith('/settings/notification'),
+              },
+              !features.disableSavedCommands && {
+                title: t('sharedSavedCommands'),
+                link: '/settings/commands',
+                icon: <SendIcon />,
+                selected: path.startsWith('/settings/command'),
+              },
+              !features.disableMaintenance && {
+                title: t('sharedMaintenance'),
+                link: '/settings/maintenances',
+                icon: <BuildIcon />,
+                selected: path.startsWith('/settings/maintenance'),
+              },
+              !features.disableCalendars && {
+                title: t('sharedCalendars'),
+                link: '/settings/calendars',
+                icon: <TodayIcon />,
+                selected: path.startsWith('/settings/calendar'),
+              },
+              !features.disableComputedAttributes && {
+                title: t('sharedComputedAttributes'),
+                link: '/settings/attributes',
+                icon: <CalculateIcon />,
+                selected: path.startsWith('/settings/attribute'),
+              },
+            ],
     },
     {
       key: 'business',
