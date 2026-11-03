@@ -141,7 +141,7 @@ const UserPage = () => {
     >
       {item && (
         <>
-          <Accordion defaultExpanded={!attribute}>
+          <Accordion defaultExpanded>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="subtitle1">{t('sharedRequired')}</Typography>
             </AccordionSummary>
@@ -231,7 +231,7 @@ const UserPage = () => {
                 <InputLabel>{t('settingsSpeedUnit')}</InputLabel>
                 <Select
                   label={t('settingsSpeedUnit')}
-                  value={(item.attributes && item.attributes.speedUnit) || 'kn'}
+                  value={(item.attributes && item.attributes.speedUnit) || 'kmh'}
                   onChange={(e) =>
                     setItem({
                       ...item,

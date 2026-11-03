@@ -21,6 +21,61 @@ export default {
       },
     }),
   },
+  // Forms: every section is always open and shown as a titled card, like a
+  // classic admin form, instead of collapsible panels.
+  MuiAccordion: {
+    defaultProps: {
+      defaultExpanded: true,
+      disableGutters: true,
+      elevation: 0,
+    },
+    styleOverrides: {
+      root: ({ theme }) => ({
+        borderRadius: 12,
+        border: `1px solid ${theme.palette.divider}`,
+        marginBottom: theme.spacing(2),
+        overflow: 'hidden',
+        '&::before': {
+          display: 'none',
+        },
+        '&.Mui-expanded': {
+          marginBottom: theme.spacing(2),
+        },
+      }),
+    },
+  },
+  MuiAccordionSummary: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        pointerEvents: 'none',
+        minHeight: 0,
+        padding: theme.spacing(1.5, 2, 0.5),
+        '&.Mui-expanded': {
+          minHeight: 0,
+        },
+        '& .MuiTypography-root': {
+          fontWeight: 700,
+          fontSize: '0.95rem',
+        },
+      }),
+      content: {
+        margin: 0,
+        '&.Mui-expanded': {
+          margin: 0,
+        },
+      },
+      expandIconWrapper: {
+        display: 'none',
+      },
+    },
+  },
+  MuiAccordionDetails: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        padding: theme.spacing(1.5, 2, 2),
+      }),
+    },
+  },
   MuiOutlinedInput: {
     styleOverrides: {
       root: ({ theme }) => ({

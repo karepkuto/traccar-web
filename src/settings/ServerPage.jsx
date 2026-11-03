@@ -119,7 +119,7 @@ const ServerPage = () => {
                   <InputLabel>{t('settingsSpeedUnit')}</InputLabel>
                   <Select
                     label={t('settingsSpeedUnit')}
-                    value={item.attributes.speedUnit || 'kn'}
+                    value={item.attributes.speedUnit || 'kmh'}
                     onChange={(e) =>
                       setItem({
                         ...item,
