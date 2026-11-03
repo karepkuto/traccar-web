@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "b60a1e9",
+  "gitHash": "1d541fb",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 09:04 WIB",
-  "commitMessage": "Add 'Reload app' for the installed app\n\nThe installed Android/iOS app has no browser reload button. A refresh\nicon next to the version label (login screen and settings menu) and a\n'Muat Ulang Aplikasi' item in the Account menu now remove the service\nworker and its cached files and reload, so the newest version is\nfetched. The login session (server cookie) is kept.",
-  "buildTime": "2026-11-03 09:06 WIB",
-  "buildTimeIso": "2026-11-03T02:06:05.654Z"
+  "commitTime": "2026-11-03 09:13 WIB",
+  "commitMessage": "Polish: auth pages, buttons, position details, error messages\n\n- Register / reset password pages use the Pantauku logo and a\n  normal-case title like the login page\n- No more ALL-CAPS buttons; report and replay 'Tampilkan' is a filled\n  primary button\n- Position details show readable names and values only (no raw keys);\n  on phones a two-column table shows the value inline\n- Common technical errors ('Failed to fetch', limits, duplicates,\n  permissions, expired/disabled, session) are shown in plain language,\n  with the original text under 'Detail Lainnya'",
+  "buildTime": "2026-11-03 09:14 WIB",
+  "buildTimeIso": "2026-11-03T02:14:21.669Z"
 }
