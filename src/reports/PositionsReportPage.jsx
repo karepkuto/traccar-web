@@ -22,7 +22,7 @@ import MapCamera from '../map/MapCamera';
 import MapGeofence from '../map/MapGeofence';
 import scheduleReport from './common/scheduleReport';
 import MapScale from '../map/MapScale';
-import { useRestriction } from '../common/util/permissions';
+import { useRestriction, useAdministrator } from '../common/util/permissions';
 import CollectionActions from '../settings/components/CollectionActions';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 import SelectField from '../common/components/SelectField';
@@ -37,6 +37,7 @@ const PositionsReportPage = () => {
   const positionAttributes = usePositionAttributes(t);
 
   const readonly = useRestriction('readonly');
+  const admin = useAdministrator();
 
   const [available, setAvailable] = useState([]);
   const [columns, setColumns] = useState(['fixTime', 'latitude', 'longitude', 'speed', 'address']);
@@ -211,14 +212,17 @@ const PositionsReportPage = () => {
                       </TableCell>
                     ))}
                     <TableCell className={classes.actionCellPadding}>
-                      <CollectionActions
-                        itemId={item.id}
-                        endpoint="positions"
-                        readonly={readonly}
-                        onReload={() => {
-                          setItems(items.filter((position) => position.id !== item.id));
-                        }}
-                      />
+                      {/* Deleting positions rewrites history (and the server does
+                          not log it), so only administrators get the button. */}
+                      {admin && !readonly && (
+                        <CollectionActions
+                          itemId={item.id}
+                          endpoint="positions"
+                          onReload={() => {
+                            setItems(items.filter((position) => position.id !== item.id));
+                          }}
+                        />
+                      )}
                     </TableCell>
                   </TableRow>
                 ))
