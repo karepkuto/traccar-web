@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "2a1157c",
+  "gitHash": "b60a1e9",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 08:59 WIB",
-  "commitMessage": "Update notice: add close button and clearer actions\n\nThe 'update available' snackbar could not be dismissed. It now reads\n'Versi baru Pantauku tersedia.' with a 'Perbarui' button and an X to\nclose it. Closing only hides the notice; the update is still applied\nwhen the app goes to the background or is reopened.",
-  "buildTime": "2026-11-03 09:00 WIB",
-  "buildTimeIso": "2026-11-03T02:00:33.061Z"
+  "commitTime": "2026-11-03 09:04 WIB",
+  "commitMessage": "Add 'Reload app' for the installed app\n\nThe installed Android/iOS app has no browser reload button. A refresh\nicon next to the version label (login screen and settings menu) and a\n'Muat Ulang Aplikasi' item in the Account menu now remove the service\nworker and its cached files and reload, so the newest version is\nfetched. The login session (server cookie) is kept.",
+  "buildTime": "2026-11-03 09:06 WIB",
+  "buildTimeIso": "2026-11-03T02:06:05.654Z"
 }
