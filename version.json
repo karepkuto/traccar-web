@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "f25264f",
+  "gitHash": "9f7fe59",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 09:53 WIB",
-  "commitMessage": "Apply required markers, Save-time validation and advanced toggle to all settings forms\n\nDevice, group, geofence, maintenance, calendar, computed attribute,\nnotification and saved command forms now mark required fields, show red\nerrors when Simpan is pressed on an invalid form, and hide attributes and\nextra sections behind 'Tampilkan pengaturan lanjutan'.",
-  "buildTime": "2026-11-03 09:54 WIB",
-  "buildTimeIso": "2026-11-03T02:54:48.011Z"
+  "commitTime": "2026-11-03 10:20 WIB",
+  "commitMessage": "Role-based permissions, 3-day installation test and billing review tools\n\n- Roles (admin, reseller, customer) are read from the fields the server\n  enforces; choosing a role sets and locks deviceReadonly, limitCommands\n  and fixedEmail, and customer device/user limits. Admin can sync older\n  accounts in one go from the Users page.\n- Resellers no longer see delete buttons for users and devices, cannot\n  change a device's IMEI, expiration or disabled state, and request\n  activation/extension (copied message, WhatsApp when the support link is\n  a wa.me link) instead of extending themselves.\n- Every new device starts a 3-day installation test that locks itself;\n  recording the first payment activates it. Countdown shows days and\n  hours for the test and critical periods.\n- Billing gets 'Perlu Diperiksa' (devices without expiration, test longer\n  than 3 days, active longer than the last payment, no payment record,\n  more than one customer) and 'Rekap Reseller' (per-device bill basis).",
+  "buildTime": "2026-11-03 10:21 WIB",
+  "buildTimeIso": "2026-11-03T03:21:32.799Z"
 }
