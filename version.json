@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "04ceeb4",
+  "gitHash": "c51fddb",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 15:22 WIB",
-  "commitMessage": "Reseller impersonation only with a time-limited admin grant per customer\n\n- Resellers page: 'Izin Impersonate' dialog per reseller to allow chosen\n  customers until a time (2 hours, 24 hours, 3 days or custom) with an\n  optional reason, and to revoke active grants. Stored on the reseller as\n  'impersonateGrants'.\n- Users page for resellers: the Impersonate button appears only for\n  customers with an active grant; other customers get 'Minta izin\n  impersonate', which copies a request message and opens WhatsApp when the\n  server support link is a wa.me link.\n- Before a reseller impersonates, the app writes 'lastImpersonation' on\n  the customer; the server logs that edit under the reseller. The Audit\n  page pairs it with the customer's login (within 2 minutes, same IP, one\n  trail per login) into '<reseller> impersonate pengguna <customer>'.\n- Docs updated.",
-  "buildTime": "2026-11-03 15:24 WIB",
-  "buildTimeIso": "2026-11-03T08:24:22.093Z"
+  "commitTime": "2026-11-03 15:26 WIB",
+  "commitMessage": "Fix consent status for read-only accounts; Sync permissions also repairs reseller device access\n\n- Users and Consents pages showed 'Versi lama' for read-only customers who\n  had agreed to the current version: such accounts can only store\n  termsAccepted on the server (the version stays in their browser), so the\n  read-only check now runs before the old-version check and also counts\n  the server-wide read-only setting.\n- 'Samakan Hak Akses' now applies the role presets and then completes the\n  reseller -> customer device links (same as 'Perbaiki Akses Perangkat'),\n  reports both counts, and warns about customers marked read-only.\n- Docs updated.",
+  "buildTime": "2026-11-03 15:28 WIB",
+  "buildTimeIso": "2026-11-03T08:28:18.354Z"
 }
