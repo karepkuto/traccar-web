@@ -1,8 +1,13 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
+  Button,
   IconButton,
   Paper,
   Slider,
+  Stack,
+  Tab,
+  Tabs,
+  TextField,
   ToggleButton,
   ToggleButtonGroup,
   Toolbar,
@@ -15,6 +20,12 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import FastForwardIcon from '@mui/icons-material/FastForward';
 import FastRewindIcon from '@mui/icons-material/FastRewind';
+import SkipNextIcon from '@mui/icons-material/SkipNext';
+import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
+import ListIcon from '@mui/icons-material/List';
+import TripsPanel from './replay/TripsPanel';
+import { clockTime } from './replay/tripUtils';
+import { fromInputValue, toInputValue } from '../common/util/timezone';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import MapView from '../map/core/MapView';
@@ -121,8 +132,10 @@ const ReplayPage = () => {
   const [speed, setSpeed] = useState(1);
   const [range, setRange] = useState([0, 0]);
   const [rangeStart, rangeEnd] = range;
+  const [tab, setTab] = useState('time');
+  const [tripState, setTripState] = useState(null);
 
-  const loaded = Boolean(from && to && !loading && positions.length);
+  const loaded = Boolean(!loading && positions.length && (tab === 'time' ? from && to : tripState));
 
   const deviceName = useSelector((state) => {
     if (selectedDeviceId) {
@@ -185,10 +198,10 @@ const ReplayPage = () => {
     [setShowCard],
   );
 
-  const onShow = useCatchCallback(
-    async ({ deviceIds, from, to }) => {
-      const deviceId = deviceIds.find(() => true);
+  const loadPositions = useCallback(
+    async (deviceId, from, to) => {
       setLoading(true);
+      setPlaying(false);
       setSelectedDeviceId(deviceId);
       const query = new URLSearchParams({ deviceId, from, to });
       try {
@@ -200,13 +213,65 @@ const ReplayPage = () => {
         if (!positions.length) {
           throw Error(t('sharedNoData'));
         }
-        setFilterOpen(false);
       } finally {
         setLoading(false);
       }
     },
     [t],
   );
+
+  const onShow = useCatchCallback(
+    async ({ deviceIds, from, to }) => {
+      await loadPositions(
+        deviceIds.find(() => true),
+        from,
+        to,
+      );
+      setFilterOpen(false);
+    },
+    [loadPositions],
+  );
+
+  const playTrip = useCatchCallback(
+    async (trip, tripIndex, list) => {
+      setTripState({ index: tripIndex, list });
+      await loadPositions(trip.deviceId || selectedDeviceId, trip.startTime, trip.endTime);
+    },
+    [loadPositions, selectedDeviceId],
+  );
+
+  const changeTab = (value) => {
+    setTab(value);
+    setPlaying(false);
+    setPositions([]);
+    setTripState(null);
+    setShowCard(false);
+  };
+
+  // Typed start / end (date + time, WIB) move the range slider.
+  const setRangeFromInput = (which, value) => {
+    if (!value || !positions.length) {
+      return;
+    }
+    const time = fromInputValue(value).valueOf();
+    if (Number.isNaN(time)) {
+      return;
+    }
+    const times = positions.map((p) => new Date(p.fixTime).getTime());
+    if (which === 'start') {
+      let start = times.findIndex((it) => it >= time);
+      if (start < 0) start = positions.length - 1;
+      start = Math.min(start, rangeEnd);
+      setRange([start, rangeEnd]);
+      setIndex((current) => Math.min(Math.max(current, start), rangeEnd));
+    } else {
+      let end = times.length - 1;
+      while (end > 0 && times[end] > time) end -= 1;
+      end = Math.max(end, rangeStart);
+      setRange([rangeStart, end]);
+      setIndex((current) => Math.min(Math.max(current, rangeStart), end));
+    }
+  };
 
   const handleDownload = () => {
     const query = new URLSearchParams({ deviceId: selectedDeviceId, from, to });
@@ -239,7 +304,7 @@ const ReplayPage = () => {
             <Typography variant="h6" className={classes.title}>
               {t('reportReplay')}
             </Typography>
-            {loaded && (
+            {loaded && tab === 'time' && (
               <>
                 <IconButton onClick={handleDownload}>
                   <DownloadIcon />
@@ -250,9 +315,75 @@ const ReplayPage = () => {
               </>
             )}
           </Toolbar>
+          <Tabs value={tab} onChange={(_, value) => changeTab(value)} variant="fullWidth">
+            <Tab value="time" label={t('replayTabTime')} />
+            <Tab value="trips" label={t('replayTabTrips')} />
+          </Tabs>
         </Paper>
         <Paper className={classes.content} square>
-          {loaded && !filterOpen && (
+          {tab === 'trips' && !tripState && (
+            <TripsPanel
+              deviceId={selectedDeviceId}
+              onDeviceChange={setSelectedDeviceId}
+              onPlay={playTrip}
+              activeIndex={null}
+            />
+          )}
+          {tab === 'trips' && tripState && (
+            <Stack spacing={0.5} sx={{ mb: 1 }}>
+              <Stack direction="row" alignItems="center" spacing={0.5}>
+                <IconButton
+                  size="small"
+                  disabled={loading || tripState.index <= 0}
+                  onClick={() =>
+                    playTrip(
+                      tripState.list[tripState.index - 1],
+                      tripState.index - 1,
+                      tripState.list,
+                    )
+                  }
+                >
+                  <SkipPreviousIcon />
+                </IconButton>
+                <Typography variant="subtitle2" sx={{ flex: 1, textAlign: 'center' }}>
+                  {t('replayTripOf')
+                    .replace('{n}', tripState.index + 1)
+                    .replace('{total}', tripState.list.length)}
+                  {' · '}
+                  {clockTime(tripState.list[tripState.index].startTime)}–
+                  {clockTime(tripState.list[tripState.index].endTime)}
+                </Typography>
+                <IconButton
+                  size="small"
+                  disabled={loading || tripState.index >= tripState.list.length - 1}
+                  onClick={() =>
+                    playTrip(
+                      tripState.list[tripState.index + 1],
+                      tripState.index + 1,
+                      tripState.list,
+                    )
+                  }
+                >
+                  <SkipNextIcon />
+                </IconButton>
+              </Stack>
+              <Typography variant="caption" noWrap align="center">
+                {tripState.list[tripState.index].from} → {tripState.list[tripState.index].to}
+              </Typography>
+              <Button
+                size="small"
+                startIcon={<ListIcon />}
+                onClick={() => {
+                  setPlaying(false);
+                  setPositions([]);
+                  setTripState(null);
+                }}
+              >
+                {t('replayTripList')}
+              </Button>
+            </Stack>
+          )}
+          {loaded && (tab === 'trips' || !filterOpen) && (
             <>
               <Typography variant="subtitle1" align="center">
                 {deviceName}
@@ -317,19 +448,44 @@ const ReplayPage = () => {
                     disabled={playing}
                     disableSwap
                   />
-                  <div className={classes.rangeLabels}>
-                    <Typography variant="caption">
-                      {formatTime(positions[rangeStart].fixTime, 'minutes')}
-                    </Typography>
-                    <Typography variant="caption">
-                      {formatTime(positions[rangeEnd].fixTime, 'minutes')}
-                    </Typography>
-                  </div>
+                  {tab === 'time' ? (
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 1.5 }}>
+                      <TextField
+                        size="small"
+                        type="datetime-local"
+                        label={t('replayRangeStart')}
+                        value={toInputValue(positions[rangeStart].fixTime)}
+                        onChange={(e) => setRangeFromInput('start', e.target.value)}
+                        disabled={playing}
+                        slotProps={{ inputLabel: { shrink: true } }}
+                        fullWidth
+                      />
+                      <TextField
+                        size="small"
+                        type="datetime-local"
+                        label={t('replayRangeEnd')}
+                        value={toInputValue(positions[rangeEnd].fixTime)}
+                        onChange={(e) => setRangeFromInput('end', e.target.value)}
+                        disabled={playing}
+                        slotProps={{ inputLabel: { shrink: true } }}
+                        fullWidth
+                      />
+                    </Stack>
+                  ) : (
+                    <div className={classes.rangeLabels}>
+                      <Typography variant="caption">
+                        {formatTime(positions[rangeStart].fixTime, 'minutes')}
+                      </Typography>
+                      <Typography variant="caption">
+                        {formatTime(positions[rangeEnd].fixTime, 'minutes')}
+                      </Typography>
+                    </div>
+                  )}
                 </div>
               )}
             </>
           )}
-          <div style={{ display: loaded && !filterOpen ? 'none' : 'block' }}>
+          <div style={{ display: tab === 'time' && (!loaded || filterOpen) ? 'block' : 'none' }}>
             <ReportFilter onShow={onShow} deviceType="single" loading={loading} />
           </div>
         </Paper>
