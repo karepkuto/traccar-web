@@ -24,6 +24,7 @@ import useCommonDeviceAttributes from '../common/attributes/useCommonDeviceAttri
 import { useCatch } from '../reactHelper';
 import useSettingsStyles from './common/useSettingsStyles';
 import QrCodeDialog from '../common/components/QrCodeDialog';
+import { AdvancedSection, ValidatedTextField } from './components/ValidatedFields';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 
 const DevicePage = () => {
@@ -62,6 +63,7 @@ const DevicePage = () => {
   return (
     <EditItemView
       endpoint="devices"
+      hasAdvanced
       item={item}
       setItem={setItem}
       validate={validate}
@@ -75,12 +77,16 @@ const DevicePage = () => {
               <Typography variant="subtitle1">{t('sharedRequired')}</Typography>
             </AccordionSummary>
             <AccordionDetails className={classes.details}>
-              <TextField
+              <ValidatedTextField
+                required
+                error={item.name?.trim() ? null : t('validationRequired')}
                 value={item.name || ''}
                 onChange={(event) => setItem({ ...item, name: event.target.value })}
                 label={t('sharedName')}
               />
-              <TextField
+              <ValidatedTextField
+                required
+                error={item.uniqueId?.trim() ? null : t('validationRequired')}
                 value={item.uniqueId || ''}
                 onChange={(event) => setItem({ ...item, uniqueId: event.target.value })}
                 label={t('deviceIdentifier')}
@@ -159,25 +165,29 @@ const DevicePage = () => {
             </AccordionDetails>
           </Accordion>
           {item.id && (
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography variant="subtitle1">{t('attributeDeviceImage')}</Typography>
-              </AccordionSummary>
-              <AccordionDetails className={classes.details}>
-                <FileInput
-                  placeholder={t('attributeDeviceImage')}
-                  value={imageFile}
-                  onChange={handleFileInput}
-                  slotProps={{ htmlInput: { accept: 'image/*' } }}
-                />
-              </AccordionDetails>
-            </Accordion>
+            <AdvancedSection>
+              <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography variant="subtitle1">{t('attributeDeviceImage')}</Typography>
+                </AccordionSummary>
+                <AccordionDetails className={classes.details}>
+                  <FileInput
+                    placeholder={t('attributeDeviceImage')}
+                    value={imageFile}
+                    onChange={handleFileInput}
+                    slotProps={{ htmlInput: { accept: 'image/*' } }}
+                  />
+                </AccordionDetails>
+              </Accordion>
+            </AdvancedSection>
           )}
-          <EditAttributesAccordion
-            attributes={item.attributes}
-            setAttributes={(attributes) => setItem({ ...item, attributes })}
-            definitions={{ ...commonDeviceAttributes, ...deviceAttributes }}
-          />
+          <AdvancedSection>
+            <EditAttributesAccordion
+              attributes={item.attributes}
+              setAttributes={(attributes) => setItem({ ...item, attributes })}
+              definitions={{ ...commonDeviceAttributes, ...deviceAttributes }}
+            />
+          </AdvancedSection>
         </>
       )}
       <QrCodeDialog open={showQr} onClose={() => setShowQr(false)} />

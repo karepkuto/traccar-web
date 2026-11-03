@@ -29,6 +29,7 @@ const EditItemView = ({
   onItemSaved,
   menu,
   breadcrumbs,
+  hasAdvanced,
 }) => {
   const navigate = useNavigate();
   const { classes } = useSettingsStyles();
@@ -36,6 +37,7 @@ const EditItemView = ({
 
   const { id } = useParams();
   const [submitted, setSubmitted] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(!hasAdvanced);
 
   useAsyncTask(
     async ({ signal }) => {
@@ -82,7 +84,18 @@ const EditItemView = ({
           </Alert>
         )}
         {item ? (
-          <FormValidationContext value={{ submitted }}>{children}</FormValidationContext>
+          <FormValidationContext value={{ submitted, showAdvanced }}>
+            {children}
+            {hasAdvanced && (
+              <Button
+                variant="text"
+                onClick={() => setShowAdvanced((value) => !value)}
+                sx={{ mb: 1 }}
+              >
+                {t(showAdvanced ? 'userHideAdvanced' : 'userShowAdvanced')}
+              </Button>
+            )}
+          </FormValidationContext>
         ) : (
           <Accordion defaultExpanded>
             <AccordionSummary>

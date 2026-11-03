@@ -17,6 +17,7 @@ import useGeofenceAttributes from '../common/attributes/useGeofenceAttributes';
 import SettingsMenu from './components/SettingsMenu';
 import SelectField from '../common/components/SelectField';
 import { geofencesActions } from '../store';
+import { AdvancedSection, ValidatedTextField } from './components/ValidatedFields';
 import useSettingsStyles from './common/useSettingsStyles';
 
 const GeofencePage = () => {
@@ -37,6 +38,7 @@ const GeofencePage = () => {
   return (
     <EditItemView
       endpoint="geofences"
+      hasAdvanced
       item={item}
       setItem={setItem}
       validate={validate}
@@ -51,7 +53,9 @@ const GeofencePage = () => {
               <Typography variant="subtitle1">{t('sharedRequired')}</Typography>
             </AccordionSummary>
             <AccordionDetails className={classes.details}>
-              <TextField
+              <ValidatedTextField
+                required
+                error={item.name?.trim() ? null : t('validationRequired')}
                 value={item.name || ''}
                 onChange={(event) => setItem({ ...item, name: event.target.value })}
                 label={t('sharedName')}
@@ -90,11 +94,13 @@ const GeofencePage = () => {
               />
             </AccordionDetails>
           </Accordion>
-          <EditAttributesAccordion
-            attributes={item.attributes}
-            setAttributes={(attributes) => setItem({ ...item, attributes })}
-            definitions={geofenceAttributes}
-          />
+          <AdvancedSection>
+            <EditAttributesAccordion
+              attributes={item.attributes}
+              setAttributes={(attributes) => setItem({ ...item, attributes })}
+              definitions={geofenceAttributes}
+            />
+          </AdvancedSection>
         </>
       )}
     </EditItemView>

@@ -7,6 +7,7 @@ import { useAsyncTask } from '../../reactHelper';
 import fetchOrThrow from '../../common/util/fetchOrThrow';
 import { prefixString } from '../../common/util/stringUtils';
 import useCommandAttributes from '../../common/attributes/useCommandAttributes';
+import { useFormSubmitted } from './FormValidationContext';
 
 const BaseCommandView = ({
   deviceId,
@@ -17,6 +18,7 @@ const BaseCommandView = ({
   setSavedId,
 }) => {
   const t = useTranslation();
+  const submitted = useFormSubmitted();
   const limitCommands = useRestriction('limitCommands');
 
   const textEnabled = useSelector((state) => state.session.server.textEnabled);
@@ -116,7 +118,15 @@ const BaseCommandView = ({
             : options.find((it) => it.optionType === 'type' && it.type === item.type) || null
         }
         onChange={handleSelect}
-        renderInput={(params) => <TextField {...params} label={t('sharedType')} />}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            required
+            label={t('sharedType')}
+            error={submitted && !item?.type}
+            helperText={submitted && !item?.type ? t('validationRequired') : undefined}
+          />
+        )}
       />
       {(!includeSaved || !savedId) &&
         attributes.map(({ key, name, type }) => {

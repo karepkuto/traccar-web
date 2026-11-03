@@ -5,8 +5,6 @@ import {
   AccordionSummary,
   AccordionDetails,
   Typography,
-  TextField,
-  FormControl,
   InputLabel,
   MenuItem,
   Select,
@@ -15,6 +13,11 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { prefixString } from '../common/util/stringUtils';
 import EditItemView from './components/EditItemView';
 import EditAttributesAccordion from './components/EditAttributesAccordion';
+import {
+  AdvancedSection,
+  ValidatedFormControl,
+  ValidatedTextField,
+} from './components/ValidatedFields';
 import { useAttributePreference } from '../common/util/preferences';
 import {
   speedFromKnots,
@@ -131,6 +134,7 @@ const MaintenancePage = () => {
   return (
     <EditItemView
       endpoint="maintenance"
+      hasAdvanced
       item={item}
       setItem={setItem}
       validate={validate}
@@ -144,12 +148,14 @@ const MaintenancePage = () => {
               <Typography variant="subtitle1">{t('sharedRequired')}</Typography>
             </AccordionSummary>
             <AccordionDetails className={classes.details}>
-              <TextField
+              <ValidatedTextField
+                required
+                error={item.name?.trim() ? null : t('validationRequired')}
                 value={item.name || ''}
                 onChange={(e) => setItem({ ...item, name: e.target.value })}
                 label={t('sharedName')}
               />
-              <FormControl>
+              <ValidatedFormControl required error={item.type ? null : t('validationRequired')}>
                 <InputLabel>{t('sharedType')}</InputLabel>
                 <Select
                   label={t('sharedType')}
@@ -162,8 +168,10 @@ const MaintenancePage = () => {
                     </MenuItem>
                   ))}
                 </Select>
-              </FormControl>
-              <TextField
+              </ValidatedFormControl>
+              <ValidatedTextField
+                required
+                error={item.start ? null : t('validationRequired')}
                 type={item.type?.endsWith('Time') ? 'date' : 'number'}
                 value={rawToValue(true, item.start) || ''}
                 onChange={(e) => setItem({ ...item, start: valueToRaw(true, e.target.value) })}
@@ -173,7 +181,9 @@ const MaintenancePage = () => {
                     : t('maintenanceStart')
                 }
               />
-              <TextField
+              <ValidatedTextField
+                required
+                error={item.period ? null : t('validationRequired')}
                 type="number"
                 value={rawToValue(false, item.period) || ''}
                 onChange={(e) => setItem({ ...item, period: valueToRaw(false, e.target.value) })}
@@ -185,11 +195,13 @@ const MaintenancePage = () => {
               />
             </AccordionDetails>
           </Accordion>
-          <EditAttributesAccordion
-            attributes={item.attributes}
-            setAttributes={(attributes) => setItem({ ...item, attributes })}
-            definitions={{}}
-          />
+          <AdvancedSection>
+            <EditAttributesAccordion
+              attributes={item.attributes}
+              setAttributes={(attributes) => setItem({ ...item, attributes })}
+              definitions={{}}
+            />
+          </AdvancedSection>
         </>
       )}
     </EditItemView>

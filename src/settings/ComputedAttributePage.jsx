@@ -20,6 +20,7 @@ import { useTranslation } from '../common/components/LocalizationProvider';
 import usePositionAttributes from '../common/attributes/usePositionAttributes';
 import SettingsMenu from './components/SettingsMenu';
 import SelectField from '../common/components/SelectField';
+import { AdvancedSection, ValidatedTextField } from './components/ValidatedFields';
 import { useCatch } from '../reactHelper';
 import { snackBarDurationLongMs } from '../common/util/duration';
 import useSettingsStyles from './common/useSettingsStyles';
@@ -74,6 +75,7 @@ const ComputedAttributePage = () => {
   return (
     <EditItemView
       endpoint="attributes/computed"
+      hasAdvanced
       item={item}
       setItem={setItem}
       validate={validate}
@@ -87,7 +89,9 @@ const ComputedAttributePage = () => {
               <Typography variant="subtitle1">{t('sharedRequired')}</Typography>
             </AccordionSummary>
             <AccordionDetails className={classes.details}>
-              <TextField
+              <ValidatedTextField
+                required
+                error={item.description?.trim() ? null : t('validationRequired')}
                 value={item.description || ''}
                 onChange={(e) => setItem({ ...item, description: e.target.value })}
                 label={t('sharedDescription')}
@@ -125,7 +129,9 @@ const ComputedAttributePage = () => {
                 renderOption={(props, option) => <li {...props}>{option.name || option}</li>}
                 renderInput={(params) => <TextField {...params} label={t('sharedAttribute')} />}
               />
-              <TextField
+              <ValidatedTextField
+                required
+                error={item.expression?.trim() ? null : t('validationRequired')}
                 value={item.expression || ''}
                 onChange={(e) => setItem({ ...item, expression: e.target.value })}
                 label={t('sharedExpression')}
@@ -146,19 +152,21 @@ const ComputedAttributePage = () => {
               </FormControl>
             </AccordionDetails>
           </Accordion>
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="subtitle1">{t('sharedExtra')}</Typography>
-            </AccordionSummary>
-            <AccordionDetails className={classes.details}>
-              <TextField
-                type="number"
-                value={item.priority || 0}
-                onChange={(e) => setItem({ ...item, priority: Number(e.target.value) })}
-                label={t('sharedPriority')}
-              />
-            </AccordionDetails>
-          </Accordion>
+          <AdvancedSection>
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography variant="subtitle1">{t('sharedExtra')}</Typography>
+              </AccordionSummary>
+              <AccordionDetails className={classes.details}>
+                <TextField
+                  type="number"
+                  value={item.priority || 0}
+                  onChange={(e) => setItem({ ...item, priority: Number(e.target.value) })}
+                  label={t('sharedPriority')}
+                />
+              </AccordionDetails>
+            </Accordion>
+          </AdvancedSection>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="subtitle1">{t('sharedTest')}</Typography>

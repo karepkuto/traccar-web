@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import TextField from '@mui/material/TextField';
 
 import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -14,6 +13,7 @@ import useGroupAttributes from '../common/attributes/useGroupAttributes';
 import { useCatch } from '../reactHelper';
 import { groupsActions } from '../store';
 import useSettingsStyles from './common/useSettingsStyles';
+import { AdvancedSection, ValidatedTextField } from './components/ValidatedFields';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 
 const GroupPage = () => {
@@ -36,6 +36,7 @@ const GroupPage = () => {
   return (
     <EditItemView
       endpoint="groups"
+      hasAdvanced
       item={item}
       setItem={setItem}
       validate={validate}
@@ -50,7 +51,9 @@ const GroupPage = () => {
               <Typography variant="subtitle1">{t('sharedRequired')}</Typography>
             </AccordionSummary>
             <AccordionDetails className={classes.details}>
-              <TextField
+              <ValidatedTextField
+                required
+                error={item.name?.trim() ? null : t('validationRequired')}
                 value={item.name || ''}
                 onChange={(event) => setItem({ ...item, name: event.target.value })}
                 label={t('sharedName')}
@@ -70,11 +73,13 @@ const GroupPage = () => {
               />
             </AccordionDetails>
           </Accordion>
-          <EditAttributesAccordion
-            attributes={item.attributes}
-            setAttributes={(attributes) => setItem({ ...item, attributes })}
-            definitions={{ ...commonDeviceAttributes, ...groupAttributes }}
-          />
+          <AdvancedSection>
+            <EditAttributesAccordion
+              attributes={item.attributes}
+              setAttributes={(attributes) => setItem({ ...item, attributes })}
+              definitions={{ ...commonDeviceAttributes, ...groupAttributes }}
+            />
+          </AdvancedSection>
         </>
       )}
     </EditItemView>

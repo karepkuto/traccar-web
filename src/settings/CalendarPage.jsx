@@ -16,6 +16,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FileInput from '../common/components/FileInput';
 import EditItemView from './components/EditItemView';
 import EditAttributesAccordion from './components/EditAttributesAccordion';
+import { AdvancedSection, ValidatedTextField } from './components/ValidatedFields';
 import { useTranslation } from '../common/components/LocalizationProvider';
 import SettingsMenu from './components/SettingsMenu';
 import { prefixString } from '../common/util/stringUtils';
@@ -111,6 +112,7 @@ const CalendarPage = () => {
   return (
     <EditItemView
       endpoint="calendars"
+      hasAdvanced
       item={item}
       setItem={setItem}
       defaultItem={{ data: simpleCalendar() }}
@@ -126,7 +128,9 @@ const CalendarPage = () => {
               <Typography variant="subtitle1">{t('sharedRequired')}</Typography>
             </AccordionSummary>
             <AccordionDetails className={classes.details}>
-              <TextField
+              <ValidatedTextField
+                required
+                error={item.name?.trim() ? null : t('validationRequired')}
                 value={item.name || ''}
                 onChange={(event) => setItem({ ...item, name: event.target.value })}
                 label={t('sharedName')}
@@ -236,11 +240,13 @@ const CalendarPage = () => {
               )}
             </AccordionDetails>
           </Accordion>
-          <EditAttributesAccordion
-            attributes={item.attributes}
-            setAttributes={(attributes) => setItem({ ...item, attributes })}
-            definitions={{}}
-          />
+          <AdvancedSection>
+            <EditAttributesAccordion
+              attributes={item.attributes}
+              setAttributes={(attributes) => setItem({ ...item, attributes })}
+              definitions={{}}
+            />
+          </AdvancedSection>
         </>
       )}
     </EditItemView>

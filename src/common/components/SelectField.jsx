@@ -38,6 +38,8 @@ const SelectField = ({
   singleLine,
   allValue,
   filter,
+  required,
+  error,
 }) => {
   const { classes } = useStyles();
   const [items, setItems] = useState();
@@ -131,6 +133,8 @@ const SelectField = ({
             {...params}
             label={label}
             helperText={helperText}
+            required={required}
+            error={error}
             placeholder={multiple && !autocompleteValue.length ? placeholder : undefined}
             slotProps={{
               ...params.slotProps,

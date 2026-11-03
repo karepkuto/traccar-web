@@ -1,7 +1,10 @@
 import { createContext, use } from 'react';
 
-// Set by EditItemView after the user presses Save on an invalid form, so
-// pages can show field errors only from that moment (Laravel style).
-export const FormValidationContext = createContext({ submitted: false });
+// Shared state of an EditItemView form:
+// - submitted: Save was pressed on an invalid form, so fields show errors
+// - showAdvanced: the "advanced settings" sections are visible
+export const FormValidationContext = createContext({ submitted: false, showAdvanced: true });
 
 export const useFormSubmitted = () => use(FormValidationContext).submitted;
+
+export const useShowAdvanced = () => use(FormValidationContext).showAdvanced;

@@ -16,6 +16,7 @@ import { useTranslation, useTranslationKeys } from '../common/components/Localiz
 import EditItemView from './components/EditItemView';
 import { prefixString, unprefixString } from '../common/util/stringUtils';
 import SelectField from '../common/components/SelectField';
+import { AdvancedSection, ValidatedSelectField } from './components/ValidatedFields';
 import SettingsMenu from './components/SettingsMenu';
 import { useCatch } from '../reactHelper';
 import useSettingsStyles from './common/useSettingsStyles';
@@ -55,6 +56,7 @@ const NotificationPage = () => {
   return (
     <EditItemView
       endpoint="notifications"
+      hasAdvanced
       item={item}
       setItem={setItem}
       validate={validate}
@@ -68,7 +70,9 @@ const NotificationPage = () => {
               <Typography variant="subtitle1">{t('sharedRequired')}</Typography>
             </AccordionSummary>
             <AccordionDetails className={classes.details}>
-              <SelectField
+              <ValidatedSelectField
+                required
+                error={item.type ? null : t('validationRequired')}
                 value={item.type}
                 onChange={(e) => setItem({ ...item, type: e.target.value })}
                 endpoint="/api/notifications/types"
@@ -76,7 +80,7 @@ const NotificationPage = () => {
                 keyGetter={(it) => it.type}
                 titleGetter={(it) => t(prefixString('event', it.type))}
                 label={t('sharedType')}
-                helperText={
+                helper={
                   ['geofenceEnter', 'geofenceExit', 'geofenceCrossed'].includes(item.type)
                     ? t('notificationGeofenceLabel')
                     : null
@@ -101,7 +105,9 @@ const NotificationPage = () => {
                   label={t('sharedAlarms')}
                 />
               )}
-              <SelectField
+              <ValidatedSelectField
+                required
+                error={item.notificators ? null : t('validationRequired')}
                 multiple
                 value={item.notificators ? item.notificators.split(/[, ]+/) : []}
                 onChange={(e) => setItem({ ...item, notificators: e.target.value.join() })}
@@ -111,7 +117,9 @@ const NotificationPage = () => {
                 label={t('notificationNotificators')}
               />
               {item.notificators?.includes('command') && (
-                <SelectField
+                <ValidatedSelectField
+                  required
+                  error={item.commandId ? null : t('validationRequired')}
                   value={item.commandId}
                   onChange={(e) => setItem({ ...item, commandId: Number(e.target.value) })}
                   endpoint="/api/commands"
@@ -140,59 +148,63 @@ const NotificationPage = () => {
               </FormGroup>
             </AccordionDetails>
           </Accordion>
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="subtitle1">{t('sharedExtra')}</Typography>
-            </AccordionSummary>
-            <AccordionDetails className={classes.details}>
-              <TextField
-                value={item.description || ''}
-                onChange={(e) => setItem({ ...item, description: e.target.value })}
-                label={t('sharedDescription')}
-              />
-              <SelectField
-                value={item.calendarId}
-                onChange={(e) => setItem({ ...item, calendarId: Number(e.target.value) })}
-                endpoint="/api/calendars"
-                label={t('sharedCalendar')}
-              />
-              {['geofenceEnter', 'geofenceExit', 'geofenceCrossed'].includes(item.type) && (
+          <AdvancedSection>
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography variant="subtitle1">{t('sharedExtra')}</Typography>
+              </AccordionSummary>
+              <AccordionDetails className={classes.details}>
+                <TextField
+                  value={item.description || ''}
+                  onChange={(e) => setItem({ ...item, description: e.target.value })}
+                  label={t('sharedDescription')}
+                />
                 <SelectField
-                  multiple
-                  value={item.attributes?.geofenceIds ? item.attributes.geofenceIds.split(',') : []}
-                  onChange={(e) => {
-                    const geofenceIds = e.target.value.join();
-                    const attributes = { ...item.attributes };
-                    if (geofenceIds) {
-                      attributes.geofenceIds = geofenceIds;
-                    } else {
-                      delete attributes.geofenceIds;
+                  value={item.calendarId}
+                  onChange={(e) => setItem({ ...item, calendarId: Number(e.target.value) })}
+                  endpoint="/api/calendars"
+                  label={t('sharedCalendar')}
+                />
+                {['geofenceEnter', 'geofenceExit', 'geofenceCrossed'].includes(item.type) && (
+                  <SelectField
+                    multiple
+                    value={
+                      item.attributes?.geofenceIds ? item.attributes.geofenceIds.split(',') : []
                     }
-                    setItem({ ...item, attributes });
-                  }}
-                  endpoint="/api/geofences"
-                  keyGetter={(it) => String(it.id)}
-                  label={t('sharedGeofences')}
-                />
-              )}
-              <FormGroup>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={item.attributes && item.attributes.priority}
-                      onChange={(e) =>
-                        setItem({
-                          ...item,
-                          attributes: { ...item.attributes, priority: e.target.checked },
-                        })
+                    onChange={(e) => {
+                      const geofenceIds = e.target.value.join();
+                      const attributes = { ...item.attributes };
+                      if (geofenceIds) {
+                        attributes.geofenceIds = geofenceIds;
+                      } else {
+                        delete attributes.geofenceIds;
                       }
-                    />
-                  }
-                  label={t('sharedPriority')}
-                />
-              </FormGroup>
-            </AccordionDetails>
-          </Accordion>
+                      setItem({ ...item, attributes });
+                    }}
+                    endpoint="/api/geofences"
+                    keyGetter={(it) => String(it.id)}
+                    label={t('sharedGeofences')}
+                  />
+                )}
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={item.attributes && item.attributes.priority}
+                        onChange={(e) =>
+                          setItem({
+                            ...item,
+                            attributes: { ...item.attributes, priority: e.target.checked },
+                          })
+                        }
+                      />
+                    }
+                    label={t('sharedPriority')}
+                  />
+                </FormGroup>
+              </AccordionDetails>
+            </Accordion>
+          </AdvancedSection>
         </>
       )}
     </EditItemView>
