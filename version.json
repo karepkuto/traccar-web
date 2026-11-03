@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "34815ad",
+  "gitHash": "b03db03",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 14:35 WIB",
-  "commitMessage": "Positions report: only administrators can delete positions\n\nThe delete button came from upstream Traccar, where any user without the\n'readonly' restriction may delete positions of devices they can see. That\nlets a reseller or customer rewrite a vehicle's history, and the server\ndoes not record position deletions in the audit log. The button is now\nshown to administrators only.",
-  "buildTime": "2026-11-03 14:36 WIB",
-  "buildTimeIso": "2026-11-03T07:36:58.062Z"
+  "commitTime": "2026-11-03 14:40 WIB",
+  "commitMessage": "Consent gate works for read-only accounts; readable error message\n\nA read-only account (user or server 'Hanya-baca') may only change the\n'termsAccepted' attribute of its own account, so saving the consent\nrecord failed with a Java stack trace. The gate now retries with\ntermsAccepted only and keeps the detailed record (version, time, items)\nin the browser; Consents and Users show such accounts as 'Setuju\n(hanya-baca)'. Server errors are shortened to their first line.\n\nDocs updated (legal, limits, change history), including the hash of the\ndocs commit.",
+  "buildTime": "2026-11-03 14:41 WIB",
+  "buildTimeIso": "2026-11-03T07:41:35.306Z"
 }
