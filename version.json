@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "c51fddb",
+  "gitHash": "5065635",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 15:26 WIB",
-  "commitMessage": "Fix consent status for read-only accounts; Sync permissions also repairs reseller device access\n\n- Users and Consents pages showed 'Versi lama' for read-only customers who\n  had agreed to the current version: such accounts can only store\n  termsAccepted on the server (the version stays in their browser), so the\n  read-only check now runs before the old-version check and also counts\n  the server-wide read-only setting.\n- 'Samakan Hak Akses' now applies the role presets and then completes the\n  reseller -> customer device links (same as 'Perbaiki Akses Perangkat'),\n  reports both counts, and warns about customers marked read-only.\n- Docs updated.",
-  "buildTime": "2026-11-03 15:28 WIB",
-  "buildTimeIso": "2026-11-03T08:28:18.354Z"
+  "commitTime": "2026-11-03 15:31 WIB",
+  "commitMessage": "Docs: cover every remaining module and complete the code map",
+  "buildTime": "2026-11-03 15:33 WIB",
+  "buildTimeIso": "2026-11-03T08:33:26.447Z"
 }
