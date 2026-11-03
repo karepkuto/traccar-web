@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "c172680",
+  "gitHash": "2a1157c",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 08:57 WIB",
-  "commitMessage": "Light / dark theme toggle, light by default\n\n- Sun / moon button in the settings and reports header (desktop drawer\n  and phone top bar) and on the login screen, plus 'Mode Gelap /\n  Mode Terang' in the Account menu of the bottom bar (also on the map)\n- The choice is remembered on the device; without a choice the app is\n  light (the phone's system theme is ignored), unless an admin set the\n  server darkMode attribute\n- Same orange accents in both modes",
-  "buildTime": "2026-11-03 08:58 WIB",
-  "buildTimeIso": "2026-11-03T01:58:09.433Z"
+  "commitTime": "2026-11-03 08:59 WIB",
+  "commitMessage": "Update notice: add close button and clearer actions\n\nThe 'update available' snackbar could not be dismissed. It now reads\n'Versi baru Pantauku tersedia.' with a 'Perbarui' button and an X to\nclose it. Closing only hides the notice; the update is still applied\nwhen the app goes to the background or is reopened.",
+  "buildTime": "2026-11-03 09:00 WIB",
+  "buildTimeIso": "2026-11-03T02:00:33.061Z"
 }
