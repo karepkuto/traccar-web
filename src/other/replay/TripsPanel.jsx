@@ -187,82 +187,89 @@ const TripsPanel = ({ deviceId, onDeviceChange, onPlay, activeIndex }) => {
 
       {!loading && trips && trips.length > 0 && (
         <Box sx={{ maxHeight: { xs: '45vh', md: '55vh' }, overflowY: 'auto', pr: 0.5 }}>
-          {trips.map((trip, i) => (
-            <div key={`${trip.startTime}-${trip.endTime}`}>
-              {i > 0 && (
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  spacing={0.5}
-                  sx={{ color: 'text.secondary', pl: 1.5, py: 0.5 }}
-                >
-                  <LocalParkingIcon sx={{ fontSize: 14 }} />
-                  <Typography variant="caption">
-                    {t('replayParked').replace(
-                      '{d}',
-                      shortDuration(dayjs(trip.startTime).diff(dayjs(trips[i - 1].endTime)), t),
-                    )}
-                  </Typography>
-                </Stack>
-              )}
-              <ButtonBase
-                onClick={() => onPlay(trip, i, trips)}
-                sx={{
-                  width: '100%',
-                  textAlign: 'left',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1.5,
-                  p: 1.25,
-                  borderRadius: 3,
-                  border: `1px solid ${theme.palette.divider}`,
-                  bgcolor:
-                    activeIndex === i ? alpha(theme.palette.primary.main, 0.1) : 'background.paper',
-                  boxShadow:
-                    activeIndex === i ? `inset 4px 0 0 ${theme.palette.primary.main}` : 'none',
-                }}
-              >
-                <Box
+          {/* Newest first. Numbers and the previous/next buttons stay in
+              chronological order; the parking gap sits below each trip. */}
+          {[...trips.keys()].reverse().map((i) => {
+            const trip = trips[i];
+            return (
+              <div key={`${trip.startTime}-${trip.endTime}`}>
+                <ButtonBase
+                  onClick={() => onPlay(trip, i, trips)}
                   sx={{
-                    flex: 'none',
-                    width: 28,
-                    height: 28,
-                    borderRadius: '50%',
-                    bgcolor: 'primary.main',
-                    color: 'primary.contrastText',
+                    width: '100%',
+                    textAlign: 'left',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 700,
-                    fontSize: '0.8rem',
+                    gap: 1.5,
+                    p: 1.25,
+                    borderRadius: 3,
+                    border: `1px solid ${theme.palette.divider}`,
+                    bgcolor:
+                      activeIndex === i
+                        ? alpha(theme.palette.primary.main, 0.1)
+                        : 'background.paper',
+                    boxShadow:
+                      activeIndex === i ? `inset 4px 0 0 ${theme.palette.primary.main}` : 'none',
                   }}
                 >
-                  {i + 1}
-                </Box>
-                <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                    {clockTime(trip.startTime)} – {clockTime(trip.endTime)}
-                    <Typography component="span" variant="caption" color="textSecondary">
-                      {' · '}
-                      {shortDuration(trip.duration, t)}
-                      {' · '}
-                      {formatDistance(trip.distance, distanceUnit, t)}
-                      {' · '}
-                      {t('replayMax')} {Math.round(speedFromKnots(trip.maxSpeed || 0, speedUnit))}{' '}
-                      {speedUnitString(speedUnit, t)}
+                  <Box
+                    sx={{
+                      flex: 'none',
+                      width: 28,
+                      height: 28,
+                      borderRadius: '50%',
+                      bgcolor: 'primary.main',
+                      color: 'primary.contrastText',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 700,
+                      fontSize: '0.8rem',
+                    }}
+                  >
+                    {i + 1}
+                  </Box>
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                      {clockTime(trip.startTime)} – {clockTime(trip.endTime)}
+                      <Typography component="span" variant="caption" color="textSecondary">
+                        {' · '}
+                        {shortDuration(trip.duration, t)}
+                        {' · '}
+                        {formatDistance(trip.distance, distanceUnit, t)}
+                        {' · '}
+                        {t('replayMax')} {Math.round(speedFromKnots(trip.maxSpeed || 0, speedUnit))}{' '}
+                        {speedUnitString(speedUnit, t)}
+                      </Typography>
                     </Typography>
-                  </Typography>
-                  <Typography variant="caption" component="div" noWrap>
-                    {trip.from}
-                  </Typography>
-                  <Typography variant="caption" component="div" noWrap color="textSecondary">
-                    → {trip.to}
-                  </Typography>
-                </Box>
-                <PlayCircleIcon color="primary" sx={{ fontSize: 32, flex: 'none' }} />
-              </ButtonBase>
-            </div>
-          ))}
+                    <Typography variant="caption" component="div" noWrap>
+                      {trip.from}
+                    </Typography>
+                    <Typography variant="caption" component="div" noWrap color="textSecondary">
+                      → {trip.to}
+                    </Typography>
+                  </Box>
+                  <PlayCircleIcon color="primary" sx={{ fontSize: 32, flex: 'none' }} />
+                </ButtonBase>
+                {i > 0 && (
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    spacing={0.5}
+                    sx={{ color: 'text.secondary', pl: 1.5, py: 0.5 }}
+                  >
+                    <LocalParkingIcon sx={{ fontSize: 14 }} />
+                    <Typography variant="caption">
+                      {t('replayParked').replace(
+                        '{d}',
+                        shortDuration(dayjs(trip.startTime).diff(dayjs(trips[i - 1].endTime)), t),
+                      )}
+                    </Typography>
+                  </Stack>
+                )}
+              </div>
+            );
+          })}
         </Box>
       )}
     </Stack>

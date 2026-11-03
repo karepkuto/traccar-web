@@ -45,6 +45,9 @@ khusus protokol JT808), dan **Bagikan** (tidak tampil bila atribut server
 ## 5.3 Putar Ulang (Replay)
 - Kecepatan sampai **10x**, rentang waktu bisa dipotong, waktu dalam WIB.
 - Tab **Perjalanan**: daftar perjalanan per hari dari `/api/reports/trips`.
+  Urutan **terbaru di atas**; nomor perjalanan dan tombol sebelumnya/berikutnya
+  tetap kronologis. Waktu yang tampil adalah waktu yang disimpan server: koreksi
+  *Jam GPS* (`decoder.timezone`) hanya berlaku untuk data baru.
   Pilih satu perjalanan untuk memutarnya; ada tombol sebelumnya/berikutnya.
   Info apakah perjalanan dideteksi dengan ACC atau tanpa ACC.
 - Tab **Waktu**: tanggal/jam bisa diketik langsung.
