@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, TextField, Typography, Snackbar, IconButton } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
+import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import LoginLayout from './LoginLayout';
+import LogoImage from './LogoImage';
 import { useTranslation } from '../common/components/LocalizationProvider';
 import { snackBarDurationShortMs } from '../common/util/duration';
 import { useCatch, useAsyncTask } from '../reactHelper';
@@ -23,15 +25,15 @@ const useStyles = makeStyles()((theme) => ({
     alignItems: 'center',
   },
   title: {
-    fontSize: theme.spacing(3),
-    fontWeight: 500,
+    fontSize: theme.spacing(2.75),
+    fontWeight: 700,
     marginLeft: theme.spacing(1),
-    textTransform: 'uppercase',
   },
 }));
 
 const RegisterPage = () => {
   const { classes } = useStyles();
+  const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const t = useTranslation();
@@ -68,13 +70,14 @@ const RegisterPage = () => {
   return (
     <LoginLayout>
       <div className={classes.container}>
+        <LogoImage color={theme.palette.primary.main} />
         <div className={classes.header}>
           {!server.newServer && (
             <IconButton color="primary" onClick={() => navigate('/login')}>
               <BackIcon />
             </IconButton>
           )}
-          <Typography className={classes.title} color="primary">
+          <Typography className={classes.title} color="textPrimary">
             {t('loginRegister')}
           </Typography>
         </div>

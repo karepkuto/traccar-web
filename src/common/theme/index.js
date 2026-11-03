@@ -10,6 +10,10 @@ export default (server, darkMode, direction) =>
       createTheme({
         typography: {
           fontFamily: 'Roboto,Segoe UI,Helvetica Neue,Arial,sans-serif',
+          button: {
+            textTransform: 'none',
+            fontWeight: 600,
+          },
         },
         palette: palette(server, darkMode),
         shape: {

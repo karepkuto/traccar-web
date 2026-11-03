@@ -174,6 +174,12 @@ export default {
             display: 'flex',
             alignItems: 'center',
           },
+          '& td[data-cell-kind="inline"]': {
+            flex: '0 1 auto',
+            maxWidth: '60%',
+            textAlign: 'right',
+            wordBreak: 'break-word',
+          },
           '& td[data-cell-kind="primary"]': {
             flex: 1,
             minWidth: 0,

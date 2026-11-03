@@ -56,6 +56,13 @@ const labelTable = (table) => {
           cell.setAttribute('data-label', label);
         }
       });
+      if (details === 1) {
+        // Two-column tables (name / value): show the value inline.
+        cells
+          .filter((cell) => cell.getAttribute('data-cell-kind') === 'detail')
+          .forEach((cell) => cell.setAttribute('data-cell-kind', 'inline'));
+        details = 0;
+      }
       if (details > 0) {
         row.setAttribute('data-has-details', '');
       } else {

@@ -87,19 +87,17 @@ const PositionPage = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>{t('stateName')}</TableCell>
-                  <TableCell>{t('sharedName')}</TableCell>
                   <TableCell>{t('stateValue')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {item &&
                   Object.getOwnPropertyNames(item)
-                    .filter((it) => it !== 'attributes')
+                    .filter((it) => it !== 'attributes' && it !== 'deviceId')
                     .map((property) => (
                       <TableRow key={property}>
-                        <TableCell>{property}</TableCell>
                         <TableCell>
-                          <strong>{positionAttributes[property]?.name}</strong>
+                          <strong>{positionAttributes[property]?.name || property}</strong>
                         </TableCell>
                         <TableCell>
                           <PositionValue position={item} property={property} />
@@ -109,9 +107,8 @@ const PositionPage = () => {
                 {item &&
                   Object.getOwnPropertyNames(item.attributes).map((attribute) => (
                     <TableRow key={attribute}>
-                      <TableCell>{attribute}</TableCell>
                       <TableCell>
-                        <strong>{positionAttributes[attribute]?.name}</strong>
+                        <strong>{positionAttributes[attribute]?.name || attribute}</strong>
                       </TableCell>
                       <TableCell>
                         <PositionValue position={item} attribute={attribute} />
