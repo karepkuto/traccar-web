@@ -21,6 +21,7 @@ import { sessionActions } from '../../store';
 import { useTranslation } from './LocalizationProvider';
 import { useRestriction } from '../util/permissions';
 import { useThemeMode } from './ThemeModeContext';
+import reloadApp from '../util/reloadApp';
 import { nativePostMessage } from './NativeInterface';
 
 const BottomMenu = () => {
@@ -174,6 +175,14 @@ const BottomMenu = () => {
           }}
         >
           <Typography color="textPrimary">{t(darkMode ? 'themeLight' : 'themeDark')}</Typography>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setAnchorEl(null);
+            reloadApp();
+          }}
+        >
+          <Typography color="textPrimary">{t('appReload')}</Typography>
         </MenuItem>
         <MenuItem onClick={handleLogout}>
           <Typography color="error">{t('loginLogout')}</Typography>
