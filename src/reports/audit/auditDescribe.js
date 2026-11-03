@@ -5,7 +5,7 @@ import { ROLES, getUserRole } from '../../common/util/roles';
 // Turns raw /api/audit rows into readable entries.
 
 export const ACTION_GROUPS = {
-  access: ['login', 'logout', 'denied', 'token'],
+  access: ['login', 'logout', 'denied', 'token', 'impersonate'],
   change: ['create', 'edit', 'remove', 'accumulators'],
   link: ['link', 'unlink'],
   command: ['command'],
@@ -132,6 +132,39 @@ export const describe = (action, names, at) => {
     group: actionGroup(action.actionType),
     severity: severityOf(action, actor),
   };
+};
+
+// A reseller's impersonation shows up as "<reseller> edited user X" (the
+// trail written by the app) followed shortly by "X logged in". Returns
+// Map loginActionId -> trail edit action.
+const PAIR_WINDOW_MS = 120000;
+
+export const findImpersonations = (actions) => {
+  const sorted = [...actions].sort((a, b) =>
+    String(a.actionTime).localeCompare(String(b.actionTime)),
+  );
+  const pairs = new Map();
+  const used = new Set();
+  sorted.forEach((action, index) => {
+    if (action.actionType !== 'login') return;
+    for (let i = index - 1; i >= 0; i -= 1) {
+      const previous = sorted[i];
+      if (dayjs(action.actionTime).diff(dayjs(previous.actionTime)) > PAIR_WINDOW_MS) break;
+      if (
+        previous.actionType === 'edit' &&
+        previous.objectType === 'user' &&
+        previous.objectId === action.userId &&
+        previous.userId !== action.userId &&
+        !used.has(previous.id) &&
+        (!previous.address || !action.address || previous.address === action.address)
+      ) {
+        used.add(previous.id);
+        pairs.set(action.id, previous);
+        break;
+      }
+    }
+  });
+  return pairs;
 };
 
 export const roleKey = (role) =>

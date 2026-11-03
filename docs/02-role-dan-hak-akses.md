@@ -40,7 +40,7 @@ Keterangan: ✅ boleh · ❌ ditolak server · 🔒 disembunyikan di tampilan sa
 | Buat pelanggan | ✅ | ✅ (milik) | ❌ |
 | Ubah/nonaktifkan pelanggan, reset password | ✅ | ✅ (milik) | ❌ |
 | Hapus pengguna | ✅ | 🔒 | ❌ |
-| Impersonate (masuk sebagai) pengguna | ✅ | ✅ (milik), diatur kontrak | ❌ |
+| Impersonate (masuk sebagai) pengguna | ✅ | 🔒 hanya pelanggan yang **diberi izin admin** sampai batas waktu | ❌ |
 | Pindah pelanggan antar reseller | ✅ | ❌ (tidak ada tombol) | ❌ |
 | Tambah perangkat | ✅ | ✅ (sesuai batas) | ❌ |
 | Ubah nama/ikon perangkat | ✅ | ✅ (milik) | ❌ |
@@ -76,6 +76,26 @@ milik pelanggannya (`src/common/util/privacy.js`).
   privat (tidak ada data yang bocor sesaat). Daftar dimuat ulang tiap 60 detik
   atau setelah penautan berubah.
 - Dukungan lanjutan: impersonate atas permintaan pelanggan.
+
+## 2.3b Izin impersonate untuk reseller
+- Admin: Pengaturan → Reseller → ikon 🔑 **Izin Impersonate** → pilih
+  pelanggan, batas waktu (2 jam / 24 jam / 3 hari / bebas), alasan opsional.
+  Izin aktif bisa dicabut. Disimpan di atribut reseller `impersonateGrants`
+  (JSON; yang kedaluwarsa dibuang saat disimpan).
+- Reseller: di Pengguna, tombol *Impersonate* hanya muncul untuk pelanggan
+  dengan izin aktif. Pelanggan lain memiliki tombol **Minta izin
+  impersonate**, yang menyalin pesan dan membuka WhatsApp bila atribut server
+  `support` berupa tautan wa.me. Izin baru terbaca setelah reseller memuat
+  ulang aplikasi.
+- Jejak: sebelum reseller impersonate, aplikasi menulis atribut
+  `lastImpersonation` di akun pelanggan. Server mencatat perubahan itu atas
+  nama reseller, lalu "login" pelanggan. Audit memasangkan keduanya (≤ 2 menit,
+  IP sama, satu jejak untuk satu login) menjadi
+  **"<reseller> impersonate pengguna <pelanggan>"**.
+- Batasan: server tetap mengizinkan reseller impersonate pelanggannya lewat
+  API tanpa izin dan tanpa jejak (hanya "login <pelanggan>" + IP). Itu
+  pelanggaran kontrak. Impersonate oleh admin tidak meninggalkan jejak
+  pelaku (tercatat sebagai login pelanggan).
 
 ## 2.4 Hak dan kewajiban (disepakati, sebagian masuk EULA)
 - **Superadmin**: wajib mengaktivasi paling lambat **1x24 jam** setelah

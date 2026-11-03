@@ -29,6 +29,9 @@ import LoginIcon from '@mui/icons-material/Login';
 import LinkIcon from '@mui/icons-material/Link';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import TransferDialog from './components/TransferDialog';
+import { useSelector } from 'react-redux';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import { activeGrant, recordImpersonation } from '../common/util/impersonation';
 import { useCatch, useAsyncTask } from '../reactHelper';
 import { formatTime } from '../common/util/formatter';
 import { useTranslation } from '../common/components/LocalizationProvider';
@@ -258,10 +261,44 @@ const UsersPage = () => {
   };
 
   // ---- Row actions ----
+  const currentUser = useSelector((state) => state.session.user);
+  const [requestCopied, setRequestCopied] = useState(false);
+  const supportLink = useSelector((state) => state.session.server.attributes?.support || '');
+
   const handleLogin = useCatch(async (userId) => {
+    if (!admin) {
+      // Leaves a trail the server logs under this reseller's id.
+      await recordImpersonation(userId, currentUser);
+    }
     await fetchOrThrow(`/api/session/${userId}`);
     window.location.replace('/');
   });
+
+  // Resellers without a grant ask the admin for one.
+  const handleRequestGrant = async (userId) => {
+    const customer = items.find((user) => user.id === userId);
+    const text = t('grantRequestMessage')
+      .replace('{reseller}', currentUser.name)
+      .replace('{customer}', customer?.name || `#${userId}`);
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // Clipboard unavailable; the WhatsApp link still carries the text.
+    }
+    if (/^https:\/\/(wa\.me|api\.whatsapp\.com)\//.test(supportLink)) {
+      const url = new URL(supportLink);
+      url.searchParams.set('text', text);
+      window.open(url.toString(), '_blank', 'noopener');
+    }
+    setRequestCopied(true);
+  };
+
+  const actionRequestGrant = {
+    key: 'requestGrant',
+    title: t('grantRequest'),
+    icon: <VpnKeyIcon fontSize="small" />,
+    handler: handleRequestGrant,
+  };
 
   const actionLogin = {
     key: 'login',
@@ -442,7 +479,15 @@ const UsersPage = () => {
                   onReload={reload}
                   removable={admin}
                   customActions={[
-                    ...(manager ? [actionLogin] : []),
+                    ...(admin || (manager && activeGrant(currentUser, user.id))
+                      ? [actionLogin]
+                      : []),
+                    ...(manager &&
+                    !admin &&
+                    role === ROLES.CUSTOMER &&
+                    !activeGrant(currentUser, user.id)
+                      ? [actionRequestGrant]
+                      : []),
                     actionConnections,
                     ...(admin && role === ROLES.CUSTOMER ? [actionTransfer] : []),
                   ]}
@@ -519,6 +564,12 @@ const UsersPage = () => {
           )}
         </DialogActions>
       </Dialog>
+      <Snackbar
+        open={requestCopied}
+        autoHideDuration={4000}
+        onClose={() => setRequestCopied(false)}
+        message={t('grantRequestCopied')}
+      />
       <Snackbar
         open={Boolean(syncMessage)}
         autoHideDuration={4000}

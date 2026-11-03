@@ -919,5 +919,17 @@
     "shareBack": "Back",
     "shareMessage": "Location of {name}:",
     "privacyCustomerDevice": "Customer's device · location & history hidden",
-    "privacyCustomerDeviceLong": "This device belongs to your customer. To protect their privacy, location, trip history, reports and commands are not shown to resellers. Status and subscription remain visible. For further support, impersonate at the customer's request."
+    "privacyCustomerDeviceLong": "This device belongs to your customer. To protect their privacy, location, trip history, reports and commands are not shown to resellers. Status and subscription remain visible. For further support, impersonate at the customer's request.",
+    "grantTitle": "Impersonation Permission",
+    "grantInfo": "The reseller can impersonate only the customers allowed here, until the given time. Every impersonation is recorded in the Audit log.",
+    "grantActive": "Active permissions",
+    "grantNone": "No active permissions.",
+    "grantAdd": "Grant a new permission",
+    "grantReason": "Reason (optional)",
+    "grantReasonHint": "e.g. customer asked for help via WhatsApp",
+    "grantGive": "Grant",
+    "grant2h": "2 hours",
+    "grantRequest": "Request impersonation permission",
+    "grantRequestMessage": "Hello Pantauku admin, I am {reseller} and ask permission to impersonate customer account {customer} for support at the customer's request.",
+    "grantRequestCopied": "Request message copied. Send it to the admin."
 }

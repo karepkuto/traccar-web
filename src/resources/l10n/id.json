@@ -921,5 +921,17 @@
     "shareBack": "Kembali",
     "shareMessage": "Lokasi {name}:",
     "privacyCustomerDevice": "Milik pelanggan · lokasi & riwayat disembunyikan",
-    "privacyCustomerDeviceLong": "Perangkat ini milik pelanggan Anda. Demi privasi pelanggan, lokasi, riwayat perjalanan, laporan, dan perintah tidak ditampilkan untuk reseller. Status dan langganan tetap bisa dipantau. Untuk dukungan lebih lanjut, gunakan impersonate atas permintaan pelanggan."
+    "privacyCustomerDeviceLong": "Perangkat ini milik pelanggan Anda. Demi privasi pelanggan, lokasi, riwayat perjalanan, laporan, dan perintah tidak ditampilkan untuk reseller. Status dan langganan tetap bisa dipantau. Untuk dukungan lebih lanjut, gunakan impersonate atas permintaan pelanggan.",
+    "grantTitle": "Izin Impersonate",
+    "grantInfo": "Reseller hanya bisa impersonate pelanggan yang diberi izin di sini, sampai batas waktunya. Setiap impersonate tercatat di Audit.",
+    "grantActive": "Izin aktif",
+    "grantNone": "Belum ada izin aktif.",
+    "grantAdd": "Beri izin baru",
+    "grantReason": "Alasan (opsional)",
+    "grantReasonHint": "mis. pelanggan minta bantuan via WA",
+    "grantGive": "Beri Izin",
+    "grant2h": "2 jam",
+    "grantRequest": "Minta izin impersonate",
+    "grantRequestMessage": "Halo admin Pantauku, saya {reseller} minta izin impersonate akun pelanggan {customer} untuk keperluan dukungan atas permintaan pelanggan.",
+    "grantRequestCopied": "Pesan permintaan izin disalin. Kirim ke admin."
 }

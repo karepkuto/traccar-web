@@ -38,7 +38,15 @@ import fetchOrThrow from '../common/util/fetchOrThrow';
 import exportExcel from '../common/util/exportExcel';
 import { formatTime } from '../common/util/formatter';
 import { getTimezone } from '../common/util/timezone';
-import { ACTION_GROUPS, NAME_SOURCES, describe, roleKey } from './audit/auditDescribe';
+import {
+  ACTION_GROUPS,
+  NAME_SOURCES,
+  describe,
+  findImpersonations,
+  roleKey,
+} from './audit/auditDescribe';
+import { getUserRole } from '../common/util/roles';
+import TheaterComedyIcon from '@mui/icons-material/TheaterComedy';
 import useAuditText from './audit/auditText';
 
 const PAGE = 150;
@@ -56,6 +64,7 @@ const actionIcons = {
   report: DescriptionIcon,
   accumulators: RestartAltIcon,
   token: KeyIcon,
+  impersonate: TheaterComedyIcon,
 };
 
 const AuditPage = () => {
@@ -101,13 +110,31 @@ const AuditPage = () => {
     }
   }, []);
 
-  const entries = useMemo(
-    () =>
-      (actions || [])
-        .map((action) => describe(action, names, at))
-        .sort((a, b) => String(b.time).localeCompare(String(a.time))),
-    [actions, names, at],
-  );
+  const entries = useMemo(() => {
+    const list = actions || [];
+    const impersonations = findImpersonations(list);
+    return list
+      .map((action) => {
+        const entry = describe(action, names, at);
+        const trail = impersonations.get(action.id);
+        if (!trail) {
+          return entry;
+        }
+        // "<reseller> impersonate pengguna <customer>"
+        const actor = names.user?.get(trail.userId);
+        return {
+          ...entry,
+          actor,
+          actorId: trail.userId,
+          role: actor ? getUserRole(actor) : null,
+          verb: at('action_impersonate'),
+          object: `${at('object_user')} ${names.user?.get(action.userId)?.name || `#${action.userId}`}`,
+          actionType: 'impersonate',
+          severity: 'warning',
+        };
+      })
+      .sort((a, b) => String(b.time).localeCompare(String(a.time)));
+  }, [actions, names, at]);
 
   const actorOptions = useMemo(() => {
     const ids = [...new Set(entries.map((entry) => entry.actorId).filter(Boolean))];

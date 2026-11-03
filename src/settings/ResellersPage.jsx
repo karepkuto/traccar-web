@@ -24,6 +24,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import TransferDialog from './components/TransferDialog';
+import ImpersonationGrantsDialog from './components/ImpersonationGrantsDialog';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { repairResellerAccess, syncResellerCustomers } from '../common/util/resellerAccess';
 import BuildIcon from '@mui/icons-material/Build';
 import PageLayout from '../common/components/PageLayout';
@@ -52,6 +54,7 @@ const ResellersPage = () => {
   const [loading, setLoading] = useState(true);
   const [manage, setManage] = useState(null);
   const [transfer, setTransfer] = useState(null);
+  const [grantFor, setGrantFor] = useState(null);
   const [repairing, setRepairing] = useState(false);
   const [repairMessage, setRepairMessage] = useState(null);
 
@@ -207,6 +210,11 @@ const ResellersPage = () => {
                           <GroupAddIcon fontSize="small" />
                         </IconButton>
                       </Tooltip>
+                      <Tooltip title={t('grantTitle')}>
+                        <IconButton size="small" onClick={() => setGrantFor(reseller)}>
+                          <VpnKeyIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                       <Tooltip title={t('transferTitle')}>
                         <IconButton size="small" onClick={() => setTransfer({ reseller })}>
                           <SwapHorizIcon fontSize="small" />
@@ -281,6 +289,9 @@ const ResellersPage = () => {
         onClose={() => setRepairMessage(null)}
         message={repairMessage}
       />
+      {grantFor && (
+        <ImpersonationGrantsDialog reseller={grantFor} onClose={() => setGrantFor(null)} />
+      )}
       {transfer && (
         <TransferDialog source={transfer} onClose={() => setTransfer(null)} onDone={reload} />
       )}
