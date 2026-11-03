@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "cccc99f",
+  "gitHash": "c7cc4b1",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 15:04 WIB",
-  "commitMessage": "Sharing: 24-hour default, active links with revoke, live location only\n\n- Share page redesigned: default validity 24 hours with quick choices\n  (1 hour, 24 hours, 3 days, 7 days) or a custom date, Create Link, Copy\n  and WhatsApp buttons, and a clear message when a link from the same\n  account already exists (the server answers 409).\n- 'Tautan Aktif' lists the temporary accounts behind a device's links\n  (creator, valid until, active/expired) with a Revoke button for\n  administrators; deleting the temporary account invalidates the token.\n  Others are told that only the admin can revoke.\n- Shared-link viewers no longer see Replay, Commands, Edit or Reports;\n  /replay and /reports redirect to the map. The server API still allows\n  reading the device history.\n- Docs updated.",
-  "buildTime": "2026-11-03 15:05 WIB",
-  "buildTimeIso": "2026-11-03T08:05:21.211Z"
+  "commitTime": "2026-11-03 15:13 WIB",
+  "commitMessage": "Reseller privacy: customers' devices show status and subscription only\n\nResellers keep full access to their stock devices (installation tests)\nbut, for devices owned by one of their customers, no longer see location,\ntrip history, replay, reports, commands, position details or the share\nbutton. The device list shows status and subscription with a note; the\nmap and auto-zoom skip those devices; report and replay device pickers\nleave them out ('all' expands to the allowed devices, groups are hidden)\nand no request is made while the list is loading, so the server is never\nasked for 'all devices'. Command and position pages redirect to the map.\n\nEnforced in the web app only: the server still gives resellers access to\ndevices linked to them. Docs updated (roles, limits, change history).",
+  "buildTime": "2026-11-03 15:15 WIB",
+  "buildTimeIso": "2026-11-03T08:15:08.307Z"
 }
