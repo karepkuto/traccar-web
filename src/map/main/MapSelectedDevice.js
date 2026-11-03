@@ -5,6 +5,7 @@ import { map } from '../core/MapView';
 import { usePrevious } from '../../reactHelper';
 import { useAttributePreference } from '../../common/util/preferences';
 import { toMapCoordinates } from '../core/mapUtil';
+import { usePrivacy } from '../../common/util/privacy';
 
 const MapSelectedDevice = () => {
   const currentTime = useSelector((state) => state.devices.selectTime);
@@ -15,7 +16,9 @@ const MapSelectedDevice = () => {
   const selectZoom = useAttributePreference('web.selectZoom', 10);
   const mapFollow = useAttributePreference('mapFollow', false);
 
-  const position = useSelector((state) => state.session.positions[currentId]);
+  const { isPrivate } = usePrivacy();
+  const livePosition = useSelector((state) => state.session.positions[currentId]);
+  const position = isPrivate(currentId) ? null : livePosition;
 
   const previousPosition = usePrevious(position);
 

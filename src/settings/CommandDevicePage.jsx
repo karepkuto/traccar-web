@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { usePrivacy } from '../common/util/privacy';
 import {
   Accordion,
   AccordionSummary,
@@ -23,6 +24,7 @@ const CommandDevicePage = () => {
   const t = useTranslation();
 
   const { id } = useParams();
+  const { isPrivate } = usePrivacy();
 
   const [savedId, setSavedId] = useState(0);
   const [item, setItem] = useState({});
@@ -47,6 +49,11 @@ const CommandDevicePage = () => {
   });
 
   const validate = () => savedId || (item && item.type);
+
+  // Reseller privacy: no commands or position details for customers' devices.
+  if (isPrivate(id)) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <PageLayout menu={<SettingsMenu />} breadcrumbs={['settingsTitle', 'deviceCommand']}>

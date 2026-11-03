@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useAsyncTask } from '../reactHelper';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 import { getBillingThresholds } from '../billing/billingLogic';
+import { usePrivacy } from '../common/util/privacy';
 import { billingFilterKey, ignitionKey, motionKey, sortDevices } from './filterLogic';
 
 export default (
@@ -19,6 +20,7 @@ export default (
   const devices = useSelector((state) => state.devices.items);
   const server = useSelector((state) => state.session.server);
   const thresholds = useMemo(() => getBillingThresholds(server), [server]);
+  const { isPrivate } = usePrivacy();
 
   // Owner filter: ask the server which devices each chosen user can see.
   // Ids that are not in the current account's options (e.g. a filter saved
@@ -98,10 +100,12 @@ export default (
 
     setFilteredDevices(filtered);
     // The map follows the list when asked to, and always while filtering by owner.
+    // Reseller privacy: customers' devices never appear on the map.
     setFilteredPositions(
-      filterMap || ownerKey
+      (filterMap || ownerKey
         ? filtered.map((device) => positions[device.id]).filter(Boolean)
-        : Object.values(positions),
+        : Object.values(positions)
+      ).filter((position) => !isPrivate(position.deviceId)),
     );
   }, [
     keyword,
@@ -112,6 +116,7 @@ export default (
     devices,
     positions,
     thresholds,
+    isPrivate,
     ownerKey,
     ownerDevices,
     setFilteredDevices,

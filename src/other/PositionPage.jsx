@@ -15,7 +15,8 @@ import {
   TableBody,
 } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { usePrivacy } from '../common/util/privacy';
 import { useAsyncTask } from '../reactHelper';
 import { useTranslation } from '../common/components/LocalizationProvider';
 import PositionValue from '../common/components/PositionValue';
@@ -44,6 +45,7 @@ const PositionPage = () => {
   const positionAttributes = usePositionAttributes(t);
 
   const { id } = useParams();
+  const { isPrivate } = usePrivacy();
 
   const [item, setItem] = useState();
 
@@ -69,6 +71,11 @@ const PositionPage = () => {
     }
     return null;
   });
+
+  // Reseller privacy: no commands or position details for customers' devices.
+  if (item && isPrivate(item.deviceId)) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className={classes.root}>

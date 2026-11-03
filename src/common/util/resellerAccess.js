@@ -1,5 +1,6 @@
 import fetchOrThrow from './fetchOrThrow';
 import { findOtherResellers, isCustomer, isReseller } from './ownership';
+import { invalidatePrivacy } from './privacy';
 
 // Pantauku rule: a reseller always has access to every device of its
 // customers. Traccar only gives a reseller the devices linked directly to
@@ -55,6 +56,7 @@ export const revokeCustomerDevicesFromReseller = async (resellerId, customerId) 
 
 // After devices were linked to a customer.
 export const grantCustomerDevicesToReseller = async (customerId, deviceIds) => {
+  invalidatePrivacy();
   const reseller = await findResellerOf(customerId);
   if (reseller) {
     await grantDevicesToReseller(reseller.id, deviceIds || (await directDeviceIds(customerId)));
@@ -78,6 +80,7 @@ export const fetchDeviceCustomers = async (deviceId) =>
 // Gives a device to one customer (or nobody when customerId is null) and
 // moves the reseller link along with it.
 export const setDeviceOwner = async (deviceId, customerId) => {
+  invalidatePrivacy();
   const current = await fetchDeviceCustomers(deviceId);
   const newReseller = customerId ? await findResellerOf(customerId) : null;
   for (const old of current.filter((c) => c.id !== customerId)) {

@@ -35,6 +35,7 @@ import { useTranslation } from './LocalizationProvider';
 import RemoveDialog from './RemoveDialog';
 import PositionValue from './PositionValue';
 import { useAdministrator, useDeviceReadonly, useRestriction } from '../util/permissions';
+import { usePrivacy } from '../util/privacy';
 import usePositionAttributes from '../attributes/usePositionAttributes';
 import { devicesActions } from '../../store';
 import { useCatch, useCatchCallback } from '../../reactHelper';
@@ -166,7 +167,13 @@ const ActionButton = ({ icon, label, onClick, disabled, color }) => (
   </ButtonBase>
 );
 
-const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPadding = 0 }) => {
+const StatusCard = ({
+  deviceId,
+  position: positionProp,
+  onClose,
+  disableActions,
+  desktopPadding = 0,
+}) => {
   const { classes } = useStyles({ desktopPadding });
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -175,6 +182,10 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
   const readonly = useRestriction('readonly');
   const deviceReadonly = useDeviceReadonly();
   const admin = useAdministrator();
+  // Reseller privacy: a customer's device shows status only.
+  const { isPrivate } = usePrivacy();
+  const privateDevice = isPrivate(deviceId);
+  const position = privateDevice ? null : positionProp;
 
   const shareDisabled = useSelector((state) => state.session.server.attributes.disableShare);
   const user = useSelector((state) => state.session.user);
@@ -270,6 +281,13 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
                   </IconButton>
                 </div>
               </CardMedia>
+              {privateDevice && (
+                <CardContent className={classes.content}>
+                  <Typography variant="body2" color="textSecondary">
+                    {t('privacyCustomerDeviceLong')}
+                  </Typography>
+                </CardContent>
+              )}
               {position && (
                 <CardContent className={classes.content}>
                   <div className={classes.chips}>
@@ -338,18 +356,22 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
                 {/* Shared-link viewers see the live location only. */}
                 {!user.temporary && (
                   <>
-                    <ActionButton
-                      icon={<RouteIcon />}
-                      label={t('reportReplay')}
-                      onClick={() => navigate(`/replay?deviceId=${deviceId}`)}
-                      disabled={disableActions || !position}
-                    />
-                    <ActionButton
-                      icon={<SendIcon />}
-                      label={t('commandTitle')}
-                      onClick={() => navigate(`/settings/device/${deviceId}/command`)}
-                      disabled={disableActions}
-                    />
+                    {!privateDevice && (
+                      <ActionButton
+                        icon={<RouteIcon />}
+                        label={t('reportReplay')}
+                        onClick={() => navigate(`/replay?deviceId=${deviceId}`)}
+                        disabled={disableActions || !position}
+                      />
+                    )}
+                    {!privateDevice && (
+                      <ActionButton
+                        icon={<SendIcon />}
+                        label={t('commandTitle')}
+                        onClick={() => navigate(`/settings/device/${deviceId}/command`)}
+                        disabled={disableActions}
+                      />
+                    )}
                     <ActionButton
                       icon={<EditIcon />}
                       label={t('sharedEdit')}
@@ -367,13 +389,15 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
                     disabled={disableActions}
                   />
                 )}
-                <ActionButton
-                  icon={<MapIcon />}
-                  label={t('statusLocation')}
-                  onClick={(e) => setAnchorEl(e.currentTarget)}
-                  disabled={!position}
-                />
-                {!shareDisabled && !user.temporary && (
+                {!privateDevice && (
+                  <ActionButton
+                    icon={<MapIcon />}
+                    label={t('statusLocation')}
+                    onClick={(e) => setAnchorEl(e.currentTarget)}
+                    disabled={!position}
+                  />
+                )}
+                {!shareDisabled && !user.temporary && !privateDevice && (
                   <ActionButton
                     icon={<ShareIcon />}
                     label={t('sharedShare')}

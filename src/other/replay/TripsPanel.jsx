@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { usePrivacy } from '../../common/util/privacy';
 import {
   Alert,
   Box,
@@ -42,9 +43,13 @@ const TripsPanel = ({ deviceId, onDeviceChange, onPlay, activeIndex }) => {
   const [trips, setTrips] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const { isPrivate } = usePrivacy();
   const deviceList = useMemo(
-    () => Object.values(devices).sort((a, b) => a.name.localeCompare(b.name)),
-    [devices],
+    () =>
+      Object.values(devices)
+        .filter((device) => !isPrivate(device.id))
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    [devices, isPrivate],
   );
   const device = devices[deviceId];
 

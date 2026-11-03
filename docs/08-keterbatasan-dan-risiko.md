@@ -13,4 +13,6 @@
 | Hanya satu admin | Akun bermasalah = bisnis berhenti | 2FA + kode cadangan; pertimbangkan admin cadangan |
 | Akun Hanya-baca tidak bisa menyimpan rekaman persetujuan lengkap di server | Bukti persetujuan lemah, diminta ulang di perangkat lain | Hindari Hanya-baca untuk pelanggan biasa; lihat [06](06-legal.md) |
 | Tautan bagikan: pemegang token bisa membaca riwayat perangkat lewat API; pencabutan hanya oleh admin | Kebocoran privasi bila tautan tersebar | Bawaan 24 jam, layar riwayat disembunyikan, daftar Tautan Aktif + Cabut; atribut server `disableShare` untuk mematikan fitur |
+| Privasi pelanggan terhadap reseller hanya di tampilan | Reseller teknis bisa membaca riwayat pelanggan lewat API; membaca posisi tidak tercatat di audit | Kontrak (larangan + sanksi pindah pelanggan); pembuatan laporan tetap tercatat |
+| Impersonate tidak mencatat pelaku | Audit hanya mencatat "login <pelanggan>" + IP, tanpa siapa yang melakukannya | Lihat keputusan di [02](02-role-dan-hak-akses.md) |
 | Teks legal masih draf | Risiko hukum | Tinjauan ahli hukum |

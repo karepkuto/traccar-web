@@ -919,5 +919,7 @@
     "shareRevoke": "Cabut",
     "shareCopied": "Tautan disalin.",
     "shareBack": "Kembali",
-    "shareMessage": "Lokasi {name}:"
+    "shareMessage": "Lokasi {name}:",
+    "privacyCustomerDevice": "Milik pelanggan · lokasi & riwayat disembunyikan",
+    "privacyCustomerDeviceLong": "Perangkat ini milik pelanggan Anda. Demi privasi pelanggan, lokasi, riwayat perjalanan, laporan, dan perintah tidak ditampilkan untuk reseller. Status dan langganan tetap bisa dipantau. Untuk dukungan lebih lanjut, gunakan impersonate atas permintaan pelanggan."
 }

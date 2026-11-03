@@ -10,6 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
+import { usePrivacy } from '../../common/util/privacy';
 import { useTranslation } from '../../common/components/LocalizationProvider';
 import useReportStyles from '../common/useReportStyles';
 import SplitButton from '../../common/components/SplitButton';
@@ -37,23 +38,39 @@ const ReportFilter = ({ children, onShow, onExport, onSchedule, deviceType, load
 
   const devices = useSelector((state) => state.devices.items, deviceEquality(['id', 'name']));
   const groups = useSelector((state) => state.groups.items);
+  // Reseller privacy: customers' devices are not offered, "all" means all
+  // allowed devices, and groups (which may hold customers' devices) are hidden.
+  const { active: privacy, isPrivate } = usePrivacy();
+  const allowedDevices = useMemo(
+    () =>
+      Object.values(devices)
+        .filter((device) => !isPrivate(device.id))
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    [devices, isPrivate],
+  );
   const deviceList = useMemo(
-    () => [
-      { id: 'all', name: t('notificationAlways') },
-      ...Object.values(devices).sort((a, b) => a.name.localeCompare(b.name)),
-    ],
-    [devices, t],
+    () => [{ id: 'all', name: t('notificationAlways') }, ...allowedDevices],
+    [allowedDevices, t],
   );
   const groupList = useMemo(
     () => Object.values(groups).sort((a, b) => a.name.localeCompare(b.name)),
     [groups],
   );
 
-  const deviceIds = useMemo(
-    () => searchParams.getAll('deviceId').map((it) => (it === 'all' ? it : Number(it))),
-    [searchParams],
+  const deviceIds = useMemo(() => {
+    const ids = searchParams.getAll('deviceId').map((it) => (it === 'all' ? it : Number(it)));
+    if (!privacy) {
+      return ids;
+    }
+    if (ids.includes('all')) {
+      return allowedDevices.map((device) => device.id);
+    }
+    return ids.filter((id) => !isPrivate(id));
+  }, [searchParams, privacy, allowedDevices, isPrivate]);
+  const groupIds = useMemo(
+    () => (privacy ? [] : searchParams.getAll('groupId').map(Number)),
+    [searchParams, privacy],
   );
-  const groupIds = useMemo(() => searchParams.getAll('groupId').map(Number), [searchParams]);
   const from = searchParams.get('from');
   const to = searchParams.get('to');
   const [period, setPeriod] = useState('today');
@@ -106,10 +123,12 @@ const ReportFilter = ({ children, onShow, onExport, onSchedule, deviceType, load
   const options = evaluateOptions();
 
   useEffect(() => {
-    if (from && to) {
+    // With privacy on, an empty device list would mean "all devices" to the
+    // server, customers' devices included, so nothing is requested then.
+    if (from && to && !(privacy && !deviceIds.filter((it) => it !== 'all').length)) {
       onShow({ deviceIds: deviceIds.filter((it) => it !== 'all'), groupIds, from, to });
     }
-  }, [deviceIds, groupIds, from, to, onShow]);
+  }, [deviceIds, groupIds, from, to, onShow, privacy]);
 
   const showReport = () => {
     let selectedFrom;
@@ -232,7 +251,7 @@ const ReportFilter = ({ children, onShow, onExport, onSchedule, deviceType, load
           />
         </div>
       )}
-      {deviceType === 'multiple' && (
+      {deviceType === 'multiple' && !privacy && (
         <div className={classes.filterItem}>
           <SelectField
             label={t('settingsGroups')}

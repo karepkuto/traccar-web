@@ -27,6 +27,7 @@ import TripsPanel from './replay/TripsPanel';
 import { clockTime } from './replay/tripUtils';
 import { fromInputValue, toInputValue } from '../common/util/timezone';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { usePrivacy } from '../common/util/privacy';
 import { useSelector } from 'react-redux';
 import MapView from '../map/core/MapView';
 import MapRoutePath from '../map/MapRoutePath';
@@ -122,7 +123,10 @@ const ReplayPage = () => {
 
   const [positions, setPositions] = useState([]);
   const [index, setIndex] = useState(0);
-  const [selectedDeviceId, setSelectedDeviceId] = useState(defaultDeviceId);
+  const { isPrivate } = usePrivacy();
+  const [selectedDeviceId, setSelectedDeviceId] = useState(() =>
+    isPrivate(defaultDeviceId) ? null : defaultDeviceId,
+  );
   const [showCard, setShowCard] = useState(false);
   const from = searchParams.get('from');
   const to = searchParams.get('to');

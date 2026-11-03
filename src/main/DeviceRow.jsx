@@ -19,6 +19,7 @@ import DriverValue from '../common/components/DriverValue';
 import MotionBar from './components/MotionBar';
 import useFeatures from '../common/util/useFeatures';
 import BillingCountdown from '../billing/BillingCountdown';
+import { usePrivacy } from '../common/util/privacy';
 
 dayjs.extend(relativeTime);
 
@@ -39,7 +40,11 @@ const DeviceRow = ({ devices, index, style }) => {
   const selectedDeviceId = useSelector((state) => state.devices.selectedId);
 
   const item = devices[index];
-  const position = useSelector((state) => state.session.positions[item.id]);
+  const { isPrivate } = usePrivacy();
+  const privateDevice = isPrivate(item.id);
+  const livePosition = useSelector((state) => state.session.positions[item.id]);
+  // Reseller privacy: no telemetry for customers' devices.
+  const position = privateDevice ? null : livePosition;
 
   const devicePrimary = useAttributePreference('devicePrimary', 'name');
   const deviceSecondary = useAttributePreference('deviceSecondary', '');
@@ -145,6 +150,11 @@ const DeviceRow = ({ devices, index, style }) => {
             {secondaryValue && <> • {secondaryValue}</>}
             <BillingCountdown device={item} />
           </Typography>
+          {privateDevice && (
+            <Typography variant="caption" component="div" color="textSecondary" noWrap>
+              {t('privacyCustomerDevice')}
+            </Typography>
+          )}
           {position && (
             <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5, overflow: 'hidden' }}>
               <Chip
