@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import { Snackbar, IconButton } from '@mui/material';
-import RefreshIcon from '@mui/icons-material/Refresh';
+import { useEffect, useState } from 'react';
+import { Button, IconButton, Snackbar } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { useSelector } from 'react-redux';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { useTranslation } from './common/components/LocalizationProvider';
@@ -67,14 +67,28 @@ const UpdateController = () => {
     return () => document.removeEventListener('visibilitychange', onHidden);
   }, [needRefresh, updateServiceWorker]);
 
+  // "Nanti" only hides the notice: the update is still applied the next
+  // time the app goes to the background or is reopened.
+  const [dismissed, setDismissed] = useState(false);
+
   return (
     <Snackbar
-      open={needRefresh}
-      message={t('settingsUpdateAvailable')}
+      open={needRefresh && !dismissed}
+      message={t('updateAvailable')}
       action={
-        <IconButton color="inherit" onClick={() => updateServiceWorker(true)}>
-          <RefreshIcon />
-        </IconButton>
+        <>
+          <Button color="primary" size="small" onClick={() => updateServiceWorker(true)}>
+            {t('updateNow')}
+          </Button>
+          <IconButton
+            color="inherit"
+            size="small"
+            aria-label={t('updateLater')}
+            onClick={() => setDismissed(true)}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </>
       }
     />
   );
