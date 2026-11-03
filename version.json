@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "bc1f5ba",
+  "gitHash": "c172680",
   "gitBranch": "master",
-  "commitTime": "2026-11-02 22:19 WIB",
-  "commitMessage": "Review module descriptions for accuracy and coverage\n\n- Send-command pages (device and group) and Share had picked up the\n  device/group form text because of route order; they now have their\n  own descriptions\n- Expiration wording follows the server's actual behaviour (verified in\n  Traccar's ConnectionManager): new connections from an expired device\n  are refused so new data is not stored, while an already connected\n  device may keep sending until it reconnects\n- Preferences, Account, Announcement, Notifications, Scheduled,\n  Statistics, Audit and Logs descriptions corrected to match what the\n  pages really contain and who can see them",
-  "buildTime": "2026-11-02 22:20 WIB",
-  "buildTimeIso": "2026-11-02T15:20:33.286Z"
+  "commitTime": "2026-11-03 08:57 WIB",
+  "commitMessage": "Light / dark theme toggle, light by default\n\n- Sun / moon button in the settings and reports header (desktop drawer\n  and phone top bar) and on the login screen, plus 'Mode Gelap /\n  Mode Terang' in the Account menu of the bottom bar (also on the map)\n- The choice is remembered on the device; without a choice the app is\n  light (the phone's system theme is ignored), unless an admin set the\n  server darkMode attribute\n- Same orange accents in both modes",
+  "buildTime": "2026-11-03 08:58 WIB",
+  "buildTimeIso": "2026-11-03T01:58:09.433Z"
 }
