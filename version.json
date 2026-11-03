@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "4de3336",
+  "gitHash": "9611300",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 09:19 WIB",
-  "commitMessage": "Forms: always-open titled sections instead of collapsible panels\n\n- Every form section (Wajib, Tambahan, Atribut, …) is shown open as a\n  bordered card with a bold title, like a classic admin form; section\n  headers no longer collapse\n- Sections that used to start collapsed (attributes, account) now start\n  open so nothing becomes unreachable\n- Speed unit selects on Account and Server show km/h when unset,\n  matching what the app displays",
-  "buildTime": "2026-11-03 09:20 WIB",
-  "buildTimeIso": "2026-11-03T02:20:27.721Z"
+  "commitTime": "2026-11-03 09:35 WIB",
+  "commitMessage": "Replay: per-trip history tab and typed time range\n\nTrips tab ('Perjalanan'):\n- Pick a device and a day (today, yesterday or a date in WIB) to list\n  that day's trips from the server's trip report, each as a card with\n  times, duration, distance, max speed and from -> to\n- Places use the geofence name when the start / end point lies in a\n  geofence, otherwise the address (or coordinates)\n- Parking time between trips is shown; tapping a card plays that trip\n  with the existing player, with previous / next trip and back to list\n- Chips tell whether the device reports ignition (ACC) and whether trip\n  detection uses ACC or movement, with an (i) explaining the 5-minute\n  default stop threshold\n\nBy time tab ('Waktu'):\n- Start and end of the range can be typed as date + time (WIB); the\n  range slider follows, snapping to the nearest recorded points",
+  "buildTime": "2026-11-03 09:36 WIB",
+  "buildTimeIso": "2026-11-03T02:36:54.057Z"
 }
