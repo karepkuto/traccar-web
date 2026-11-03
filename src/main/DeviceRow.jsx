@@ -1,31 +1,14 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from 'tss-react/mui';
-import {
-  IconButton,
-  Tooltip,
-  Avatar,
-  ListItemAvatar,
-  ListItemText,
-  ListItemButton,
-  Typography,
-} from '@mui/material';
-import BatteryFullIcon from '@mui/icons-material/BatteryFull';
-import BatteryChargingFullIcon from '@mui/icons-material/BatteryChargingFull';
-import Battery60Icon from '@mui/icons-material/Battery60';
-import BatteryCharging60Icon from '@mui/icons-material/BatteryCharging60';
-import Battery20Icon from '@mui/icons-material/Battery20';
-import BatteryCharging20Icon from '@mui/icons-material/BatteryCharging20';
+import { Avatar, Box, ButtonBase, Chip, Tooltip, Typography } from '@mui/material';
+import { alpha, useTheme } from '@mui/material/styles';
 import ErrorIcon from '@mui/icons-material/Error';
+import SpeedIcon from '@mui/icons-material/Speed';
+import BatteryStdIcon from '@mui/icons-material/BatteryStd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { devicesActions } from '../store';
-import {
-  formatAlarm,
-  formatBoolean,
-  formatPercentage,
-  formatStatus,
-  getStatusColor,
-} from '../common/util/formatter';
+import { formatAlarm, formatStatus, getStatusColor } from '../common/util/formatter';
+import { speedFromKnots, speedUnitString } from '../common/util/converter';
 import { useTranslation } from '../common/components/LocalizationProvider';
 import { mapIconKey, mapIcons } from '../map/core/preloadImages';
 import { useAdministrator } from '../common/util/permissions';
@@ -39,36 +22,15 @@ import BillingCountdown from '../billing/BillingCountdown';
 
 dayjs.extend(relativeTime);
 
-const useStyles = makeStyles()((theme) => ({
-  icon: {
-    width: '25px',
-    height: '25px',
-    filter: 'brightness(0) invert(1)',
-  },
-  batteryText: {
-    fontSize: '0.75rem',
-    fontWeight: 'normal',
-    lineHeight: '0.875rem',
-  },
-  success: {
-    color: theme.palette.success.main,
-  },
-  warning: {
-    color: theme.palette.warning.main,
-  },
-  error: {
-    color: theme.palette.error.main,
-  },
-  neutral: {
-    color: theme.palette.neutral.main,
-  },
-  selected: {
-    backgroundColor: theme.palette.action.selected,
-  },
-}));
+// Height of one card in the virtualized list (see DeviceList rowHeight).
+export const DEVICE_ROW_HEIGHT = 96;
 
+const paletteKey = (statusColor) => (statusColor === 'neutral' ? 'neutral' : statusColor);
+
+// Device list item as a compact card: status-coloured avatar, name, status
+// and small chips for speed, engine and battery.
 const DeviceRow = ({ devices, index, style }) => {
-  const { classes } = useStyles();
+  const theme = useTheme();
   const dispatch = useDispatch();
   const t = useTranslation();
   const features = useFeatures();
@@ -81,6 +43,7 @@ const DeviceRow = ({ devices, index, style }) => {
 
   const devicePrimary = useAttributePreference('devicePrimary', 'name');
   const deviceSecondary = useAttributePreference('deviceSecondary', '');
+  const speedUnit = useAttributePreference('speedUnit');
 
   const resolveFieldValue = (field) => {
     if (field === 'geofenceIds') {
@@ -103,103 +66,121 @@ const DeviceRow = ({ devices, index, style }) => {
   const primaryValue = resolveFieldValue(devicePrimary);
   const secondaryValue = resolveFieldValue(deviceSecondary);
 
-  const secondaryText = () => {
-    let status;
-    if (item.status === 'online' || !item.lastUpdate) {
-      status = formatStatus(item.status, t);
-    } else {
-      status = dayjs(item.lastUpdate).fromNow();
-    }
-    return (
-      <>
-        {secondaryValue && (
-          <>
-            {secondaryValue}
-            {' • '}
-          </>
-        )}
-        <span className={classes[getStatusColor(item.status)]}>{status}</span>
-        <BillingCountdown expirationTime={item.expirationTime} />
-      </>
-    );
+  const statusColor = getStatusColor(item.status);
+  const statusMain = theme.palette[paletteKey(statusColor)].main;
+  const statusText =
+    item.status === 'online' || !item.lastUpdate
+      ? formatStatus(item.status, t)
+      : dayjs(item.lastUpdate).fromNow();
+
+  const selected = selectedDeviceId === item.id;
+  const attributes = position?.attributes || {};
+  const hasIgnition = Object.hasOwn(attributes, 'ignition');
+  const hasBattery = Object.hasOwn(attributes, 'batteryLevel');
+  const speed = position ? Math.round(speedFromKnots(position.speed || 0, speedUnit)) : null;
+
+  const chipSx = {
+    height: 22,
+    fontSize: '0.72rem',
+    fontWeight: 600,
+    '& .MuiChip-icon': { ml: 0.5 },
   };
 
   return (
-    <div style={style}>
-      <ListItemButton
-        key={item.id}
+    <div style={{ ...style, padding: theme.spacing(0.75, 1) }}>
+      <ButtonBase
+        component="div"
         onClick={() => dispatch(devicesActions.selectId(item.id))}
         disabled={!admin && item.disabled}
-        selected={selectedDeviceId === item.id}
-        className={selectedDeviceId === item.id ? classes.selected : null}
+        sx={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1.5,
+          px: 1.5,
+          borderRadius: 3,
+          textAlign: 'left',
+          bgcolor: selected ? alpha(theme.palette.primary.main, 0.1) : 'background.paper',
+          boxShadow: selected
+            ? `inset 4px 0 0 ${theme.palette.primary.main}`
+            : '0 1px 3px rgba(0,0,0,0.08)',
+          opacity: !admin && item.disabled ? 0.5 : 1,
+        }}
       >
-        <ListItemAvatar>
-          <Avatar>
-            <img className={classes.icon} src={mapIcons[mapIconKey(item.category)]} alt="" />
+        <Box sx={{ position: 'relative', flex: 'none' }}>
+          <Avatar sx={{ width: 44, height: 44, bgcolor: alpha(statusMain, 0.9) }}>
+            <img
+              src={mapIcons[mapIconKey(item.category)]}
+              alt=""
+              style={{ width: 24, height: 24, filter: 'brightness(0) invert(1)' }}
+            />
           </Avatar>
-        </ListItemAvatar>
-        <ListItemText
-          primary={primaryValue}
-          secondary={secondaryText()}
-          slots={{
-            primary: Typography,
-            secondary: Typography,
-          }}
-          slotProps={{
-            primary: { noWrap: true },
-            secondary: { noWrap: true },
-          }}
-        />
-        {position && (
-          <>
-            {position.attributes.hasOwnProperty('alarm') && (
-              <Tooltip title={`${t('eventAlarm')}: ${formatAlarm(position.attributes.alarm, t)}`}>
-                <IconButton size="small">
-                  <ErrorIcon fontSize="small" className={classes.error} />
-                </IconButton>
+          <Box
+            sx={{
+              position: 'absolute',
+              right: -1,
+              bottom: -1,
+              width: 13,
+              height: 13,
+              borderRadius: '50%',
+              bgcolor: statusMain,
+              border: `2px solid ${theme.palette.background.paper}`,
+            }}
+          />
+        </Box>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <Typography noWrap sx={{ fontWeight: 700, flex: 1, minWidth: 0 }}>
+              {primaryValue}
+            </Typography>
+            {Object.hasOwn(attributes, 'alarm') && (
+              <Tooltip title={`${t('eventAlarm')}: ${formatAlarm(attributes.alarm, t)}`}>
+                <ErrorIcon fontSize="small" color="error" />
               </Tooltip>
             )}
-            {position.attributes.hasOwnProperty('ignition') && (
-              <Tooltip
-                title={`${t('positionIgnition')}: ${formatBoolean(position.attributes.ignition, t)}`}
-              >
-                <IconButton size="small">
-                  {position.attributes.ignition ? (
-                    <EngineIcon width={20} height={20} className={classes.success} />
-                  ) : (
-                    <EngineIcon width={20} height={20} className={classes.neutral} />
-                  )}
-                </IconButton>
-              </Tooltip>
-            )}
-            {position.attributes.hasOwnProperty('batteryLevel') && (
-              <Tooltip
-                title={`${t('positionBatteryLevel')}: ${formatPercentage(position.attributes.batteryLevel)}`}
-              >
-                <IconButton size="small">
-                  {(position.attributes.batteryLevel > 70 &&
-                    (position.attributes.charge ? (
-                      <BatteryChargingFullIcon fontSize="small" className={classes.success} />
-                    ) : (
-                      <BatteryFullIcon fontSize="small" className={classes.success} />
-                    ))) ||
-                    (position.attributes.batteryLevel > 30 &&
-                      (position.attributes.charge ? (
-                        <BatteryCharging60Icon fontSize="small" className={classes.warning} />
-                      ) : (
-                        <Battery60Icon fontSize="small" className={classes.warning} />
-                      ))) ||
-                    (position.attributes.charge ? (
-                      <BatteryCharging20Icon fontSize="small" className={classes.error} />
-                    ) : (
-                      <Battery20Icon fontSize="small" className={classes.error} />
-                    ))}
-                </IconButton>
-              </Tooltip>
-            )}
-          </>
-        )}
-      </ListItemButton>
+          </Box>
+          <Typography variant="caption" component="div" noWrap color="textSecondary">
+            <span style={{ color: statusMain, fontWeight: 600 }}>{statusText}</span>
+            {secondaryValue && <> • {secondaryValue}</>}
+            <BillingCountdown expirationTime={item.expirationTime} />
+          </Typography>
+          {position && (
+            <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5, overflow: 'hidden' }}>
+              <Chip
+                size="small"
+                icon={<SpeedIcon />}
+                label={`${speed} ${speedUnitString(speedUnit, t)}`}
+                sx={chipSx}
+              />
+              {hasIgnition && (
+                <Chip
+                  size="small"
+                  icon={<EngineIcon width={14} height={14} />}
+                  label={attributes.ignition ? 'ON' : 'OFF'}
+                  color={attributes.ignition ? 'success' : 'default'}
+                  variant={attributes.ignition ? 'filled' : 'outlined'}
+                  sx={chipSx}
+                />
+              )}
+              {hasBattery && (
+                <Chip
+                  size="small"
+                  icon={<BatteryStdIcon />}
+                  label={`${attributes.batteryLevel}%`}
+                  color={
+                    (attributes.batteryLevel > 70 && 'success') ||
+                    (attributes.batteryLevel > 30 && 'warning') ||
+                    'error'
+                  }
+                  variant="outlined"
+                  sx={chipSx}
+                />
+              )}
+            </Box>
+          )}
+        </Box>
+      </ButtonBase>
     </div>
   );
 };

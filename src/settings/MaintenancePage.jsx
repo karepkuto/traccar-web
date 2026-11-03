@@ -36,7 +36,7 @@ const MaintenancePage = () => {
   const [item, setItem] = useState();
   const [labels, setLabels] = useState({ start: '', period: '' });
 
-  const speedUnit = useAttributePreference('speedUnit', 'kn');
+  const speedUnit = useAttributePreference('speedUnit', 'kmh');
   const distanceUnit = useAttributePreference('distanceUnit', 'km');
 
   const convertToList = (attributes) => {

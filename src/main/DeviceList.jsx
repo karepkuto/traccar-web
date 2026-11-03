@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui';
 import { List } from 'react-window';
 import { devicesActions } from '../store';
 import { useAsyncTask } from '../reactHelper';
-import DeviceRow from './DeviceRow';
+import DeviceRow, { DEVICE_ROW_HEIGHT } from './DeviceRow';
 import fetchOrThrow from '../common/util/fetchOrThrow';
 
 const useStyles = makeStyles()((theme) => ({
@@ -44,7 +44,7 @@ const DeviceList = ({ devices }) => {
       className={classes.list}
       rowComponent={DeviceRow}
       rowCount={devices.length}
-      rowHeight={72}
+      rowHeight={DEVICE_ROW_HEIGHT}
       rowProps={{ devices }}
       overscanCount={5}
     />

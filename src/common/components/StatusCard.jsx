@@ -15,9 +15,10 @@ import {
   Menu,
   MenuItem,
   CardMedia,
-  TableFooter,
   Link,
-  Tooltip,
+  Avatar,
+  ButtonBase,
+  Chip,
 } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import CloseIcon from '@mui/icons-material/Close';
@@ -35,19 +36,40 @@ import usePositionAttributes from '../attributes/usePositionAttributes';
 import { devicesActions } from '../../store';
 import { useCatch, useCatchCallback } from '../../reactHelper';
 import { useAttributePreference } from '../util/preferences';
+import { useTheme } from '@mui/material/styles';
+import SpeedIcon from '@mui/icons-material/Speed';
+import BatteryStdIcon from '@mui/icons-material/BatteryStd';
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
+import dayjs from 'dayjs';
+import { formatStatus, getStatusColor } from '../util/formatter';
+import { speedFromKnots, speedUnitString } from '../util/converter';
+import { mapIconKey, mapIcons } from '../../map/core/preloadImages';
 import fetchOrThrow from '../util/fetchOrThrow';
 
 const useStyles = makeStyles()((theme, { desktopPadding }) => ({
   card: {
     pointerEvents: 'auto',
-    width: theme.dimensions.popupMaxWidth,
+    width: `min(360px, calc(100vw - ${theme.spacing(4)}))`,
+    borderRadius: 16,
   },
   header: {
     display: 'flex',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    padding: theme.spacing(1, 1, 0, 2),
-    color: theme.palette.text.secondary,
+    gap: theme.spacing(1.5),
+    padding: theme.spacing(1.5, 1, 0.5, 2),
+    cursor: 'move',
+  },
+  chips: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: theme.spacing(0.75),
+    marginBottom: theme.spacing(1),
+  },
+  address: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: theme.spacing(0.75),
+    marginBottom: theme.spacing(0.5),
   },
   media: {
     height: theme.dimensions.popupImageHeight,
@@ -80,7 +102,9 @@ const useStyles = makeStyles()((theme, { desktopPadding }) => ({
     borderBottom: 'none',
   },
   actions: {
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
+    borderTop: `1px solid ${theme.palette.divider}`,
+    padding: theme.spacing(0.5),
   },
   root: {
     pointerEvents: 'none',
@@ -116,6 +140,29 @@ const StatusRow = ({ name, content }) => {
   );
 };
 
+// Icon with a small label underneath, so actions are self-explanatory.
+const ActionButton = ({ icon, label, onClick, disabled, color }) => (
+  <ButtonBase
+    onClick={onClick}
+    disabled={disabled}
+    sx={{
+      flexDirection: 'column',
+      gap: 0.25,
+      px: 1,
+      py: 0.75,
+      borderRadius: 2,
+      minWidth: 56,
+      color: color ? `${color}.main` : 'text.primary',
+      opacity: disabled ? 0.35 : 1,
+    }}
+  >
+    {icon}
+    <Typography variant="caption" sx={{ fontSize: '0.68rem', lineHeight: 1.2 }}>
+      {label}
+    </Typography>
+  </ButtonBase>
+);
+
 const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPadding = 0 }) => {
   const { classes } = useStyles({ desktopPadding });
   const navigate = useNavigate();
@@ -130,6 +177,14 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
   const device = useSelector((state) => state.devices.items[deviceId]);
 
   const deviceImage = device?.attributes?.deviceImage;
+  const theme = useTheme();
+  const speedUnit = useAttributePreference('speedUnit');
+  const statusColor = getStatusColor(device?.status);
+  const statusMain = theme.palette[statusColor].main;
+  const statusText =
+    !device || device.status === 'online' || !device.lastUpdate
+      ? formatStatus(device?.status, t)
+      : dayjs(device.lastUpdate).fromNow();
 
   const positionAttributes = usePositionAttributes(t);
   const positionItems = useAttributePreference(
@@ -181,15 +236,31 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
             dragHandleClassName="draggable-header"
             style={{ position: 'relative' }}
           >
-            <Card elevation={3} className={classes.card}>
+            <Card elevation={6} className={classes.card}>
               <CardMedia
                 className={`draggable-header ${deviceImage ? classes.media : ''}`}
                 image={deviceImage && `/api/media/${device.uniqueId}/${deviceImage}`}
               >
                 <div className={classes.header}>
-                  <Typography variant="body2" color="inherit">
-                    {device.name}
-                  </Typography>
+                  <Avatar sx={{ width: 40, height: 40, bgcolor: statusMain, flex: 'none' }}>
+                    <img
+                      src={mapIcons[mapIconKey(device.category)]}
+                      alt=""
+                      style={{ width: 22, height: 22, filter: 'brightness(0) invert(1)' }}
+                    />
+                  </Avatar>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <Typography
+                      variant="subtitle1"
+                      noWrap
+                      sx={{ fontWeight: 700, lineHeight: 1.3 }}
+                    >
+                      {device.name}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: statusMain, fontWeight: 600 }}>
+                      {statusText}
+                    </Typography>
+                  </div>
                   <IconButton size="small" color="inherit" onClick={onClose} onTouchStart={onClose}>
                     <CloseIcon fontSize="small" />
                   </IconButton>
@@ -197,10 +268,42 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
               </CardMedia>
               {position && (
                 <CardContent className={classes.content}>
+                  <div className={classes.chips}>
+                    <Chip
+                      size="small"
+                      icon={<SpeedIcon />}
+                      label={`${Math.round(speedFromKnots(position.speed || 0, speedUnit))} ${speedUnitString(speedUnit, t)}`}
+                    />
+                    {position.attributes.hasOwnProperty('ignition') && (
+                      <Chip
+                        size="small"
+                        label={`${t('positionIgnition')}: ${position.attributes.ignition ? 'ON' : 'OFF'}`}
+                        color={position.attributes.ignition ? 'success' : 'default'}
+                        variant={position.attributes.ignition ? 'filled' : 'outlined'}
+                      />
+                    )}
+                    {position.attributes.hasOwnProperty('batteryLevel') && (
+                      <Chip
+                        size="small"
+                        icon={<BatteryStdIcon />}
+                        label={`${position.attributes.batteryLevel}%`}
+                        variant="outlined"
+                      />
+                    )}
+                  </div>
+                  {position.address && (
+                    <div className={classes.address}>
+                      <PlaceOutlinedIcon fontSize="small" color="action" />
+                      <Typography variant="body2">
+                        <PositionValue position={position} property="address" />
+                      </Typography>
+                    </div>
+                  )}
                   <Table size="small" className={classes.table}>
                     <TableBody>
                       {positionItems
                         .split(',')
+                        .filter((key) => key !== 'address' && key !== 'speed')
                         .filter(
                           (key) =>
                             position.hasOwnProperty(key) || position.attributes.hasOwnProperty(key),
@@ -219,63 +322,46 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
                           />
                         ))}
                     </TableBody>
-                    <TableFooter>
-                      <TableRow>
-                        <TableCell colSpan={2} className={classes.cell}>
-                          <Typography variant="body2">
-                            <Link component={RouterLink} to={`/position/${position.id}`}>
-                              {t('sharedShowDetails')}
-                            </Link>
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    </TableFooter>
                   </Table>
+                  <Typography variant="body2" sx={{ mt: 1 }}>
+                    <Link component={RouterLink} to={`/position/${position.id}`}>
+                      {t('sharedShowDetails')}
+                    </Link>
+                  </Typography>
                 </CardContent>
               )}
               <CardActions className={classes.actions} disableSpacing>
-                <Tooltip title={t('sharedExtra')}>
-                  <IconButton
-                    color="secondary"
-                    onClick={(e) => setAnchorEl(e.currentTarget)}
-                    disabled={!position}
-                  >
-                    <PendingIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title={t('reportReplay')}>
-                  <IconButton
-                    onClick={() => navigate(`/replay?deviceId=${deviceId}`)}
-                    disabled={disableActions || !position}
-                  >
-                    <RouteIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title={t('commandTitle')}>
-                  <IconButton
-                    onClick={() => navigate(`/settings/device/${deviceId}/command`)}
-                    disabled={disableActions}
-                  >
-                    <SendIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title={t('sharedEdit')}>
-                  <IconButton
-                    onClick={() => navigate(`/settings/device/${deviceId}`)}
-                    disabled={disableActions || deviceReadonly}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title={t('sharedRemove')}>
-                  <IconButton
-                    color="error"
-                    onClick={() => setRemoving(true)}
-                    disabled={disableActions || deviceReadonly}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Tooltip>
+                <ActionButton
+                  icon={<RouteIcon />}
+                  label={t('reportReplay')}
+                  onClick={() => navigate(`/replay?deviceId=${deviceId}`)}
+                  disabled={disableActions || !position}
+                />
+                <ActionButton
+                  icon={<SendIcon />}
+                  label={t('commandTitle')}
+                  onClick={() => navigate(`/settings/device/${deviceId}/command`)}
+                  disabled={disableActions}
+                />
+                <ActionButton
+                  icon={<EditIcon />}
+                  label={t('sharedEdit')}
+                  onClick={() => navigate(`/settings/device/${deviceId}`)}
+                  disabled={disableActions || deviceReadonly}
+                />
+                <ActionButton
+                  icon={<DeleteIcon />}
+                  label={t('sharedRemove')}
+                  color="error"
+                  onClick={() => setRemoving(true)}
+                  disabled={disableActions || deviceReadonly}
+                />
+                <ActionButton
+                  icon={<PendingIcon />}
+                  label={t('statusMore')}
+                  onClick={(e) => setAnchorEl(e.currentTarget)}
+                  disabled={!position}
+                />
               </CardActions>
             </Card>
           </Rnd>
