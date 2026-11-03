@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "c7cc4b1",
+  "gitHash": "04ceeb4",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 15:13 WIB",
-  "commitMessage": "Reseller privacy: customers' devices show status and subscription only\n\nResellers keep full access to their stock devices (installation tests)\nbut, for devices owned by one of their customers, no longer see location,\ntrip history, replay, reports, commands, position details or the share\nbutton. The device list shows status and subscription with a note; the\nmap and auto-zoom skip those devices; report and replay device pickers\nleave them out ('all' expands to the allowed devices, groups are hidden)\nand no request is made while the list is loading, so the server is never\nasked for 'all devices'. Command and position pages redirect to the map.\n\nEnforced in the web app only: the server still gives resellers access to\ndevices linked to them. Docs updated (roles, limits, change history).",
-  "buildTime": "2026-11-03 15:15 WIB",
-  "buildTimeIso": "2026-11-03T08:15:08.307Z"
+  "commitTime": "2026-11-03 15:22 WIB",
+  "commitMessage": "Reseller impersonation only with a time-limited admin grant per customer\n\n- Resellers page: 'Izin Impersonate' dialog per reseller to allow chosen\n  customers until a time (2 hours, 24 hours, 3 days or custom) with an\n  optional reason, and to revoke active grants. Stored on the reseller as\n  'impersonateGrants'.\n- Users page for resellers: the Impersonate button appears only for\n  customers with an active grant; other customers get 'Minta izin\n  impersonate', which copies a request message and opens WhatsApp when the\n  server support link is a wa.me link.\n- Before a reseller impersonates, the app writes 'lastImpersonation' on\n  the customer; the server logs that edit under the reseller. The Audit\n  page pairs it with the customer's login (within 2 minutes, same IP, one\n  trail per login) into '<reseller> impersonate pengguna <customer>'.\n- Docs updated.",
+  "buildTime": "2026-11-03 15:24 WIB",
+  "buildTimeIso": "2026-11-03T08:24:22.093Z"
 }
