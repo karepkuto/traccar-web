@@ -12,4 +12,5 @@
 | Tautan yang dibuat di luar aplikasi tidak mengikuti aturan akses reseller | Reseller tidak melihat perangkat pelanggannya | *Perbaiki Akses Perangkat* |
 | Hanya satu admin | Akun bermasalah = bisnis berhenti | 2FA + kode cadangan; pertimbangkan admin cadangan |
 | Akun Hanya-baca tidak bisa menyimpan rekaman persetujuan lengkap di server | Bukti persetujuan lemah, diminta ulang di perangkat lain | Hindari Hanya-baca untuk pelanggan biasa; lihat [06](06-legal.md) |
+| Tautan bagikan: pemegang token bisa membaca riwayat perangkat lewat API; pencabutan hanya oleh admin | Kebocoran privasi bila tautan tersebar | Bawaan 24 jam, layar riwayat disembunyikan, daftar Tautan Aktif + Cabut; atribut server `disableShare` untuk mematikan fitur |
 | Teks legal masih draf | Risiko hukum | Tinjauan ahli hukum |

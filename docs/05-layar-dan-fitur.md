@@ -29,18 +29,28 @@ khusus protokol JT808), dan **Bagikan** (tidak tampil bila atribut server
 `disableShare` aktif atau bagi akun sementara).
 
 ## 5.2a Tautan bagikan (share)
-- Membuat **akun sementara** di server (`temporary`, `readonly`, tertaut hanya
-  ke perangkat itu, `expirationTime` = batas tautan; perintah dan laporan
-  dimatikan kecuali diaktifkan di konfigurasi server) dan token bertanda tangan
-  yang berlaku sampai batas itu.
-- Penerima membuka tautan dan melihat pop-up **"Lokasi yang Dibagikan"** berisi
-  4 poin ketentuan ringkas, satu centang, dan tombol *Lihat Lokasi*
-  (`src/legal/ShareNotice.jsx`). Persetujuannya disimpan di browser
-  (`shareNotice:<userId>`), bukan di server, karena akun sementara bersifat
-  hanya-baca. EULA lengkap tidak ditampilkan untuk akun sementara.
-- Mencabut akses: hapus akun sementara di Pengguna (aktifkan *Sementara*).
-  Satu pengguna hanya bisa punya satu tautan aktif per perangkat; membagikan
-  ulang sebelum dihapus menghasilkan konflik.
+- Halaman Bagikan (`src/settings/SharePage.jsx`): masa berlaku **bawaan 24
+  jam**, pilihan cepat 1 jam / 24 jam / 3 hari / 7 hari atau tanggal bebas,
+  tombol *Buat Tautan*, *Salin*, dan *WhatsApp*.
+- Server membuat **akun sementara** (`temporary`, `readonly`, email
+  `<email pembuat>:<IMEI>`, tertaut hanya ke perangkat itu, `expirationTime` =
+  batas tautan; perintah dan laporan mati kecuali diaktifkan di konfigurasi
+  server) dan token bertanda tangan.
+- **Satu pembuat = satu tautan per perangkat.** Membuat lagi saat akun
+  sementara lama masih ada (walau sudah kedaluwarsa) ditolak server (409).
+  Aplikasi menampilkan pesan agar tautan lama dicabut dulu.
+- **Tautan Aktif** (admin): daftar akun sementara perangkat itu (pembuat,
+  batas waktu, Aktif/Kedaluwarsa) dengan tombol **Cabut** (menghapus akun
+  sementara, sehingga token langsung tidak berlaku). Pelanggan dan reseller
+  tidak bisa mencabut karena server tidak memberi mereka akses ke akun
+  sementara; mereka diarahkan ke admin.
+- Penerima: pop-up ringkas **"Lokasi yang Dibagikan"**
+  (`src/legal/ShareNotice.jsx`, disimpan di browser `shareNotice:<userId>`),
+  bukan EULA penuh.
+- Penerima hanya melihat **lokasi langsung**: tombol Putar Ulang, Perintah,
+  dan Ubah disembunyikan, menu Laporan disembunyikan, dan alamat `/replay` /
+  `/reports` dialihkan ke peta. **Server tetap mengizinkan** akun sementara
+  membaca riwayat posisi perangkat itu lewat API.
 
 ## 5.3 Putar Ulang (Replay)
 - Kecepatan sampai **10x**, rentang waktu bisa dipotong, waktu dalam WIB.

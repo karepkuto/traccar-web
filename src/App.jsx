@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMediaQuery, useTheme } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
@@ -34,6 +34,7 @@ const App = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const desktop = useMediaQuery(theme.breakpoints.up('md'));
   const [shareNoticeAccepted, setShareNoticeAccepted] = useState(false);
@@ -82,6 +83,11 @@ const App = () => {
   }
   if (needsConsent(user)) {
     return <ConsentGate user={user} />;
+  }
+  // Shared-link viewers: live location only, no history or reports. The
+  // server still allows the API; this keeps the screens out of reach.
+  if (user.temporary && /^\/(replay|reports)/.test(location.pathname)) {
+    return <Navigate to="/" replace />;
   }
   if (needsShareNotice(user) && !shareNoticeAccepted) {
     return <ShareNotice user={user} onAccept={() => setShareNoticeAccepted(true)} />;

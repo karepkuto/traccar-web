@@ -335,24 +335,29 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
                 </CardContent>
               )}
               <CardActions className={classes.actions} disableSpacing>
-                <ActionButton
-                  icon={<RouteIcon />}
-                  label={t('reportReplay')}
-                  onClick={() => navigate(`/replay?deviceId=${deviceId}`)}
-                  disabled={disableActions || !position}
-                />
-                <ActionButton
-                  icon={<SendIcon />}
-                  label={t('commandTitle')}
-                  onClick={() => navigate(`/settings/device/${deviceId}/command`)}
-                  disabled={disableActions}
-                />
-                <ActionButton
-                  icon={<EditIcon />}
-                  label={t('sharedEdit')}
-                  onClick={() => navigate(`/settings/device/${deviceId}`)}
-                  disabled={disableActions || deviceReadonly}
-                />
+                {/* Shared-link viewers see the live location only. */}
+                {!user.temporary && (
+                  <>
+                    <ActionButton
+                      icon={<RouteIcon />}
+                      label={t('reportReplay')}
+                      onClick={() => navigate(`/replay?deviceId=${deviceId}`)}
+                      disabled={disableActions || !position}
+                    />
+                    <ActionButton
+                      icon={<SendIcon />}
+                      label={t('commandTitle')}
+                      onClick={() => navigate(`/settings/device/${deviceId}/command`)}
+                      disabled={disableActions}
+                    />
+                    <ActionButton
+                      icon={<EditIcon />}
+                      label={t('sharedEdit')}
+                      onClick={() => navigate(`/settings/device/${deviceId}`)}
+                      disabled={disableActions || deviceReadonly}
+                    />
+                  </>
+                )}
                 {admin && (
                   <ActionButton
                     icon={<DeleteIcon />}

@@ -32,7 +32,8 @@ const BottomMenu = () => {
   const { darkMode, toggleDarkMode } = useThemeMode();
 
   const readonly = useRestriction('readonly');
-  const disableReports = useRestriction('disableReports');
+  const temporary = useSelector((state) => state.session.user?.temporary);
+  const disableReports = useRestriction('disableReports') || temporary;
   const devices = useSelector((state) => state.devices.items);
   const user = useSelector((state) => state.session.user);
   const socket = useSelector((state) => state.session.socket);

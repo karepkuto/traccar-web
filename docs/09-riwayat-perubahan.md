@@ -6,7 +6,8 @@ Setiap commit yang mengubah perilaku aplikasi **wajib** menambah baris di sini
 
 | Commit | Tanggal | Perubahan |
 |---|---|---|
-| (commit ini) | 2026-11-03 | Replay tab Perjalanan: urutan terbaru di atas (nomor dan tombol sebelumnya/berikutnya tetap kronologis) |
+| (commit ini) | 2026-11-03 | Bagikan: bawaan 24 jam dengan pilihan cepat, tombol Salin/WhatsApp, daftar *Tautan Aktif* dengan tombol Cabut (admin), pesan jelas saat tautan sudah ada; akun sementara tidak melihat Putar Ulang, Perintah, Ubah, maupun Laporan |
+| `d84e756` | 2026-11-03 | Replay tab Perjalanan: urutan terbaru di atas (nomor dan tombol sebelumnya/berikutnya tetap kronologis) |
 | `aefafae` | 2026-11-03 | Kartu perangkat: tombol *Lainnya* diganti *Lokasi* (menu buka di peta + buat geofence) dan *Bagikan*; penerima tautan bagikan mendapat pop-up ketentuan ringkas, bukan EULA penuh |
 | `bef052f` | 2026-11-03 | Form perangkat: bagian *Jam GPS* (radio UTC/WIB/WITA/WIT untuk `decoder.timezone`) dengan deteksi otomatis selisih 7/8/9 jam |
 | `b03db03` | 2026-11-03 | Persetujuan EULA untuk akun Hanya-baca: server hanya menerima `termsAccepted`, rincian disimpan di perangkat; pesan error tidak lagi berupa stack trace Java |
