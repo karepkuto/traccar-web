@@ -18,6 +18,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from './LocalizationProvider';
 import BackIcon from './BackIcon';
 import InfoTip from './InfoTip';
+import ThemeToggle from './ThemeToggle';
 import { moduleInfoKey } from '../util/moduleInfo';
 
 const useStyles = makeStyles()((theme, { miniVariant }) => ({
@@ -134,12 +135,13 @@ const PageLayout = ({ menu, breadcrumbs, children }) => {
                   <BackIcon />
                 </IconButton>
                 <PageTitle breadcrumbs={breadcrumbs} />
+                <ThemeToggle sx={{ ml: 'auto' }} />
               </>
             )}
             <IconButton
               color="inherit"
               edge="start"
-              sx={{ ml: miniVariant ? -2 : 'auto' }}
+              sx={{ ml: miniVariant ? -2 : 0 }}
               onClick={toggleDrawer}
             >
               {miniVariant !== (theme.direction === 'rtl') ? (
@@ -174,7 +176,8 @@ const PageLayout = ({ menu, breadcrumbs, children }) => {
               <MenuIcon />
             </IconButton>
             <PageTitle breadcrumbs={breadcrumbs} />
-            <InfoTip text={infoText} sx={{ ml: 'auto' }} />
+            <ThemeToggle sx={{ ml: 'auto' }} />
+            <InfoTip text={infoText} />
           </Toolbar>
         </AppBar>
       )}

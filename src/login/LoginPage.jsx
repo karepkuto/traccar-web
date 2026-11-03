@@ -32,6 +32,7 @@ import {
 import LogoImage from './LogoImage';
 import { useCatch } from '../reactHelper';
 import QrCodeDialog from '../common/components/QrCodeDialog';
+import ThemeToggle from '../common/components/ThemeToggle';
 import PasswordField from '../common/components/PasswordField';
 
 const useStyles = makeStyles()((theme) => ({
@@ -178,6 +179,7 @@ const LoginPage = () => {
             </Tooltip>
           </IconButton>
         )}
+        <ThemeToggle color="primary" />
         {!nativeEnvironment && (
           <IconButton color="primary" onClick={() => setShowQr(true)}>
             <QrCode2Icon />

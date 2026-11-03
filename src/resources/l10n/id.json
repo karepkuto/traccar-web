@@ -357,6 +357,8 @@
     "settingsAppVersion": "Versi Aplikasi",
     "settingsConnection": "Koneksi",
     "settingsDarkMode": "Mode Gelap",
+    "themeLight": "Mode Terang",
+    "themeDark": "Mode Gelap",
     "settingsTotpEnable": "Aktifkan Sandi Sekali Pakai",
     "settingsTotpForce": "Wajibkan Sandi Sekali Pakai",
     "settingsServiceWorkerUpdateInterval": "Interval Cek Pembaruan Aplikasi",

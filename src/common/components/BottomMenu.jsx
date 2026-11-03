@@ -20,6 +20,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { sessionActions } from '../../store';
 import { useTranslation } from './LocalizationProvider';
 import { useRestriction } from '../util/permissions';
+import { useThemeMode } from './ThemeModeContext';
 import { nativePostMessage } from './NativeInterface';
 
 const BottomMenu = () => {
@@ -27,6 +28,7 @@ const BottomMenu = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const t = useTranslation();
+  const { darkMode, toggleDarkMode } = useThemeMode();
 
   const readonly = useRestriction('readonly');
   const disableReports = useRestriction('disableReports');
@@ -164,6 +166,14 @@ const BottomMenu = () => {
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
         <MenuItem onClick={handleAccount}>
           <Typography color="textPrimary">{t('settingsUser')}</Typography>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            toggleDarkMode();
+            setAnchorEl(null);
+          }}
+        >
+          <Typography color="textPrimary">{t(darkMode ? 'themeLight' : 'themeDark')}</Typography>
         </MenuItem>
         <MenuItem onClick={handleLogout}>
           <Typography color="error">{t('loginLogout')}</Typography>
