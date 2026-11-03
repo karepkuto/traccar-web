@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "7fa6b6b",
+  "gitHash": "34815ad",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 14:30 WIB",
-  "commitMessage": "Keep reseller access to their customers' devices in every linking path\n\nTraccar gives a reseller only the devices linked directly to it, so a\ndevice an admin linked to a customer stayed invisible to that customer's\nreseller. New helpers in util/resellerAccess keep the reseller -> device\nlinks in step:\n\n- Linking devices to a customer (user Connections, new device form)\n  also links them to the customer's reseller.\n- Adding customers to a reseller (Resellers > manage customers, user\n  Connections) links their devices to the reseller; removing a customer\n  revokes them, except devices of the reseller's other customers.\n- Device Connections gets a 'Pelanggan (pemilik)' field: changing the\n  owner moves the reseller link (old reseller loses it, new one gets it).\n- Moving customers to another reseller or to direct management already\n  moved the device links and keeps doing so.\n- Resellers page: 'Perbaiki Akses Perangkat' adds missing links for\n  existing data.",
-  "buildTime": "2026-11-03 14:31 WIB",
-  "buildTimeIso": "2026-11-03T07:31:41.092Z"
+  "commitTime": "2026-11-03 14:35 WIB",
+  "commitMessage": "Positions report: only administrators can delete positions\n\nThe delete button came from upstream Traccar, where any user without the\n'readonly' restriction may delete positions of devices they can see. That\nlets a reseller or customer rewrite a vehicle's history, and the server\ndoes not record position deletions in the audit log. The button is now\nshown to administrators only.",
+  "buildTime": "2026-11-03 14:36 WIB",
+  "buildTimeIso": "2026-11-03T07:36:58.062Z"
 }
