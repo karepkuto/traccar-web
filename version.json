@@ -1,9 +1,9 @@
 {
   "version": "6.14.5",
-  "gitHash": "9611300",
+  "gitHash": "0c17a45",
   "gitBranch": "master",
-  "commitTime": "2026-11-03 09:35 WIB",
-  "commitMessage": "Replay: per-trip history tab and typed time range\n\nTrips tab ('Perjalanan'):\n- Pick a device and a day (today, yesterday or a date in WIB) to list\n  that day's trips from the server's trip report, each as a card with\n  times, duration, distance, max speed and from -> to\n- Places use the geofence name when the start / end point lies in a\n  geofence, otherwise the address (or coordinates)\n- Parking time between trips is shown; tapping a card plays that trip\n  with the existing player, with previous / next trip and back to list\n- Chips tell whether the device reports ignition (ACC) and whether trip\n  detection uses ACC or movement, with an (i) explaining the 5-minute\n  default stop threshold\n\nBy time tab ('Waktu'):\n- Start and end of the range can be typed as date + time (WIB); the\n  range slider follows, snapping to the nearest recorded points",
-  "buildTime": "2026-11-03 09:36 WIB",
-  "buildTimeIso": "2026-11-03T02:36:54.057Z"
+  "commitTime": "2026-11-03 09:44 WIB",
+  "commitMessage": "Simpler user / reseller form with Laravel-style validation\n\nUser form:\n- Only the essentials up front: name, login email, password, phone,\n  and an 'Account type & limits' card (Customer / Reseller /\n  Administrator, customer limit for resellers, device limit, optional\n  account expiration, disable account)\n- Map preferences, location, restrictions, token and attributes moved\n  behind 'Show advanced settings'\n- 'New reseller' opens the form with Reseller preselected (limit 10)\n- Account expiration can be left empty (no limit) instead of 2099\n\nAll forms:\n- Save stays clickable; pressing it on an invalid form shows a red\n  summary at the top and keeps the user on the page\n- User form shows field errors under the inputs (required, password at\n  least 6 characters, reseller customer limit)",
+  "buildTime": "2026-11-03 09:45 WIB",
+  "buildTimeIso": "2026-11-03T02:45:40.525Z"
 }
