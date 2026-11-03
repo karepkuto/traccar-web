@@ -30,7 +30,15 @@ const useStyles = makeStyles()((theme) => ({
 
 // Row actions in the familiar "Ubah | Hapus" style. Extra actions stay as
 // icons with tooltips on desktop; on phones everything is in an "Aksi" menu.
-const CollectionActions = ({ itemId, editPath, endpoint, onReload, customActions, readonly }) => {
+const CollectionActions = ({
+  itemId,
+  editPath,
+  endpoint,
+  onReload,
+  customActions,
+  readonly,
+  removable = true,
+}) => {
   const theme = useTheme();
   const { classes } = useStyles();
   const navigate = useNavigate();
@@ -93,7 +101,7 @@ const CollectionActions = ({ itemId, editPath, endpoint, onReload, customActions
                 <ListItemText>{t('sharedEdit')}</ListItemText>
               </MenuItem>
             )}
-            {!readonly && (
+            {!readonly && removable && (
               <MenuItem onClick={handleRemove} sx={{ color: 'error.main' }}>
                 <ListItemIcon>
                   <DeleteIcon fontSize="small" color="error" />
@@ -125,15 +133,17 @@ const CollectionActions = ({ itemId, editPath, endpoint, onReload, customActions
                   {t('sharedEdit')}
                 </Button>
               )}
-              <Button
-                size="small"
-                variant="outlined"
-                color="error"
-                startIcon={<DeleteIcon fontSize="small" />}
-                onClick={handleRemove}
-              >
-                {t('sharedRemove')}
-              </Button>
+              {removable && (
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="error"
+                  startIcon={<DeleteIcon fontSize="small" />}
+                  onClick={handleRemove}
+                >
+                  {t('sharedRemove')}
+                </Button>
+              )}
             </>
           )}
         </div>

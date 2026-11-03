@@ -41,6 +41,13 @@ import useMapStyles from '../map/core/useMapStyles';
 import { map } from '../map/core/MapView';
 import useSettingsStyles from './common/useSettingsStyles';
 import fetchOrThrow from '../common/util/fetchOrThrow';
+import {
+  ROLES,
+  ROLE_LOCKED_FLAGS,
+  applyRolePreset,
+  getUserRole,
+  roleMismatches,
+} from '../common/util/roles';
 
 const UserPage = () => {
   const { classes } = useSettingsStyles();
@@ -123,11 +130,7 @@ const UserPage = () => {
 
   // Rules shown under the fields once Save is pressed (Laravel style).
   const isNew = !item?.id;
-  const accountType = (() => {
-    if (item?.administrator) return 'admin';
-    if ((item?.userLimit || 0) !== 0) return 'reseller';
-    return 'customer';
-  })();
+  const accountType = getUserRole(item);
   const errors = {};
   if (item) {
     if (!item.name?.trim()) errors.name = t('validationRequired');
@@ -149,24 +152,48 @@ const UserPage = () => {
   const showAccountSection = manager && (isNew || editingOther || admin);
 
   const [searchType] = useState(() => new URLSearchParams(window.location.search).get('type'));
-  const defaultItem = (() => {
-    const base = admin ? { deviceLimit: -1 } : {};
-    return searchType === 'reseller' ? { ...base, userLimit: 10 } : base;
-  })();
+  // Role presets: restrictions follow the account type (see util/roles).
+  const [defaultItem] = useState(() =>
+    applyRolePreset(searchType === 'reseller' && admin ? { userLimit: 10, deviceLimit: -1 } : {}, {
+      admin,
+    }),
+  );
 
   const setAccountType = (type) => {
-    if (type === 'admin') {
+    if (type === ROLES.ADMIN) {
       setItem({ ...item, administrator: true });
-    } else if (type === 'reseller') {
-      setItem({
-        ...item,
-        administrator: false,
-        userLimit: item.userLimit > 0 ? item.userLimit : 10,
-      });
+    } else if (type === ROLES.RESELLER) {
+      setItem(
+        applyRolePreset(
+          {
+            ...item,
+            administrator: false,
+            userLimit: item.userLimit > 0 ? item.userLimit : 10,
+            deviceLimit: item.deviceLimit || -1,
+          },
+          { admin },
+        ),
+      );
     } else {
-      setItem({ ...item, administrator: false, userLimit: 0 });
+      setItem(applyRolePreset({ ...item, administrator: false, userLimit: 0 }, { admin }));
     }
   };
+
+  // Accounts created before roles existed get their role restrictions as
+  // soon as a manager opens them; saving stores the corrected values.
+  useEffect(() => {
+    if (
+      item?.id &&
+      manager &&
+      item.id !== currentUser.id &&
+      accountType !== ROLES.ADMIN &&
+      roleMismatches(item, { admin }).length
+    ) {
+      setItem(applyRolePreset(item, { admin }));
+    }
+  }, [item, manager, admin, currentUser.id, accountType]);
+
+  const roleLocked = accountType !== ROLES.ADMIN;
 
   return (
     <EditItemView
@@ -272,7 +299,7 @@ const UserPage = () => {
                     helper={t('userCustomerLimitHelp')}
                   />
                 )}
-                {admin && (
+                {admin && accountType === ROLES.RESELLER && (
                   <TextField
                     type="number"
                     value={item.deviceLimit ?? -1}
@@ -499,10 +526,15 @@ const UserPage = () => {
                           />
                         }
                         label={t(label)}
-                        disabled={!manager}
+                        disabled={!manager || (roleLocked && ROLE_LOCKED_FLAGS.includes(key))}
                       />
                     ))}
                   </FormGroup>
+                  {roleLocked && (
+                    <Typography variant="caption" color="textSecondary">
+                      {t('userRoleLockedHelp')}
+                    </Typography>
+                  )}
                   <Button
                     variant="outlined"
                     color="primary"

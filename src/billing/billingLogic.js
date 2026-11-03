@@ -15,7 +15,12 @@ export const BILLING_STATUS = {
   WARNING: 'warning',
   CRITICAL: 'critical',
   EXPIRED: 'expired',
+  TRIAL: 'trial',
 };
+
+// New devices get a short installation test period before an administrator
+// activates them by recording the first payment.
+export const TRIAL_DAYS = 3;
 
 // Device attribute keys used to store the current billing state.
 // Traccar attributes are a flat map, so keys are prefixed instead of nested.
@@ -30,6 +35,24 @@ export const BILLING_ATTRIBUTES = {
   lastPaidReference: 'billingLastPaidReference',
   lastPaidBy: 'billingLastPaidBy',
   history: 'billingHistory',
+  trialStart: 'billingTrialStart',
+};
+
+export const isTrial = (attributes) => Boolean(attributes?.[BILLING_ATTRIBUTES.trialStart]);
+
+// Values for a new device: locked automatically after the test period.
+export const trialDefaults = (now = dayjs()) => ({
+  expirationTime: now.add(TRIAL_DAYS, 'day').toISOString(),
+  attributes: { [BILLING_ATTRIBUTES.trialStart]: now.toISOString() },
+});
+
+// Remaining time split into whole days and hours (rounded down).
+export const getRemainingParts = (expirationTime, now = dayjs()) => {
+  if (!expirationTime) {
+    return null;
+  }
+  const minutes = Math.max(0, dayjs(expirationTime).diff(now, 'minute'));
+  return { days: Math.floor(minutes / 1440), hours: Math.floor((minutes % 1440) / 60), minutes };
 };
 
 export const getRemainingDays = (expirationTime, now = dayjs()) => {
@@ -41,13 +64,21 @@ export const getRemainingDays = (expirationTime, now = dayjs()) => {
 
 export const getBillingStatus = (
   expirationTime,
-  { now = dayjs(), warningDays = DEFAULT_WARNING_DAYS, criticalDays = DEFAULT_CRITICAL_DAYS } = {},
+  {
+    now = dayjs(),
+    warningDays = DEFAULT_WARNING_DAYS,
+    criticalDays = DEFAULT_CRITICAL_DAYS,
+    trial = false,
+  } = {},
 ) => {
   if (!expirationTime) {
     return BILLING_STATUS.UNSET;
   }
   if (!dayjs(expirationTime).isAfter(now)) {
     return BILLING_STATUS.EXPIRED;
+  }
+  if (trial) {
+    return BILLING_STATUS.TRIAL;
   }
   const days = getRemainingDays(expirationTime, now);
   if (days <= criticalDays) {
@@ -206,4 +237,46 @@ export const appendHistory = (attributes, entry) => {
     serialized = JSON.stringify(list);
   }
   return { serialized, trimmed };
+};
+
+// ---------- Checks (detect changes made outside payment recording) ----------
+
+export const BILLING_ISSUES = {
+  NO_EXPIRATION: 'noExpiration',
+  TRIAL_TOO_LONG: 'trialTooLong',
+  UNPAID_EXTENSION: 'unpaidExtension',
+  NO_PAYMENT: 'noPayment',
+  MULTIPLE_OWNERS: 'multipleOwners',
+};
+
+const HOUR = 3600000;
+
+// Returns [{ key, date? }] for one device. ownerCount comes from the
+// ownership map (customers who can see the device).
+export const findBillingIssues = (device, ownerCount = 0) => {
+  const issues = [];
+  const attributes = device.attributes || {};
+  const expiration = device.expirationTime ? dayjs(device.expirationTime) : null;
+  if (!expiration) {
+    issues.push({ key: BILLING_ISSUES.NO_EXPIRATION });
+  } else if (isTrial(attributes)) {
+    const start = dayjs(attributes[BILLING_ATTRIBUTES.trialStart]);
+    if (!start.isValid() || expiration.diff(start) > TRIAL_DAYS * 24 * HOUR + HOUR) {
+      issues.push({ key: BILLING_ISSUES.TRIAL_TOO_LONG });
+    }
+  } else {
+    const history = parseHistory(attributes);
+    if (!history.length) {
+      issues.push({ key: BILLING_ISSUES.NO_PAYMENT });
+    } else if (history[0].e) {
+      const paidUntil = expirationFromEndDate(history[0].e);
+      if (expiration.diff(paidUntil) > 24 * HOUR) {
+        issues.push({ key: BILLING_ISSUES.UNPAID_EXTENSION, date: history[0].e });
+      }
+    }
+  }
+  if (ownerCount > 1) {
+    issues.push({ key: BILLING_ISSUES.MULTIPLE_OWNERS });
+  }
+  return issues;
 };

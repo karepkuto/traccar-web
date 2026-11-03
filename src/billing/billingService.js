@@ -21,6 +21,13 @@ export const fetchResellers = async ({ signal } = {}) => {
     .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 };
 
+// Devices the given user can see (for resellers this includes the devices of
+// their customers).
+export const fetchUserDevices = async (userId, { signal } = {}) => {
+  const response = await fetchOrThrow(`/api/devices?userId=${userId}`, { signal });
+  return response.json();
+};
+
 export const recordPaymentAndExtend = async (
   deviceId,
   { startDate, endDate, periods, unit, amount, price, reference, billedTo, paidBy },
@@ -56,6 +63,8 @@ export const recordPaymentAndExtend = async (
     [BILLING_ATTRIBUTES.price]: price ?? null,
     [BILLING_ATTRIBUTES.billedTo]: billedTo || null,
   };
+  // The first payment activates a device that was in its installation test.
+  delete attributes[BILLING_ATTRIBUTES.trialStart];
   Object.keys(attributes).forEach((key) => {
     if (attributes[key] === null) {
       delete attributes[key];

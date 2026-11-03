@@ -18,7 +18,8 @@ import SelectField from '../common/components/SelectField';
 import deviceCategories from '../common/util/deviceCategories';
 import { useTranslation } from '../common/components/LocalizationProvider';
 import useDeviceAttributes from '../common/attributes/useDeviceAttributes';
-import { useManager } from '../common/util/permissions';
+import { useAdministrator } from '../common/util/permissions';
+import { trialDefaults } from '../billing/billingLogic';
 import SettingsMenu from './components/SettingsMenu';
 import useCommonDeviceAttributes from '../common/attributes/useCommonDeviceAttributes';
 import { useCatch } from '../reactHelper';
@@ -31,7 +32,7 @@ const DevicePage = () => {
   const { classes } = useSettingsStyles();
   const t = useTranslation();
 
-  const manager = useManager();
+  const admin = useAdministrator();
 
   const commonDeviceAttributes = useCommonDeviceAttributes(t);
   const deviceAttributes = useDeviceAttributes(t);
@@ -39,7 +40,10 @@ const DevicePage = () => {
   const [searchParams] = useSearchParams();
   const uniqueId = searchParams.get('uniqueId');
 
-  const [item, setItem] = useState(uniqueId ? { uniqueId } : null);
+  // Every new device starts in the installation test and locks itself unless
+  // an administrator activates it by recording the first payment.
+  const [defaultItem] = useState(() => trialDefaults());
+  const [item, setItem] = useState(uniqueId ? { ...defaultItem, uniqueId } : null);
   const [showQr, setShowQr] = useState(false);
   const [imageFile, setImageFile] = useState(null);
 
@@ -66,6 +70,7 @@ const DevicePage = () => {
       hasAdvanced
       item={item}
       setItem={setItem}
+      defaultItem={defaultItem}
       validate={validate}
       menu={<SettingsMenu />}
       breadcrumbs={['settingsTitle', 'sharedDevice']}
@@ -91,7 +96,7 @@ const DevicePage = () => {
                 onChange={(event) => setItem({ ...item, uniqueId: event.target.value })}
                 label={t('deviceIdentifier')}
                 helperText={t('deviceIdentifierHelp')}
-                disabled={Boolean(uniqueId)}
+                disabled={Boolean(uniqueId) || (Boolean(item.id) && !admin)}
               />
             </AccordionDetails>
           </Accordion>
@@ -147,7 +152,7 @@ const DevicePage = () => {
                     setItem({ ...item, expirationTime: new Date(e.target.value).toISOString() });
                   }
                 }}
-                disabled={!manager}
+                disabled={!admin}
               />
               <FormControlLabel
                 control={
@@ -157,7 +162,7 @@ const DevicePage = () => {
                   />
                 }
                 label={t('sharedDisabled')}
-                disabled={!manager}
+                disabled={!admin}
               />
               <Button variant="outlined" color="primary" onClick={() => setShowQr(true)}>
                 {t('sharedQrCode')}

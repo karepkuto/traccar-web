@@ -70,6 +70,38 @@ const strings = {
       'Each device keeps about its last 12 payments. Export regularly for a complete record.',
     billingShowAll: 'Show all devices',
     billingTotalPaid: 'Total',
+    billingStatusTrial: 'Installation test',
+    billingTrialExpired: 'Not activated (locked)',
+    billingTimeDaysHours: '{d} d {h} h',
+    billingTimeHours: '{h} h',
+    billingTimeUnderHour: '< 1 h',
+    billingLeft: '{time} left',
+    billingActivate: 'Activate (record first payment)',
+    billingTrialNote:
+      'This device is in its {n}-day installation test. Recording the first payment activates it.',
+    billingRequestActivation: 'Request activation',
+    billingRequestExtension: 'Request extension',
+    billingRequestMessage: 'Please activate/extend device {name} (IMEI {imei}). Thank you.',
+    billingRequestCopied: 'Request message copied. Send it to the Pantauku admin.',
+    billingIssuesTab: 'Needs review',
+    billingIssuesNote:
+      'Changes that did not go through payment recording, e.g. edits made directly through the API. Review weekly.',
+    billingNoIssues: 'Nothing needs review.',
+    billingIssue: 'Problem',
+    billingIssue_noExpiration: 'No expiration: active forever without payment',
+    billingIssue_trialTooLong: 'Installation test longer than {n} days',
+    billingIssue_unpaidExtension: 'Active longer than the last payment (paid until {date})',
+    billingIssue_noPayment: 'Has an expiration but no payment record',
+    billingIssue_multipleOwners: 'Linked to more than one customer',
+    billingRecapTab: 'Reseller recap',
+    billingRecapReseller: 'Reseller',
+    billingRecapChoose: 'Choose a reseller to see their devices.',
+    billingRecapDevices: 'Devices',
+    billingRecapTrial: 'Installation test',
+    billingRecapDue: 'Due ≤ {n} days / locked',
+    billingRecapEstimate: 'Estimated bill',
+    billingRecapNoPrice: '{n} device(s) without a price',
+    billingRecapOnlyDue: 'Only due ≤ {n} days / locked',
   },
   id: {
     billingTitle: 'Langganan',
@@ -135,6 +167,40 @@ const strings = {
       'Setiap perangkat menyimpan sekitar 12 pembayaran terakhir. Export secara rutin untuk arsip lengkap.',
     billingShowAll: 'Tampilkan semua perangkat',
     billingTotalPaid: 'Total',
+    billingStatusTrial: 'Uji pasang',
+    billingTrialExpired: 'Belum diaktivasi (terkunci)',
+    billingTimeDaysHours: '{d} hari {h} jam',
+    billingTimeHours: '{h} jam',
+    billingTimeUnderHour: '< 1 jam',
+    billingLeft: 'sisa {time}',
+    billingActivate: 'Aktivasi (catat pembayaran pertama)',
+    billingTrialNote:
+      'Perangkat ini dalam masa uji pasang {n} hari. Mencatat pembayaran pertama akan mengaktifkannya.',
+    billingRequestActivation: 'Minta aktivasi',
+    billingRequestExtension: 'Minta perpanjangan',
+    billingRequestMessage:
+      'Mohon aktivasi/perpanjangan perangkat {name} (IMEI {imei}). Terima kasih.',
+    billingRequestCopied: 'Pesan permintaan disalin. Kirim ke admin Pantauku.',
+    billingIssuesTab: 'Perlu Diperiksa',
+    billingIssuesNote:
+      'Perubahan yang tidak lewat pencatatan pembayaran, misalnya diubah langsung lewat API. Periksa seminggu sekali.',
+    billingNoIssues: 'Tidak ada yang perlu diperiksa.',
+    billingIssue: 'Masalah',
+    billingIssue_noExpiration: 'Tidak punya masa aktif: aktif selamanya tanpa bayar',
+    billingIssue_trialTooLong: 'Masa uji pasang lebih dari {n} hari',
+    billingIssue_unpaidExtension:
+      'Masa aktif lebih panjang dari pembayaran terakhir (dibayar s.d. {date})',
+    billingIssue_noPayment: 'Punya masa aktif tapi tidak ada catatan pembayaran',
+    billingIssue_multipleOwners: 'Terhubung ke lebih dari satu pelanggan',
+    billingRecapTab: 'Rekap Reseller',
+    billingRecapReseller: 'Reseller',
+    billingRecapChoose: 'Pilih reseller untuk melihat perangkatnya.',
+    billingRecapDevices: 'Perangkat',
+    billingRecapTrial: 'Uji pasang',
+    billingRecapDue: 'Habis ≤ {n} hari / terkunci',
+    billingRecapEstimate: 'Perkiraan tagihan',
+    billingRecapNoPrice: '{n} perangkat belum punya harga',
+    billingRecapOnlyDue: 'Hanya yang habis ≤ {n} hari / terkunci',
   },
 };
 
@@ -146,7 +212,7 @@ const useBillingTranslation = () => {
       let value = data[key] ?? strings.en[key] ?? key;
       if (params) {
         Object.entries(params).forEach(([name, replacement]) => {
-          value = value.replace(`{${name}}`, replacement);
+          value = value.replaceAll(`{${name}}`, replacement);
         });
       }
       return value;

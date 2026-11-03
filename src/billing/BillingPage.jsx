@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import PaymentIcon from '@mui/icons-material/Payment';
 import HistoryIcon from '@mui/icons-material/History';
+import SendIcon from '@mui/icons-material/Send';
 import { useTheme } from '@mui/material/styles';
 import PageLayout from '../common/components/PageLayout';
 import SettingsMenu from '../settings/components/SettingsMenu';
@@ -35,21 +36,25 @@ import {
   BILLING_STATUS,
   formatDateId,
   formatRupiah,
-  getBillingStatus,
   getBillingThresholds,
   getRemainingDays,
+  isTrial,
   parseBilledTo,
   parseHistory,
 } from './billingLogic';
 import { fetchBillingDevices, fetchResellers } from './billingService';
 import { fetchDeviceOwners } from '../common/util/ownership';
-import BillingStatusChip, { statusLabelKey } from './BillingStatusChip';
+import BillingStatusChip from './BillingStatusChip';
+import { deviceBillingStatus, statusLabelKey } from './billingFormat';
+import BillingIssues from './BillingIssues';
+import ResellerRecap from './ResellerRecap';
 import ExtendDialog from './ExtendDialog';
 import useBillingTranslation from './useBillingTranslation';
 import { useTranslation } from '../common/components/LocalizationProvider';
 
 const statusOrder = [
   BILLING_STATUS.EXPIRED,
+  BILLING_STATUS.TRIAL,
   BILLING_STATUS.CRITICAL,
   BILLING_STATUS.WARNING,
   BILLING_STATUS.ACTIVE,
@@ -75,6 +80,7 @@ const BillingPage = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selected, setSelected] = useState(null);
   const [saved, setSaved] = useState(false);
+  const [requestCopied, setRequestCopied] = useState(false);
   const [tab, setTab] = useState('devices');
   const [historyDeviceId, setHistoryDeviceId] = useState(null);
   const [resellers, setResellers] = useState([]);
@@ -150,7 +156,7 @@ const BillingPage = () => {
     return items
       .map((item) => ({
         ...item,
-        billingStatus: getBillingStatus(item.expirationTime, thresholds),
+        billingStatus: deviceBillingStatus(item, thresholds),
       }))
       .filter((item) => statusFilter === 'all' || item.billingStatus === statusFilter)
       .filter(
@@ -229,6 +235,23 @@ const BillingPage = () => {
     await exportExcel(bt('billingHistoryTab'), 'riwayat-pembayaran.xlsx', sheets, theme);
   };
 
+  // Resellers cannot extend subscriptions: they send a request to the admin.
+  const handleRequest = async (device) => {
+    const text = bt('billingRequestMessage', { name: device.name, imei: device.uniqueId });
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // Clipboard may be unavailable (e.g. insecure context); the WhatsApp link still works.
+    }
+    const support = server.attributes?.support || '';
+    if (/^https:\/\/(wa\.me|api\.whatsapp\.com)\//.test(support)) {
+      const url = new URL(support);
+      url.searchParams.set('text', text);
+      window.open(url.toString(), '_blank', 'noopener');
+    }
+    setRequestCopied(true);
+  };
+
   const showHistory = (deviceId) => {
     setHistoryDeviceId(deviceId);
     setTab('history');
@@ -281,10 +304,20 @@ const BillingPage = () => {
         </TextField>
       </Toolbar>
       {error && <Alert severity="error">{error}</Alert>}
-      <Tabs value={tab} onChange={(_, value) => setTab(value)} sx={{ px: 2 }}>
+      <Tabs
+        value={tab}
+        onChange={(_, value) => setTab(value)}
+        variant="scrollable"
+        scrollButtons="auto"
+        sx={{ px: 2 }}
+      >
         <Tab value="devices" label={bt('billingDevicesTab')} />
         <Tab value="history" label={bt('billingHistoryTab')} />
+        {admin && <Tab value="issues" label={bt('billingIssuesTab')} />}
+        {admin && <Tab value="recap" label={bt('billingRecapTab')} />}
       </Tabs>
+      {tab === 'issues' && <BillingIssues items={items} owners={owners} onPay={setSelected} />}
+      {tab === 'recap' && <ResellerRecap resellers={resellers} />}
       {tab === 'devices' && (
         <div style={{ overflowX: 'auto' }}>
           <Table className={classes.table}>
@@ -311,7 +344,7 @@ const BillingPage = () => {
                     <TableCell>{renderOwner(item.id)}</TableCell>
                     <TableCell>{item.uniqueId}</TableCell>
                     <TableCell>
-                      <BillingStatusChip expirationTime={item.expirationTime} />
+                      <BillingStatusChip device={item} />
                     </TableCell>
                     <TableCell>{formatTime(item.expirationTime, 'date')}</TableCell>
                     <TableCell>
@@ -334,8 +367,25 @@ const BillingPage = () => {
                             <HistoryIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
+                        {!admin && item.billingStatus !== BILLING_STATUS.ACTIVE && (
+                          <Tooltip
+                            title={bt(
+                              isTrial(item.attributes)
+                                ? 'billingRequestActivation'
+                                : 'billingRequestExtension',
+                            )}
+                          >
+                            <IconButton size="small" onClick={() => handleRequest(item)}>
+                              <SendIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        )}
                         {admin && (
-                          <Tooltip title={bt('billingExtend')}>
+                          <Tooltip
+                            title={bt(
+                              isTrial(item.attributes) ? 'billingActivate' : 'billingExtend',
+                            )}
+                          >
                             <IconButton size="small" onClick={() => setSelected(item)}>
                               <PaymentIcon fontSize="small" />
                             </IconButton>
@@ -442,6 +492,12 @@ const BillingPage = () => {
           }}
         />
       )}
+      <Snackbar
+        open={requestCopied}
+        autoHideDuration={4000}
+        onClose={() => setRequestCopied(false)}
+        message={bt('billingRequestCopied')}
+      />
       <Snackbar
         open={saved}
         autoHideDuration={3000}

@@ -1,4 +1,5 @@
 import fetchOrThrow from './fetchOrThrow';
+import { ROLES, getUserRole } from './roles';
 
 // Pantauku rule: a device, group or geofence belongs to at most ONE customer.
 // A customer is a non-admin user who cannot manage other users (resellers
@@ -9,7 +10,7 @@ import fetchOrThrow from './fetchOrThrow';
 // whenever a link is created here. Links made directly through the API are
 // not blocked; the owner column on the subscription page shows violations.
 
-export const isCustomer = (user) => Boolean(user) && !user.administrator && !(user.userLimit || 0);
+export const isCustomer = (user) => Boolean(user) && getUserRole(user) === ROLES.CUSTOMER;
 
 const listIds = async (url, signal) => {
   const response = await fetchOrThrow(url, { signal });
@@ -79,8 +80,7 @@ export const findOtherOwners = async ({ type, id, excludeUserId, signal }) => {
   return results.filter(Boolean);
 };
 
-export const isReseller = (user) =>
-  Boolean(user) && !user.administrator && (user.userLimit || 0) !== 0;
+export const isReseller = (user) => Boolean(user) && getUserRole(user) === ROLES.RESELLER;
 
 // Resellers other than `excludeResellerId` that already manage the customer.
 export const findOtherResellers = async ({ customerId, excludeResellerId, signal }) => {

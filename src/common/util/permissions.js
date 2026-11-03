@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 export const useAdministrator = () =>
   useSelector((state) => {
     const admin = state.session.user.administrator;
-    return admin;
+    return Boolean(admin);
   });
 
 export const useManager = () =>

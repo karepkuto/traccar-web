@@ -22,6 +22,9 @@ import {
   expirationFromEndDate,
   formatDateId,
   formatRupiah,
+  isTrial,
+  TRIAL_DAYS,
+  todayDate,
   parseBilledTo,
   periodEndDate,
 } from './billingLogic';
@@ -45,7 +48,9 @@ const ExtendDialog = ({ device, onClose, onSaved }) => {
       ? attributes[BILLING_ATTRIBUTES.plan]
       : 'month',
   );
-  const [startDate, setStartDate] = useState(() => defaultStartDate(device.expirationTime));
+  const [startDate, setStartDate] = useState(() =>
+    isTrial(attributes) ? todayDate() : defaultStartDate(device.expirationTime),
+  );
   const [price, setPrice] = useState(storedPrice > 0 ? storedPrice : null);
   const [amount, setAmount] = useState(null);
   const [amountTouched, setAmountTouched] = useState(false);
@@ -70,7 +75,10 @@ const ExtendDialog = ({ device, onClose, onSaved }) => {
 
   const endInPast = newExpiration && !newExpiration.isAfter(dayjs());
   const shorter =
-    newExpiration && device.expirationTime && newExpiration.isBefore(dayjs(device.expirationTime));
+    !isTrial(attributes) &&
+    newExpiration &&
+    device.expirationTime &&
+    newExpiration.isBefore(dayjs(device.expirationTime));
   const legacyReseller = billedToType === 'reseller' && !resellerId && initialBilledTo.name;
 
   const problems = useMemo(() => {
@@ -108,10 +116,13 @@ const ExtendDialog = ({ device, onClose, onSaved }) => {
   return (
     <Dialog open onClose={saving ? undefined : onClose} fullWidth maxWidth="xs">
       <DialogTitle>
-        {bt('billingExtend')}: {device.name}
+        {bt(isTrial(attributes) ? 'billingActivate' : 'billingExtend')}: {device.name}
       </DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ pt: 1 }}>
+          {isTrial(attributes) && (
+            <Alert severity="info">{bt('billingTrialNote', { n: TRIAL_DAYS })}</Alert>
+          )}
           <Typography variant="body2">
             {bt('billingCurrentExpiration')}: {formatTime(device.expirationTime, 'date') || '-'}
           </Typography>

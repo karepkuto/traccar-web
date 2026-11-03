@@ -143,7 +143,7 @@ const DeviceRow = ({ devices, index, style }) => {
           <Typography variant="caption" component="div" noWrap color="textSecondary">
             <span style={{ color: statusMain, fontWeight: 600 }}>{statusText}</span>
             {secondaryValue && <> • {secondaryValue}</>}
-            <BillingCountdown expirationTime={item.expirationTime} />
+            <BillingCountdown device={item} />
           </Typography>
           {position && (
             <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5, overflow: 'hidden' }}>

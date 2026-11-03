@@ -9,6 +9,12 @@ import {
   Switch,
   TableFooter,
   FormControlLabel,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Snackbar,
 } from '@mui/material';
 import LoginIcon from '@mui/icons-material/Login';
 import LinkIcon from '@mui/icons-material/Link';
@@ -20,7 +26,8 @@ import SettingsMenu from './components/SettingsMenu';
 import CollectionFab from './components/CollectionFab';
 import CollectionActions from './components/CollectionActions';
 import TableShimmer from '../common/components/TableShimmer';
-import { useManager } from '../common/util/permissions';
+import { useAdministrator, useManager } from '../common/util/permissions';
+import { applyRolePreset, getUserRole, roleMismatches } from '../common/util/roles';
 import SearchHeader from './components/SearchHeader';
 import useSettingsStyles from './common/useSettingsStyles';
 import fetchOrThrow from '../common/util/fetchOrThrow';
@@ -32,6 +39,44 @@ const UsersPage = () => {
   const t = useTranslation();
 
   const manager = useManager();
+  const admin = useAdministrator();
+
+  const roleLabel = (user) =>
+    ({
+      admin: t('userTypeAdmin'),
+      reseller: t('userTypeReseller'),
+      customer: t('userTypeCustomer'),
+    })[getUserRole(user)];
+
+  // One-off clean-up: apply role restrictions to accounts made before roles.
+  const [syncTargets, setSyncTargets] = useState(null);
+  const [syncMessage, setSyncMessage] = useState(null);
+
+  const handleSyncCheck = useCatch(async () => {
+    const response = await fetchOrThrow('/api/users');
+    const users = await response.json();
+    setSyncTargets(
+      users.filter(
+        (user) => getUserRole(user) !== 'admin' && roleMismatches(user, { admin: true }).length,
+      ),
+    );
+  });
+
+  const handleSyncApply = useCatch(async () => {
+    const targets = syncTargets;
+    setSyncTargets(null);
+    await Promise.all(
+      targets.map((user) =>
+        fetchOrThrow(`/api/users/${user.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(applyRolePreset(user, { admin: true })),
+        }),
+      ),
+    );
+    setSyncMessage(t('userRoleSyncDone').replace('{n}', targets.length));
+    reload();
+  });
 
   const [reloadKey, reload] = useReducer((k) => k + 1, 0);
   const [items, setItems] = useState([]);
@@ -91,7 +136,7 @@ const UsersPage = () => {
           <TableRow>
             <TableCell>{t('sharedName')}</TableCell>
             <TableCell>{t('userEmail')}</TableCell>
-            <TableCell>{t('userAdmin')}</TableCell>
+            <TableCell>{t('userRole')}</TableCell>
             <TableCell>{t('sharedDisabled')}</TableCell>
             <TableCell>{t('userExpirationTime')}</TableCell>
             <TableCell>{t('deviceTitle')}</TableCell>
@@ -105,7 +150,7 @@ const UsersPage = () => {
               <TableRow key={item.id}>
                 <TableCell>{item.name}</TableCell>
                 <TableCell>{item.email}</TableCell>
-                <TableCell>{formatBoolean(item.administrator, t)}</TableCell>
+                <TableCell>{roleLabel(item)}</TableCell>
                 <TableCell>{formatBoolean(item.disabled, t)}</TableCell>
                 <TableCell>{formatTime(item.expirationTime, 'date')}</TableCell>
                 <TableCell>
@@ -117,6 +162,7 @@ const UsersPage = () => {
                     editPath="/settings/user"
                     endpoint="users"
                     onReload={reload}
+                    removable={admin}
                     customActions={manager ? [actionLogin, actionConnections] : [actionConnections]}
                   />
                 </TableCell>
@@ -129,6 +175,11 @@ const UsersPage = () => {
         <TableFooter>
           <TableRow>
             <TableCell colSpan={7} align="right">
+              {admin && (
+                <Button variant="text" onClick={handleSyncCheck} sx={{ float: 'left' }}>
+                  {t('userRoleSync')}
+                </Button>
+              )}
               <FormControlLabel
                 control={
                   <Switch
@@ -145,6 +196,30 @@ const UsersPage = () => {
         </TableFooter>
       </Table>
       <CollectionFab editPath="/settings/user" />
+      <Dialog open={Boolean(syncTargets)} onClose={() => setSyncTargets(null)} maxWidth="xs">
+        <DialogTitle>{t('userRoleSyncTitle')}</DialogTitle>
+        <DialogContent>
+          {syncTargets?.length
+            ? `${t('userRoleSyncBody').replace('{n}', syncTargets.length)} ${syncTargets
+                .map((user) => user.name)
+                .join(', ')}`
+            : t('userRoleSyncNone')}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSyncTargets(null)}>{t('sharedCancel')}</Button>
+          {Boolean(syncTargets?.length) && (
+            <Button variant="contained" onClick={handleSyncApply}>
+              {t('userRoleSync')}
+            </Button>
+          )}
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        open={Boolean(syncMessage)}
+        autoHideDuration={4000}
+        onClose={() => setSyncMessage(null)}
+        message={syncMessage}
+      />
     </PageLayout>
   );
 };

@@ -1,11 +1,7 @@
 import { Chip } from '@mui/material';
 import { useSelector } from 'react-redux';
-import {
-  BILLING_STATUS,
-  getBillingStatus,
-  getBillingThresholds,
-  getRemainingDays,
-} from './billingLogic';
+import { BILLING_STATUS, getBillingThresholds } from './billingLogic';
+import { billingStatusLabel, deviceBillingStatus } from './billingFormat';
 import useBillingTranslation from './useBillingTranslation';
 
 const statusColors = {
@@ -14,26 +10,18 @@ const statusColors = {
   [BILLING_STATUS.WARNING]: 'warning',
   [BILLING_STATUS.CRITICAL]: 'error',
   [BILLING_STATUS.EXPIRED]: 'error',
+  [BILLING_STATUS.TRIAL]: 'info',
 };
 
-export const statusLabelKey = (status) =>
-  `billingStatus${status.charAt(0).toUpperCase()}${status.slice(1)}`;
-
-const BillingStatusChip = ({ expirationTime }) => {
+const BillingStatusChip = ({ device }) => {
   const bt = useBillingTranslation();
   const server = useSelector((state) => state.session.server);
-  const status = getBillingStatus(expirationTime, getBillingThresholds(server));
-  const days = getRemainingDays(expirationTime);
-
-  let label = bt(statusLabelKey(status));
-  if (status === BILLING_STATUS.WARNING || status === BILLING_STATUS.CRITICAL) {
-    label = `${label} · ${bt('billingDaysLeft', { n: days })}`;
-  }
+  const status = deviceBillingStatus(device, getBillingThresholds(server));
 
   return (
     <Chip
       size="small"
-      label={label}
+      label={billingStatusLabel(bt, status, device)}
       color={statusColors[status]}
       variant={status === BILLING_STATUS.EXPIRED ? 'filled' : 'outlined'}
     />
